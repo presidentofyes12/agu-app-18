@@ -1,0 +1,1744 @@
+Home folder: /home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/views/components/app-menu/
+
+Contains proposal information.
+
+=== ./FilterProposalDropdown.tsx ===
+import * as React from 'react';
+import { styled, alpha } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import Menu, { MenuProps } from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Divider from '@mui/material/Divider';
+import { IoMdArrowDropdown } from 'react-icons/io';
+import { PROPOSAL_TYPES } from 'util/constant';
+
+const StyledMenu = styled((props: MenuProps) => (
+  <Menu
+    elevation={0}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'right',
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'right',
+    }}
+    {...props}
+  />
+))(({ theme }) => ({
+  '& .MuiPaper-root': {
+    borderRadius: 6,
+    marginTop: theme.spacing(1),
+    minWidth: 180,
+    color:
+      theme.palette.mode === 'light'
+        ? 'rgb(55, 65, 81)'
+        : theme.palette.grey[300],
+    boxShadow:
+      'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+    '& .MuiMenu-list': {
+      padding: '4px 0',
+    },
+    '& .MuiMenuItem-root': {
+      '& .MuiSvgIcon-root': {
+        fontSize: 18,
+        color: theme.palette.text.secondary,
+        marginRight: theme.spacing(1.5),
+      },
+      '&:active': {
+        backgroundColor: alpha(
+          theme.palette.primary.main,
+          theme.palette.action.selectedOpacity
+        ),
+      },
+    },
+  },
+}));
+
+export default function FilterProposalDropdown({
+  proposalTypeSetter,
+}: {
+  proposalTypeSetter: any;
+}) {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = (type: any) => {
+    setAnchorEl(null);
+    if (type==PROPOSAL_TYPES.active || type== PROPOSAL_TYPES.all || type== PROPOSAL_TYPES.expired) {
+      proposalTypeSetter(type);
+    }
+  };
+
+  return (
+    <div>
+      <button
+        className="btn btn_primary"
+        id="demo-customized-button"
+        aria-controls={open ? 'demo-customized-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+      >
+        Filter Proposal
+        <IoMdArrowDropdown />
+      </button>
+      <StyledMenu
+        id="demo-customized-menu"
+        MenuListProps={{
+          'aria-labelledby': 'demo-customized-button',
+        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={e=>handleClose(PROPOSAL_TYPES.all)} disableRipple>
+          All Proposal
+        </MenuItem>
+        <Divider sx={{ my: 0.5 }} />
+        <MenuItem  onClick={e=>handleClose(PROPOSAL_TYPES.active)}  disableRipple>
+          Active Proposal
+        </MenuItem>
+        <MenuItem  onClick={e=>handleClose(PROPOSAL_TYPES.expired)}  disableRipple>
+          Closed Proposal
+        </MenuItem>
+      </StyledMenu>
+    </div>
+  );
+}
+=== ./index.tsx ===
+import React, { useState } from 'react';
+import ChannelList from 'views/components/app-menu/channel-list';
+import DmList from 'views/components/app-menu/dm-list';
+import AppMenuBase from 'views/components/app-menu-base';
+import { useRecoilValue } from 'recoil';
+import { userState } from 'state/userState';
+import { Link, navigate } from '@reach/router';
+
+const AppMenu = () => {
+  const getUserState: any = useRecoilValue(userState);
+  const [showPopup, setShowPopup] = useState(false);
+
+  const handleNostrClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault();
+    setShowPopup(true);
+  };
+
+  const handleContinue = () => {
+    setShowPopup(false);
+    navigate('/home');
+  };
+
+  const handleCancel = () => {
+    setShowPopup(false);
+  };
+
+  const popupStyles = {
+    position: 'fixed' as 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    background: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  };
+
+  const popupContentStyles = {
+    background: 'black',
+    padding: '20px',
+    borderRadius: '10px',
+    textAlign: 'center' as 'center',
+    maxWidth: '400px',
+    width: '100%',
+  };
+
+  const buttonStyles = {
+    margin: '10px',
+    padding: '10px 20px',
+    border: 'none',
+    backgroundColor: '#007BFF',
+    color: 'white',
+    cursor: 'pointer',
+    borderRadius: '5px',
+    fontSize: '16px',
+  };
+
+  const buttonHoverStyles = {
+    backgroundColor: '#0056b3',
+  };
+
+  return (
+    <AppMenuBase>
+      <div className="custom_items">
+        <Link to="/">Home</Link>
+        <a href="/home" onClick={handleNostrClick}>Nostr</a>
+        <Link to="/settings/profile">Profile</Link>
+        <Link to="/settings/keys">Keys & Wallet</Link>
+        <Link to="/marketplace">Marketplace</Link>
+        <a href="http://localhost:8069/" target="_blank" rel="noopener noreferrer">Link to Odoo</a>
+        <Link to="/storage">Storage</Link>
+        <Link to="/dao">DAO Dashboard</Link>
+        <Link to="/calendar">Calendar</Link>
+        <Link to="/relay">Relay (Admin Only!)</Link>
+      </div>
+      {/* <ChannelList /> */}
+      <DmList />
+      {showPopup && (
+        <div style={popupStyles}>
+          <div style={popupContentStyles}>
+            <h2>Warning: Age-Restricted Content Ahead</h2>
+            <p>
+              You are about to enter a section of this site that is restricted to individuals 18 years of age and older. 
+              This area contains content that may be inappropriate for underage users.
+            </p>
+            <button 
+              style={buttonStyles} 
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = buttonHoverStyles.backgroundColor)} 
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = buttonStyles.backgroundColor)} 
+              onClick={handleContinue}>
+                I confirm that I am at least 18 years old
+            </button>
+            <button 
+              style={buttonStyles} 
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = buttonHoverStyles.backgroundColor)} 
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = buttonStyles.backgroundColor)} 
+              onClick={handleCancel}>
+                I am under the age of 18
+            </button>
+          </div>
+        </div>
+      )}
+    </AppMenuBase>
+  );
+};
+
+export default AppMenu;
+=== ./dm-list.tsx ===
+import React, { useState, useMemo } from 'react';
+import { Box, Button } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import { useAtom } from 'jotai';
+import { useLocation, useNavigate } from '@reach/router';
+import useTranslation from 'hooks/use-translation';
+import ListItem from 'views/components/app-menu/list-item';
+import StartDM from 'views/components/dialogs/start-dm'; // Ensure this import is correct
+import useLiveDirectContacts from 'hooks/use-live-direct-contacts';
+import useLiveDirectMessages from 'hooks/use-live-direct-messages';
+import useModal from 'hooks/use-modal'; // Ensure this import is correct
+import { directMessageAtom, directMessagesAtom, keysAtom, profilesAtom, readMarkMapAtom, showRequestsAtom, ravenAtom } from 'atoms';
+import Plus from 'svg/plus';
+import { DirectContact } from 'types';
+import { truncateMiddle } from 'util/truncate';
+
+const DmListItem = (props: { contact: DirectContact, onAddUserClick: (contact: DirectContact) => void, isDmRequest: boolean }) => {
+    const { contact, onAddUserClick, isDmRequest } = props;
+    const navigate = useNavigate();
+    const [profiles] = useAtom(profilesAtom);
+    const [directMessage] = useAtom(directMessageAtom);
+    const [readMarkMap] = useAtom(readMarkMapAtom);
+    const [keys] = useAtom(keysAtom);
+    const location = useLocation();
+    const messages = useLiveDirectMessages(contact.pub);
+
+    const lMessage = messages[messages.length - 1];
+    const hasUnread = keys?.priv !== 'none' && !!(readMarkMap[contact.pub] && lMessage && lMessage.created > readMarkMap[contact.pub]);
+
+    const profile = profiles.find(x => x.creator === contact.pub);
+    const label = profile?.name || truncateMiddle(contact.npub, 28, ':');
+    const isSelected = contact.pub === directMessage && location.pathname.startsWith('/dm/');
+
+    const handleItemClick = () => {
+        if (isDmRequest) {
+            onAddUserClick(contact);
+        } else {
+            navigate(`/dm/${contact.npub}`);
+        }
+    };
+
+    return (
+        <div onClick={handleItemClick}>
+            <ListItem 
+                label={label} 
+                href={isDmRequest ? '#' : `/dm/${contact.npub}`}
+                selected={isSelected} 
+                hasUnread={hasUnread}
+            />
+        </div>
+    );
+}
+
+
+const DmList = () => {
+    const theme = useTheme();
+    const [showInviteePopup, setShowInviteePopup] = useState(false);
+    const [t] = useTranslation();
+    const directContacts = useLiveDirectContacts();
+    const [, showModal] = useModal();
+    const navigate = useNavigate();
+    const [directMessages] = useAtom(directMessagesAtom);
+    const [showRequests, setShowRequests] = useAtom(showRequestsAtom);
+    const [showPopup, setShowPopup] = useState(false);
+    const [selectedContact, setSelectedContact] = useState<DirectContact | null>(null);
+    const [isSendingRequest, setIsSendingRequest] = useState(false);
+    const [raven] = useAtom(ravenAtom);
+
+    const switchShowRequests = () => {
+        setShowRequests(!showRequests);
+    }
+
+    const search = () => {
+        showModal({
+            body: <StartDM onSuccess={(id) => {
+                showModal(null);
+                navigate(`/dm/${id}`).then();
+            }} />
+        })
+    }
+
+const handleAddUserClick = (contact: DirectContact, sendingRequest: boolean = false) => {
+    console.log("Selected contact: ", contact); // Debug log
+    setSelectedContact(contact);
+    setIsSendingRequest(sendingRequest);
+    setShowPopup(true);
+};
+
+    const handleConfirmDMRequest = () => {
+    setShowPopup(false);
+    // Logic to add the user and send the confirmation message
+    if (selectedContact) {
+        // Add the user to the contact list
+        const newContact: DirectContact = {
+            pub: selectedContact.pub,
+            npub: selectedContact.npub,
+        };
+        const updatedDirectContacts = [...directContacts, newContact];
+        const updatedRequests = requests.filter(r => r.pub !== selectedContact.pub);
+        
+        // Update the directContacts and requests state or perform any necessary state management
+        // For example, if using a state management library like Redux:
+        // dispatch(updateDirectContacts(updatedDirectContacts));
+        // dispatch(updateRequests(updatedRequests));
+
+        // Check if raven is defined before sending the confirmation message
+        if (raven) {
+            raven.sendDirectMessage(selectedContact.pub, "This DM has been accepted!");
+            // Navigate to the DM page after sending the message
+            navigate(`/dm/${selectedContact.npub}`);
+        } else {
+            // Show an error message to the user and prevent navigation
+            alert("Unable to send confirmation message. Please try again later.");
+            console.error("Raven is undefined, unable to send message.");
+        }
+    }
+};
+
+    const handleConfirm = () => {
+        setShowPopup(false);
+        search(); // Show the StartDM component after confirmation
+    };
+
+    const handleCancel = () => {
+        setShowPopup(false);
+        setSelectedContact(null);
+    };
+
+const combinedSearchAndAddUser = (contact: DirectContact) => {
+    handleAddUserClick(contact, true); // For sending a request
+};
+
+
+    const handleInviteeConfirm = () => {
+        setShowInviteePopup(false);
+    };
+
+    const handleInviteeCancel = () => {
+        setShowInviteePopup(false);
+    };
+
+    const requests = useMemo(() => directContacts.filter(d => directMessages.find(m => m.peer === d.pub && m.creator !== d.pub) === undefined), [directContacts, directMessages]);
+    const dmList = useMemo(() => directContacts.filter(d => requests.find(r => r.pub === d.pub) === undefined), [directContacts, requests]);
+
+    const popupStyles = {
+        position: 'fixed' as 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        background: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 2000, // Ensure this is higher than the "direct message" box
+    };
+
+    const popupContentStyles = {
+        background: 'black',
+        padding: '20px',
+        borderRadius: '10px',
+        textAlign: 'center' as 'center',
+        maxWidth: '600px',
+        width: '100%',
+        zIndex: 2100, // Ensure this is higher than the "direct message" box
+    };
+
+    const buttonStyles = {
+        margin: '10px',
+        padding: '10px 20px',
+        border: 'none',
+        backgroundColor: '#007BFF',
+        color: 'white',
+        cursor: 'pointer',
+        borderRadius: '5px',
+        fontSize: '16px',
+    };
+
+    const buttonHoverStyles = {
+        backgroundColor: '#0056b3',
+    };
+
+    return <>
+        {showPopup && (  // Ensure the popup is rendered before the rest of the content
+            <div style={popupStyles}>
+                <div style={popupContentStyles}>
+                    <h2>{t('Confirmation of Connection')}</h2>
+                    <p>{t('Before proceeding with connecting to another user on this platform, please carefully read and acknowledge the following:')}</p>
+                    <p><strong>{t('Important:')}</strong></p>
+                    <ul>
+                        <li>{t('By choosing to connect, you affirm that you have a personal acquaintance with the user you wish to connect with.')}</li>
+                        <li>{t('You may be required to verify your acquaintance with the other user at any time. Failure to provide satisfactory identification when requested may lead to the assumption that you own or control the other user\'s account.')}</li>
+                        <li>{t('You must confirm that you have not requested, offered, initiated, or accepted any form of payment in relation to establishing this connection.')}</li>
+                    </ul>
+                    <p>{t('Please indicate your confirmation that you personally know the user you wish to connect with and that no payment has been requested, offered, initiated, or accepted in association with this connection.')}</p>
+                    <button 
+    style={buttonStyles} 
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = buttonHoverStyles.backgroundColor)} 
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = buttonStyles.backgroundColor)} 
+    onClick={isSendingRequest ? handleConfirm : handleConfirmDMRequest}>
+    {t('I Confirm')}
+</button>
+<button 
+    style={buttonStyles} 
+    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = buttonHoverStyles.backgroundColor)} 
+    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = buttonStyles.backgroundColor)} 
+    onClick={handleCancel}>
+    {t('Cancel')}
+</button>
+                </div>
+            </div>
+        )}
+
+        <Box sx={{
+            mt: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+        }}>
+            <Box sx={{
+                fontFamily: 'Faktum, sans-serif',
+                fontWeight: 'bold',
+                color: theme.palette.primary.dark,
+            }}>
+                {showRequests ? t('DM Requests') : t('DM Contacts')}
+            </Box>
+<button onClick={() => combinedSearchAndAddUser(selectedContact!)} className='btn btn_success btn_sm'>
+    <span>+</span>  Add User
+</button>
+
+        </Box>
+
+        {!showRequests && requests.length > 0 && (
+            <Box sx={{ m: '12px 0' }}>
+                <Button size='small' onClick={switchShowRequests}>
+                    {t(requests.length === 1 ? '{{n}} DM request' : '{{n}} DM requests', { n: requests.length })}
+                </Button>
+            </Box>
+        )}
+
+        {showRequests && (
+            <Box sx={{ m: '12px 0' }}>
+                <Button size='small' onClick={switchShowRequests}>
+                    {t('< Back to DMs')}
+                </Button>
+            </Box>
+        )}
+
+        {(() => {
+            const theList = showRequests ? requests : dmList;
+
+            if (theList.length === 0) {
+                return <Box component='span' sx={{
+                    color: theme.palette.primary.dark,
+                    fontSize: '85%',
+                    opacity: '0.6',
+                }}>{t('No direct message')}</Box>
+            }
+
+            return theList.map(p => (
+                <div key={p.npub}>
+                    <DmListItem contact={p} onAddUserClick={handleAddUserClick} isDmRequest={showRequests} />
+                </div>
+            ));
+        })()}
+    </>
+}
+
+export default DmList;
+=== ./default-channel-list.tsx ===
+import React, { useEffect, useState } from 'react';
+import { useLocation } from '@reach/router';
+import { useAtom } from 'jotai';
+import { Box } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+
+import useTranslation from 'hooks/use-translation';
+import useLiveChannels from 'hooks/use-live-channels';
+import useLivePublicMessages from 'hooks/use-live-public-messages';
+import ChannelAddMenu from 'views/components/app-menu/channel-add-menu';
+import ListItem from 'views/components/app-menu/list-item';
+import { channelAtom, keysAtom, ravenAtom, readMarkMapAtom } from 'atoms';
+import { CiFileOff } from 'react-icons/ci';
+import { Channel } from 'types';
+import useToast from 'hooks/use-toast';
+import { PROPOSAL_TYPES, proposalTypes, votingPeriod } from 'util/constant';
+import { isTimeRemaining } from 'util/function';
+
+import FilterProposalDropdown from './FilterProposalDropdown';
+
+const ChannelListItem = (props: { c: Channel }) => {
+  const { c } = props;
+
+  const location = useLocation();
+  const messages = useLivePublicMessages(c.id);
+  const [readMarkMap] = useAtom(readMarkMapAtom);
+  const [channel] = useAtom(channelAtom);
+  const [keys] = useAtom(keysAtom);
+
+  const lMessage = messages[messages.length - 1];
+  const hasUnread =
+    keys?.priv !== 'none' &&
+    !!(readMarkMap[c.id] && lMessage && lMessage.created > readMarkMap[c.id]);
+
+  const isSelected =
+    c.id === channel?.id && location.pathname.startsWith('/channel/');
+
+  return (
+    <>
+      {c.id ==
+      'f412192fdc846952c75058e911d37a7392aa7fd2e727330f4344badc92fb8a22' ? (
+        ''
+      ) : (
+        <ListItem
+          key={c.id}
+          label={c.name}
+          href={`/channel/${c.id}`}
+          selected={isSelected}
+          hasUnread={hasUnread}
+        />
+      )}
+    </>
+  );
+};
+
+/*
+Mostr
+Ephemeral Relays
+Public and private AI profiles for version control
+Marketplace
+Smart contract
+NewLaw/Everyone is right/Force for peace
+Withdrawal Rights/Disclaimer/ Privacy standards 
+Embedded application 
+Multi ID system 
+If you don't rate, you can't be rated.
+Privacy, scalability,  security,  transparency,  decentralization,  and identification.
+Autotranslate
+*/
+
+const permanentProposals = [
+        {
+          name: 'Mostr',
+          about: '{"problem":"Lack of connection between Fediverse and Nostr","solution":"","targetAudience":"","qualifications":"","purpose":"A platform feature enabling dynamic and flexible presentation of content.","approach":"A platform feature enabling dynamic and flexible presentation of content.","outcome":"A platform feature enabling dynamic and flexible presentation of content.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Ephemeral Relays',
+          about: '{"problem":"Need for temporary communication channels","solution":"","targetAudience":"","qualifications":"","purpose":"Temporary communication channels that expire after a set duration.","approach":"Temporary communication channels that expire after a set duration.","outcome":"Temporary communication channels that expire after a set duration.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Public and private AI profiles for version control',
+          about: '{"problem":"Lack of version control for AI profiles","solution":"","targetAudience":"","qualifications":"","purpose":"Profiles that manage and track changes in AI models and datasets.","approach":"Profiles that manage and track changes in AI models and datasets.","outcome":"Profiles that manage and track changes in AI models and datasets.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Marketplace',
+          about: '{"problem":"Need for a decentralized marketplace","solution":"","targetAudience":"","qualifications":"","purpose":"A decentralized marketplace for trading goods and services.","approach":"A decentralized marketplace for trading goods and services.","outcome":"A decentralized marketplace for trading goods and services.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Smart contract',
+          about: '{"problem":"Need for automated and self-executing contracts","solution":"","targetAudience":"","qualifications":"","purpose":"Automated and self-executing contracts with predefined rules.","approach":"Automated and self-executing contracts with predefined rules.","outcome":"Automated and self-executing contracts with predefined rules.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'NewLaw/Everyone is right/Force for peace',
+          about: '{"problem":"Need for a fair governance system","solution":"","targetAudience":"","qualifications":"","purpose":"A governance system promoting universal fairness and conflict resolution.","approach":"A governance system promoting universal fairness and conflict resolution.","outcome":"A governance system promoting universal fairness and conflict resolution.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Withdrawal Rights/Disclaimer/ Privacy standards',
+          about: '{"problem":"Need for user rights and privacy policies","solution":"","targetAudience":"","qualifications":"","purpose":"User rights and privacy policies ensuring data protection and transparency.","approach":"User rights and privacy policies ensuring data protection and transparency.","outcome":"User rights and privacy policies ensuring data protection and transparency.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Embedded application',
+          about: '{"problem":"Need for seamless application integration","solution":"","targetAudience":"","qualifications":"","purpose":"Integration of applications directly within the platform for seamless user experience.","approach":"Integration of applications directly within the platform for seamless user experience.","outcome":"Integration of applications directly within the platform for seamless user experience.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Multi ID system',
+          about: '{"problem":"Need for secure management of multiple identities","solution":"","targetAudience":"","qualifications":"","purpose":"A system allowing users to manage multiple identities securely.","approach":"A system allowing users to manage multiple identities securely.","outcome":"A system allowing users to manage multiple identities securely.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: "If you don't rate, you can't be rated.",
+          about: '{"problem":"Lack of user participation in ratings","solution":"","targetAudience":"","qualifications":"","purpose":"A feedback system encouraging user participation in ratings.","approach":"A feedback system encouraging user participation in ratings.","outcome":"A feedback system encouraging user participation in ratings.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Privacy, scalability, security, transparency, decentralization, and identification.',
+          about: '{"problem":"Need for core platform principles","solution":"","targetAudience":"","qualifications":"","purpose":"Core principles guiding platform development and operations.","approach":"Core principles guiding platform development and operations.","outcome":"Core principles guiding platform development and operations.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Autotranslate',
+          about: '{"problem":"Need for multilingual support","solution":"","targetAudience":"","qualifications":"","purpose":"Automatic translation feature for multilingual support.","approach":"Automatic translation feature for multilingual support.","outcome":"Automatic translation feature for multilingual support.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+      ];
+
+const AllProposalChannelListItem = (props: { c: any }) => {
+  const { c } = props;
+
+  const location = useLocation();
+  const messages = useLivePublicMessages(c.id);
+  const [readMarkMap] = useAtom(readMarkMapAtom);
+  const [channel] = useAtom(channelAtom);
+  const [keys] = useAtom(keysAtom);
+
+  const lMessage = messages[messages.length - 1];
+  const hasUnread =
+    keys?.priv !== 'none' &&
+    !!(readMarkMap[c.id] && lMessage && lMessage.created > readMarkMap[c.id]);
+
+  const isSelected =
+    c.id === channel?.id && location.pathname.startsWith('/channel/');
+
+
+  return (
+    <>
+      {typeof c === 'object' && c.id && c.name ? (
+        <div>
+          <ListItem
+            key={c.id}
+            label={c.name}
+            href={`/channel/${encodeURIComponent(JSON.stringify({ name: c.name, id: c.id }))}`}
+            selected={isSelected}
+            hasUnread={hasUnread}
+          />
+        </div>
+      ) : (
+        <div>
+          <ListItem
+            key={c.id}
+            label={JSON.parse(c.content).name}
+            href={`/channel/${JSON.parse(JSON.parse(c.content).about).proposalID}`}
+            selected={isSelected}
+            hasUnread={hasUnread}
+          />
+        </div>
+      )}
+    </>
+  );
+};
+
+const ChannelList = () => {
+  const theme = useTheme();
+  const [t] = useTranslation();
+  const channels = useLiveChannels();
+  const [raven] = useAtom(ravenAtom);
+  const [allProposal, setAllProposal] = useState<any>([]);
+  const [fetchedAllProposal, setFetchedAllProposal] = useState<any>([]);
+  const [filterType, setfilterType] = useState(PROPOSAL_TYPES.all);
+  const [, showMessage] = useToast();
+
+  useEffect(() => {
+  const init = async () => {
+    const allProposal = await raven?.fetchAllProposal();
+    console.log("allprops", allProposal);
+    setFetchedAllProposal(allProposal);
+    if (filterType === PROPOSAL_TYPES.all) {
+      setAllProposal(allProposal);
+    } else {
+      filterProposalsByTime();
+    }
+  };
+  init();
+}, []);
+
+  useEffect(() => {
+    console.log(filterType);
+    const init = async () => {
+      filterProposalsByTime();
+    };
+    init();
+  }, [filterType]);
+
+  function filterProposalsByTime(  ) {
+    let filteredProposals = [];
+    if (filterType === PROPOSAL_TYPES.active) {
+      filteredProposals = fetchedAllProposal.filter((proposal: any) => {
+        console.log(proposal.created_at, votingPeriod)
+        return !isTimeRemaining(proposal.created_at , votingPeriod);
+      });
+    } else if (filterType === PROPOSAL_TYPES.expired) {
+      filteredProposals = fetchedAllProposal.filter((proposal: any) => {
+        return isTimeRemaining(proposal.created_at, votingPeriod);
+      });
+    } else if (filterType === PROPOSAL_TYPES.all) {
+      filteredProposals = fetchedAllProposal;
+    }
+
+    setAllProposal(filteredProposals);
+  }
+  return (
+    <>
+      <div>
+        <Box
+          sx={{
+            mt: '10px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Box
+            sx={{
+              fontFamily: 'Faktum, sans-serif',
+              fontWeight: 'bold',
+              color: theme.palette.primary.dark,
+            }}
+          >
+            <h3 onClick={async e => console.log('p...', channels)}>
+              {t('Proposal History')}
+            </h3>
+          </Box>
+          <ChannelAddMenu />
+        </Box>
+        <hr />
+        {(() => {
+          if (channels.length === 1) {
+            return (
+              <Box
+                component="span"
+                sx={{
+                  color: theme.palette.primary.dark,
+                  fontSize: '85%',
+                  opacity: '0.6',
+                }}
+              >
+                <h4 className="text-center">
+                  {t('No Proposal Finded')} <CiFileOff />
+                </h4>
+              </Box>
+            );
+          } else {
+            return channels.map(c => <ChannelListItem key={c.id} c={c} />);
+          }
+        })()}
+      </div>
+
+      <div>
+        <Box
+          sx={{
+            mt: '50px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Box
+            sx={{
+              fontFamily: 'Faktum, sans-serif',
+              fontWeight: 'bold',
+              color: theme.palette.primary.dark,
+            }}
+          >
+            <h3 onClick={e => console.log(allProposal)}>
+              {t(`${filterType} Proposal `)}
+            </h3>
+          </Box>
+          <FilterProposalDropdown proposalTypeSetter={setfilterType} />
+        </Box>
+
+        {(() => {
+  if (!allProposal || allProposal.length === 0) {
+    return (
+      <Box
+        component="span"
+        sx={{
+          color: theme.palette.primary.dark,
+          fontSize: '85%',
+          opacity: '0.6',
+        }}
+      >
+        <h4 className="text-center">
+          {t('No Proposal Found')} <CiFileOff />
+        </h4>
+      </Box>
+    );
+  } else {
+    return allProposal.map((c: any) => (
+      <>
+        <AllProposalChannelListItem key={c.id} c={c} />
+      </>
+    ));
+  }
+})()}
+      </div>
+    </>
+  );
+};
+
+export default ChannelList;=== ./channel-list.tsx ===
+import React, { useEffect, useState } from 'react';
+import { useLocation } from '@reach/router';
+import { useAtom } from 'jotai';
+import { Box, CircularProgress } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+
+import useTranslation from 'hooks/use-translation';
+import useLiveChannels from 'hooks/use-live-channels';
+import useLivePublicMessages from 'hooks/use-live-public-messages';
+import ChannelAddMenu from 'views/components/app-menu/channel-add-menu';
+import ListItem from 'views/components/app-menu/list-item';
+import { channelAtom, keysAtom, ravenAtom, readMarkMapAtom } from 'atoms';
+import { CiFileOff } from 'react-icons/ci';
+import { Channel } from 'types';
+import useToast from 'hooks/use-toast';
+import { PROPOSAL_TYPES, permVotingPeriod, votingPeriod } from 'util/constant';
+import { isTimeRemaining } from 'util/function';
+
+import FilterProposalDropdown from './FilterProposalDropdown';
+
+const isPermanentProposal = (proposalName: string) => {
+  return permanentProposalsList.some((proposal) => proposal.name === proposalName);
+};
+
+const permanentProposalsList = [
+  {
+    name: 'Mostr',
+    about: '{"problem":"Lack of connection between Fediverse and Nostr","solution":"","targetAudience":"","qualifications":"","purpose":"A platform feature enabling dynamic and flexible presentation of content.","approach":"A platform feature enabling dynamic and flexible presentation of content.","outcome":"A platform feature enabling dynamic and flexible presentation of content.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Ephemeral Relays',
+    about: '{"problem":"Need for temporary communication channels","solution":"","targetAudience":"","qualifications":"","purpose":"Temporary communication channels that expire after a set duration.","approach":"Temporary communication channels that expire after a set duration.","outcome":"Temporary communication channels that expire after a set duration.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Public and private AI profiles for version control',
+    about: '{"problem":"Lack of version control for AI profiles","solution":"","targetAudience":"","qualifications":"","purpose":"Profiles that manage and track changes in AI models and datasets.","approach":"Profiles that manage and track changes in AI models and datasets.","outcome":"Profiles that manage and track changes in AI models and datasets.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Marketplace',
+    about: '{"problem":"Need for a decentralized marketplace","solution":"","targetAudience":"","qualifications":"","purpose":"A decentralized marketplace for trading goods and services.","approach":"A decentralized marketplace for trading goods and services.","outcome":"A decentralized marketplace for trading goods and services.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Smart contract',
+    about: '{"problem":"Need for automated and self-executing contracts","solution":"","targetAudience":"","qualifications":"","purpose":"Automated and self-executing contracts with predefined rules.","approach":"Automated and self-executing contracts with predefined rules.","outcome":"Automated and self-executing contracts with predefined rules.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'NewLaw/Everyone is right/Force for peace',
+    about: '{"problem":"Need for a fair governance system","solution":"","targetAudience":"","qualifications":"","purpose":"A governance system promoting universal fairness and conflict resolution.","approach":"A governance system promoting universal fairness and conflict resolution.","outcome":"A governance system promoting universal fairness and conflict resolution.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Withdrawal Rights/Disclaimer/ Privacy standards',
+    about: '{"problem":"Need for user rights and privacy policies","solution":"","targetAudience":"","qualifications":"","purpose":"User rights and privacy policies ensuring data protection and transparency.","approach":"User rights and privacy policies ensuring data protection and transparency.","outcome":"User rights and privacy policies ensuring data protection and transparency.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Embedded application',
+    about: '{"problem":"Need for seamless application integration","solution":"","targetAudience":"","qualifications":"","purpose":"Integration of applications directly within the platform for seamless user experience.","approach":"Integration of applications directly within the platform for seamless user experience.","outcome":"Integration of applications directly within the platform for seamless user experience.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Multi ID system',
+    about: '{"problem":"Need for secure management of multiple identities","solution":"","targetAudience":"","qualifications":"","purpose":"A system allowing users to manage multiple identities securely.","approach":"A system allowing users to manage multiple identities securely.","outcome":"A system allowing users to manage multiple identities securely.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: "If you don't rate, you can't be rated.",
+    about: '{"problem":"Lack of user participation in ratings","solution":"","targetAudience":"","qualifications":"","purpose":"A feedback system encouraging user participation in ratings.","approach":"A feedback system encouraging user participation in ratings.","outcome":"A feedback system encouraging user participation in ratings.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Privacy, scalability, security, transparency, decentralization, and identification.',
+    about: '{"problem":"Need for core platform principles","solution":"","targetAudience":"","qualifications":"","purpose":"Core principles guiding platform development and operations.","approach":"Core principles guiding platform development and operations.","outcome":"Core principles guiding platform development and operations.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Autotranslate',
+    about: '{"problem":"Need for multilingual support","solution":"","targetAudience":"","qualifications":"","purpose":"Automatic translation feature for multilingual support.","approach":"Automatic translation feature for multilingual support.","outcome":"Automatic translation feature for multilingual support.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+];
+
+const ChannelListItem = (props: { c: Channel }) => {
+  const { c } = props;
+
+  const location = useLocation();
+  const messages = useLivePublicMessages(c.id);
+  const [readMarkMap] = useAtom(readMarkMapAtom);
+  const [channel] = useAtom(channelAtom);
+  const [keys] = useAtom(keysAtom);
+
+  const lMessage = messages[messages.length - 1];
+  const hasUnread =
+    keys?.priv !== 'none' &&
+    !!(readMarkMap[c.id] && lMessage && lMessage.created > readMarkMap[c.id]);
+
+  const isSelected =
+    c.id === channel?.id && location.pathname.startsWith('/channel/');
+
+  return (
+    <>
+      {c.id === 'f412192fdc846952c75058e911d37a7392aa7fd2e727330f4344badc92fb8a22' ? (
+        ''
+      ) : (
+        <ListItem
+          key={c.id}
+          label={c.name}
+          href={`/channel/${c.id}`}
+          selected={isSelected}
+          hasUnread={hasUnread}
+        />
+      )}
+    </>
+  );
+};
+
+const permanentProposals = [
+  {
+    name: 'Mostr',
+    about: '{"problem":"Lack of connection between Fediverse and Nostr","solution":"","targetAudience":"","qualifications":"","purpose":"A platform feature enabling dynamic and flexible presentation of content.","approach":"A platform feature enabling dynamic and flexible presentation of content.","outcome":"A platform feature enabling dynamic and flexible presentation of content.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Ephemeral Relays',
+    about: '{"problem":"Need for temporary communication channels","solution":"","targetAudience":"","qualifications":"","purpose":"Temporary communication channels that expire after a set duration.","approach":"Temporary communication channels that expire after a set duration.","outcome":"Temporary communication channels that expire after a set duration.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Public and private AI profiles for version control',
+    about: '{"problem":"Lack of version control for AI profiles","solution":"","targetAudience":"","qualifications":"","purpose":"Profiles that manage and track changes in AI models and datasets.","approach":"Profiles that manage and track changes in AI models and datasets.","outcome":"Profiles that manage and track changes in AI models and datasets.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Marketplace',
+    about: '{"problem":"Need for a decentralized marketplace","solution":"","targetAudience":"","qualifications":"","purpose":"A decentralized marketplace for trading goods and services.","approach":"A decentralized marketplace for trading goods and services.","outcome":"A decentralized marketplace for trading goods and services.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Smart contract',
+    about: '{"problem":"Need for automated and self-executing contracts","solution":"","targetAudience":"","qualifications":"","purpose":"Automated and self-executing contracts with predefined rules.","approach":"Automated and self-executing contracts with predefined rules.","outcome":"Automated and self-executing contracts with predefined rules.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'NewLaw/Everyone is right/Force for peace',
+    about: '{"problem":"Need for a fair governance system","solution":"","targetAudience":"","qualifications":"","purpose":"A governance system promoting universal fairness and conflict resolution.","approach":"A governance system promoting universal fairness and conflict resolution.","outcome":"A governance system promoting universal fairness and conflict resolution.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Withdrawal Rights/Disclaimer/ Privacy standards',
+    about: '{"problem":"Need for user rights and privacy policies","solution":"","targetAudience":"","qualifications":"","purpose":"User rights and privacy policies ensuring data protection and transparency.","approach":"User rights and privacy policies ensuring data protection and transparency.","outcome":"User rights and privacy policies ensuring data protection and transparency.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Embedded application',
+    about: '{"problem":"Need for seamless application integration","solution":"","targetAudience":"","qualifications":"","purpose":"Integration of applications directly within the platform for seamless user experience.","approach":"Integration of applications directly within the platform for seamless user experience.","outcome":"Integration of applications directly within the platform for seamless user experience.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Multi ID system',
+    about: '{"problem":"Need for secure management of multiple identities","solution":"","targetAudience":"","qualifications":"","purpose":"A system allowing users to manage multiple identities securely.","approach":"A system allowing users to manage multiple identities securely.","outcome":"A system allowing users to manage multiple identities securely.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: "If you don't rate, you can't be rated.",
+    about: '{"problem":"Lack of user participation in ratings","solution":"","targetAudience":"","qualifications":"","purpose":"A feedback system encouraging user participation in ratings.","approach":"A feedback system encouraging user participation in ratings.","outcome":"A feedback system encouraging user participation in ratings.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Privacy, scalability, security, transparency, decentralization, and identification.',
+    about: '{"problem":"Need for core platform principles","solution":"","targetAudience":"","qualifications":"","purpose":"Core principles guiding platform development and operations.","approach":"Core principles guiding platform development and operations.","outcome":"Core principles guiding platform development and operations.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+  {
+    name: 'Autotranslate',
+    about: '{"problem":"Need for multilingual support","solution":"","targetAudience":"","qualifications":"","purpose":"Automatic translation feature for multilingual support.","approach":"Automatic translation feature for multilingual support.","outcome":"Automatic translation feature for multilingual support.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+    picture: '',
+  },
+];
+
+const AllProposalChannelListItem = (props: { c: any }) => {
+  const { c } = props;
+
+  const location = useLocation();
+  const messages = useLivePublicMessages(c.id);
+  const [readMarkMap] = useAtom(readMarkMapAtom);
+  const [channel] = useAtom(channelAtom);
+  const [keys] = useAtom(keysAtom);
+
+  const lMessage = messages[messages.length - 1];
+  const hasUnread =
+    keys?.priv !== 'none' &&
+    !!(readMarkMap[c.id] && lMessage && lMessage.created > readMarkMap[c.id]);
+
+  const isSelected =
+    c.id === channel?.id && location.pathname.startsWith('/channel/');
+
+  let label, href;
+  if (typeof c === 'object' && c.id && c.name) {
+    label = c.name;
+    href = `/channel/${encodeURIComponent(JSON.stringify({ name: c.name, id: c.id }))}`;
+  } else {
+    try {
+      const parsedContent = JSON.parse(c.content);
+      label = parsedContent.name;
+      href = `/channel/${JSON.parse(parsedContent.about).proposalID}`;
+    } catch (e) {
+      console.error('Failed to parse proposal content:', e);
+      return null;
+    }
+  }
+
+  return (
+    <div>
+      <ListItem
+        key={c.id}
+        label={label}
+        href={href}
+        selected={isSelected}
+        hasUnread={hasUnread}
+      />
+    </div>
+  );
+};
+
+const proposalExists = (proposals: any[] | undefined, name: string) => {
+  return proposals?.some((proposal) => {
+    try {
+      return JSON.parse(proposal.content).name === name;
+    } catch (e) {
+      console.error('Failed to parse proposal content:', e);
+      return false;
+    }
+  }) || false;
+};
+
+const ChannelList = () => {
+  const theme = useTheme();
+  const [t] = useTranslation();
+  const channels = useLiveChannels();
+  const [raven] = useAtom(ravenAtom);
+  const [allProposal, setAllProposal] = useState<any[]>([]);
+  const [fetchedAllProposal, setFetchedAllProposal] = useState<any[]>([]);
+  const [permanentProposalList, setPermanentProposalList] = useState<any[]>([]);
+  const [filterType, setfilterType] = useState(PROPOSAL_TYPES.all);
+  const [, showMessage] = useToast();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        setIsLoading(true);
+        const allProposal = await raven?.fetchAllProposal();
+        console.log('allprops', allProposal);
+        setFetchedAllProposal(allProposal || []);
+        if (filterType === PROPOSAL_TYPES.all) {
+          setAllProposal(allProposal || []);
+        } else {
+          filterProposalsByTime();
+        }
+
+        const permanentProposalsArray = [];
+
+        for (const proposal of permanentProposals) {
+          if (!proposalExists(allProposal, proposal.name)) {
+            const newProposal = await raven?.createChannel(proposal);
+            if (newProposal) permanentProposalsArray.push(newProposal);
+          } else {
+            const existingProposal = allProposal?.find((p) => {
+              try {
+                return JSON.parse(p.content).name === proposal.name;
+              } catch (e) {
+                console.error('Failed to parse proposal content:', e);
+                return false;
+              }
+            });
+            if (existingProposal) {
+              permanentProposalsArray.push(existingProposal);
+            }
+          }
+        }
+
+        setPermanentProposalList(permanentProposalsArray);
+
+        console.log('All proposals:', allProposal);
+        console.log('All fetched proposals:', fetchedAllProposal);
+        console.log('Permanent proposals:', permanentProposalsArray);
+      } catch (err) {
+        console.error('Error initializing proposals:', err);
+        setError(err instanceof Error ? err : new Error('An unknown error occurred'));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    init();
+  }, [filterType, raven]);
+
+  useEffect(() => {
+    console.log(filterType);
+    filterProposalsByTime();
+  }, [filterType, fetchedAllProposal]);
+
+  function filterProposalsByTime() {
+    let filteredProposals = [];
+    if (filterType === PROPOSAL_TYPES.active) {
+      filteredProposals = fetchedAllProposal.filter((proposal: any) => {
+        console.log(proposal.created_at, isPermanentProposal(proposal.name) ? permVotingPeriod : votingPeriod);
+        return !isTimeRemaining(proposal.created_at, isPermanentProposal(proposal.name) ? permVotingPeriod : votingPeriod);
+      });
+    } else if (filterType === PROPOSAL_TYPES.expired) {
+      filteredProposals = fetchedAllProposal.filter((proposal: any) => {
+        return isTimeRemaining(proposal.created_at, isPermanentProposal(proposal.name) ? permVotingPeriod : votingPeriod);
+      });
+    } else if (filterType === PROPOSAL_TYPES.all) {
+      filteredProposals = fetchedAllProposal;
+    }
+
+    setAllProposal(filteredProposals);
+  }
+
+  if (isLoading) return <CircularProgress />;
+  if (error) return <div>Error: {error.message}</div>;
+
+  return (
+    <>
+      {/* Proposal History section */}
+      <div>
+        <Box sx={{ mt: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ fontFamily: 'Faktum, sans-serif', fontWeight: 'bold', color: theme.palette.primary.dark }}>
+            <h3 onClick={() => console.log('p...', channels)}>{t('Proposal History')}</h3>
+          </Box>
+          <ChannelAddMenu />
+        </Box>
+        <hr />
+        {channels.length <= 1 ? (
+          <Box component="span" sx={{ color: theme.palette.primary.dark, fontSize: '85%', opacity: '0.6' }}>
+            <h4 className="text-center">{t('No Proposal Found')} <CiFileOff /></h4>
+          </Box>
+        ) : (
+          channels.map((c) => <ChannelListItem key={c.id} c={c} />)
+        )}
+      </div>
+
+      {/* All Proposals section */}
+      <div>
+        <Box sx={{ mt: '50px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ fontFamily: 'Faktum, sans-serif', fontWeight: 'bold', color: theme.palette.primary.dark }}>
+            <h3 onClick={() => console.log(allProposal)}>{t(`${filterType} Proposal `)}</h3>
+          </Box>
+          <FilterProposalDropdown proposalTypeSetter={setfilterType} />
+        </Box>
+
+        {!allProposal || allProposal.length === 0 ? (
+          <Box component="span" sx={{ color: theme.palette.primary.dark, fontSize: '85%', opacity: '0.6' }}>
+            <h4 className="text-center">{t('No Proposal Found')} <CiFileOff /></h4>
+          </Box>
+        ) : (
+          allProposal.map((c: any, index: number) => (
+            <AllProposalChannelListItem key={c?.id ?? index} c={c} />
+          ))
+        )}
+      </div>
+
+      {/* Permanent Proposals section */}
+      <div>
+        <Box sx={{ mt: '50px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ fontFamily: 'Faktum, sans-serif', fontWeight: 'bold', color: theme.palette.primary.dark }}>
+            <h3 onClick={() => console.log(permanentProposalList)}>{t('Permanent Proposals')}</h3>
+          </Box>
+        </Box>
+
+        {!permanentProposalList || permanentProposalList.length === 0 ? (
+          <Box component="span" sx={{ color: theme.palette.primary.dark, fontSize: '85%', opacity: '0.6' }}>
+            <h4 className="text-center">{t('No Permanent Proposal Found')} <CiFileOff /></h4>
+          </Box>
+        ) : (
+          permanentProposalList.map((c: any, index: number) => (
+            <AllProposalChannelListItem key={c?.id ?? index} c={c} />
+          ))
+        )}
+      </div>
+    </>
+  );
+};
+
+export default ChannelList;=== ./list-item.tsx ===
+import React from 'react';
+import {useNavigate} from '@reach/router';
+import Box from '@mui/material/Box';
+import {useTheme} from '@mui/material/styles';
+
+const ListItem = (props: { label: React.ReactNode, href: string, selected: boolean, hasUnread?: boolean }) => {
+    const navigate = useNavigate();
+    const theme = useTheme();
+
+    return <Box component="a" href={props.href} onClick={(e) => {
+        e.preventDefault();
+        navigate(props.href).then();
+    }} sx={{
+        height: '40px',
+        display: 'flex',
+        alignItems: 'center',
+        fontSize: '15px',
+        position: 'relative',
+        zIndex: 0,
+        fontWeight: props.hasUnread ? 'bold' : null,
+        color: theme.palette.text.primary,
+        textDecoration: 'none',
+        pl: '10px',
+        ':before': {
+            content: "''",
+            position: 'absolute',
+            top: '12px',
+            left: '0',
+            width: '4px',
+            height: '16px',
+            borderRadius:  theme.shape.borderRadius,
+            background: theme.palette.primary.main,
+            display: props.selected ? null : 'none'
+        },
+        ':hover': {
+            ':before': {display: 'inline-block'}
+        }
+    }}>
+        <Box sx={{
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+        }}>{props.label}</Box>
+    </Box>;
+}
+
+export default ListItem;
+=== ./channel-add-menu.tsx ===
+import React, {useState} from 'react';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import {useNavigate} from '@reach/router';
+
+import CreateChannel from 'views/components/dialogs/create-channel';
+import JoinChannel from 'views/components/dialogs/join-channel';
+import useTranslation from 'hooks/use-translation';
+import useModal from 'hooks/use-modal';
+import Plus from 'svg/plus';
+
+const ChannelAddMenu = () => {
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const navigate = useNavigate();
+    const open = Boolean(anchorEl);
+    const [t] = useTranslation();
+    const [, showModal] = useModal();
+
+    const openMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const closeMenu = () => {
+        setAnchorEl(null);
+    };
+
+    const create = () => {
+        showModal({
+            body: <CreateChannel onSuccess={(id) => {
+                showModal(null);
+                navigate(`/channel/${id}`).then();
+            }}/>
+        })
+
+        closeMenu();
+    }
+
+    const join = () => {
+        showModal({
+            body: <JoinChannel onSuccess={(id) => {
+                showModal(null);
+                navigate(`/channel/${id}`).then();
+            }}/>
+        })
+
+        closeMenu();
+    }
+
+    return <>
+        <button onClick={openMenu}  className='btn btn_success'><Plus height={18}/> New Proposal</button>
+        <Menu anchorEl={anchorEl} open={open} onClose={closeMenu}>
+            <MenuItem dense onClick={create}>{t('Create a New Proposal')}</MenuItem>
+            <MenuItem dense onClick={join}>{t('Join in a Proposal')}</MenuItem>
+        </Menu>
+    </>
+}
+
+export default ChannelAddMenu;=== ./allfiles.txt ===
+=== ./user-menu.tsx ===
+import React from 'react';
+import {useAtom} from 'jotai';
+import {useNavigate} from '@reach/router';
+import {Box} from '@mui/material';
+import {useTheme} from '@mui/material/styles';
+import {nip19} from 'nostr-tools';
+
+import Avatar from 'views/components/avatar';
+import useStyles from 'hooks/use-styles';
+import {keysAtom, profileAtom} from 'atoms';
+import {truncateMiddle} from 'util/truncate';
+
+
+const UserMenu = () => {
+    const [profile] = useAtom(profileAtom);
+    const theme = useTheme();
+    const styles = useStyles();
+    const [keys] = useAtom(keysAtom);
+    const navigate = useNavigate();
+
+    if (!keys) {
+        return null;
+    }
+
+    const clicked = () => {
+        navigate('/settings').then();
+    }
+
+    return <Box sx={{
+        height: styles.headerHeight,
+        display: 'flex',
+        alignItems: 'center',
+        flexShrink: 0
+    }}>
+        <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            flexGrow: 1,
+            background: theme.palette.divider,
+            borderRadius: theme.shape.borderRadius,
+            cursor: 'pointer',
+            transition: 'background-color 100ms linear',
+            border: '1px solid transparent',
+            ':hover': {
+                background: 'transparent',
+                border: `1px solid ${theme.palette.divider}`
+            }
+        }} onClick={clicked}>
+            <Box sx={{mr: '8px', display: 'flex'}}>
+                <Avatar src={profile?.picture} seed={keys.pub} size={42} rounded/>
+            </Box>
+            {(() => {
+
+                const sx = {
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    width: '184px',
+                    mr: '6px',
+                }
+
+                if (profile?.name) {
+                    return <Box sx={{
+                        ...sx,
+                        fontFamily: 'Faktum, sans-serif',
+                        fontWeight: 'bold',
+
+                    }}>{profile.name || ''}</Box>
+                }
+
+                return <Box sx={{
+                    ...sx,
+                    fontSize: '90%',
+                    color: theme.palette.primary.dark,
+                    opacity: '0.6',
+                }}>{truncateMiddle(nip19.npubEncode(keys.pub), 20, ':')}</Box>
+            })()}
+        </Box>
+    </Box>
+}
+
+export default UserMenu;
+=== ./old-channel-list.tsx ===
+import React, { useEffect, useState } from 'react';
+import { useLocation } from '@reach/router';
+import { useAtom } from 'jotai';
+import { Box } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+
+import useTranslation from 'hooks/use-translation';
+import useLiveChannels from 'hooks/use-live-channels';
+import useLivePublicMessages from 'hooks/use-live-public-messages';
+import ChannelAddMenu from 'views/components/app-menu/channel-add-menu';
+import ListItem from 'views/components/app-menu/list-item';
+import { channelAtom, keysAtom, ravenAtom, readMarkMapAtom } from 'atoms';
+import { CiFileOff } from 'react-icons/ci';
+import { Channel } from 'types';
+import useToast from 'hooks/use-toast';
+import { PROPOSAL_TYPES, proposalTypes, votingPeriod } from 'util/constant';
+import { isTimeRemaining } from 'util/function';
+
+import FilterProposalDropdown from './FilterProposalDropdown';
+
+const ChannelListItem = (props: { c: Channel }) => {
+  const { c } = props;
+
+  const location = useLocation();
+  const messages = useLivePublicMessages(c.id);
+  const [readMarkMap] = useAtom(readMarkMapAtom);
+  const [channel] = useAtom(channelAtom);
+  const [keys] = useAtom(keysAtom);
+
+  const lMessage = messages[messages.length - 1];
+  const hasUnread =
+    keys?.priv !== 'none' &&
+    !!(readMarkMap[c.id] && lMessage && lMessage.created > readMarkMap[c.id]);
+
+  const isSelected =
+    c.id === channel?.id && location.pathname.startsWith('/channel/');
+
+  return (
+    <>
+      {c.id ==
+      'f412192fdc846952c75058e911d37a7392aa7fd2e727330f4344badc92fb8a22' ? (
+        ''
+      ) : (
+        <ListItem
+          key={c.id}
+          label={c.name}
+          href={`/channel/${c.id}`}
+          selected={isSelected}
+          hasUnread={hasUnread}
+        />
+      )}
+    </>
+  );
+};
+
+/*
+Mostr
+Ephemeral Relays
+Public and private AI profiles for version control
+Marketplace
+Smart contract
+NewLaw/Everyone is right/Force for peace
+Withdrawal Rights/Disclaimer/ Privacy standards 
+Embedded application 
+Multi ID system 
+If you don't rate, you can't be rated.
+Privacy, scalability,  security,  transparency,  decentralization,  and identification.
+Autotranslate
+*/
+
+const AllProposalChannelListItem = (props: { c: any }) => {
+  const { c } = props;
+
+  const location = useLocation();
+  const messages = useLivePublicMessages(c.id);
+  const [readMarkMap] = useAtom(readMarkMapAtom);
+  const [channel] = useAtom(channelAtom);
+  const [keys] = useAtom(keysAtom);
+
+  const lMessage = messages[messages.length - 1];
+  const hasUnread =
+    keys?.priv !== 'none' &&
+    !!(readMarkMap[c.id] && lMessage && lMessage.created > readMarkMap[c.id]);
+
+  const isSelected =
+    c.id === channel?.id && location.pathname.startsWith('/channel/');
+
+
+  return (
+    <>
+      {typeof c === 'object' && c.id && c.name ? (
+        <div>
+          <ListItem
+            key={c.id}
+            label={c.name}
+            href={`/channel/${encodeURIComponent(JSON.stringify({ name: c.name, id: c.id }))}`}
+            selected={isSelected}
+            hasUnread={hasUnread}
+          />
+        </div>
+      ) : (
+        <div>
+          <ListItem
+            key={c.id}
+            label={JSON.parse(c.content).name}
+            href={`/channel/${JSON.parse(JSON.parse(c.content).about).proposalID}`}
+            selected={isSelected}
+            hasUnread={hasUnread}
+          />
+        </div>
+      )}
+    </>
+  );
+};
+
+const proposalExists = (proposals: any[] | undefined, name: string) => {
+  return proposals?.some((proposal) => JSON.parse(proposal.content).name === name) || false;
+};
+
+const ChannelList = () => {
+  const theme = useTheme();
+  const [t] = useTranslation();
+  const channels = useLiveChannels();
+  const [raven] = useAtom(ravenAtom);
+  const [allProposal, setAllProposal] = useState<any>([]);
+  const [fetchedAllProposal, setFetchedAllProposal] = useState<any>([]);
+  const [filterType, setfilterType] = useState(PROPOSAL_TYPES.all);
+  const [, showMessage] = useToast();
+
+  useEffect(() => {
+  const init = async () => {
+    const allProposal = await raven?.fetchAllProposal();
+    console.log("allprops", allProposal);
+    setFetchedAllProposal(allProposal);
+    if (filterType === PROPOSAL_TYPES.all) {
+      setAllProposal(allProposal);
+    } else {
+      filterProposalsByTime();
+    }
+
+      const permanentProposals = [
+        {
+          name: 'Mostr',
+          about: '{"problem":"Lack of connection between Fediverse and Nostr","solution":"","targetAudience":"","qualifications":"","purpose":"A platform feature enabling dynamic and flexible presentation of content.","approach":"A platform feature enabling dynamic and flexible presentation of content.","outcome":"A platform feature enabling dynamic and flexible presentation of content.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Ephemeral Relays',
+          about: '{"problem":"Need for temporary communication channels","solution":"","targetAudience":"","qualifications":"","purpose":"Temporary communication channels that expire after a set duration.","approach":"Temporary communication channels that expire after a set duration.","outcome":"Temporary communication channels that expire after a set duration.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Public and private AI profiles for version control',
+          about: '{"problem":"Lack of version control for AI profiles","solution":"","targetAudience":"","qualifications":"","purpose":"Profiles that manage and track changes in AI models and datasets.","approach":"Profiles that manage and track changes in AI models and datasets.","outcome":"Profiles that manage and track changes in AI models and datasets.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Marketplace',
+          about: '{"problem":"Need for a decentralized marketplace","solution":"","targetAudience":"","qualifications":"","purpose":"A decentralized marketplace for trading goods and services.","approach":"A decentralized marketplace for trading goods and services.","outcome":"A decentralized marketplace for trading goods and services.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Smart contract',
+          about: '{"problem":"Need for automated and self-executing contracts","solution":"","targetAudience":"","qualifications":"","purpose":"Automated and self-executing contracts with predefined rules.","approach":"Automated and self-executing contracts with predefined rules.","outcome":"Automated and self-executing contracts with predefined rules.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'NewLaw/Everyone is right/Force for peace',
+          about: '{"problem":"Need for a fair governance system","solution":"","targetAudience":"","qualifications":"","purpose":"A governance system promoting universal fairness and conflict resolution.","approach":"A governance system promoting universal fairness and conflict resolution.","outcome":"A governance system promoting universal fairness and conflict resolution.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Withdrawal Rights/Disclaimer/ Privacy standards',
+          about: '{"problem":"Need for user rights and privacy policies","solution":"","targetAudience":"","qualifications":"","purpose":"User rights and privacy policies ensuring data protection and transparency.","approach":"User rights and privacy policies ensuring data protection and transparency.","outcome":"User rights and privacy policies ensuring data protection and transparency.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Embedded application',
+          about: '{"problem":"Need for seamless application integration","solution":"","targetAudience":"","qualifications":"","purpose":"Integration of applications directly within the platform for seamless user experience.","approach":"Integration of applications directly within the platform for seamless user experience.","outcome":"Integration of applications directly within the platform for seamless user experience.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Multi ID system',
+          about: '{"problem":"Need for secure management of multiple identities","solution":"","targetAudience":"","qualifications":"","purpose":"A system allowing users to manage multiple identities securely.","approach":"A system allowing users to manage multiple identities securely.","outcome":"A system allowing users to manage multiple identities securely.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: "If you don't rate, you can't be rated.",
+          about: '{"problem":"Lack of user participation in ratings","solution":"","targetAudience":"","qualifications":"","purpose":"A feedback system encouraging user participation in ratings.","approach":"A feedback system encouraging user participation in ratings.","outcome":"A feedback system encouraging user participation in ratings.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Privacy, scalability, security, transparency, decentralization, and identification.',
+          about: '{"problem":"Need for core platform principles","solution":"","targetAudience":"","qualifications":"","purpose":"Core principles guiding platform development and operations.","approach":"Core principles guiding platform development and operations.","outcome":"Core principles guiding platform development and operations.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+        {
+          name: 'Autotranslate',
+          about: '{"problem":"Need for multilingual support","solution":"","targetAudience":"","qualifications":"","purpose":"Automatic translation feature for multilingual support.","approach":"Automatic translation feature for multilingual support.","outcome":"Automatic translation feature for multilingual support.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}',
+          picture: '',
+        },
+      ];
+
+      for (const proposal of permanentProposals) {
+      if (!proposalExists(allProposal, proposal.name)) {
+        console.log("All Proposals:");
+        console.log(allProposal);
+        raven?.createChannel(proposal).then((ev) => {
+          console.log(ev.id);
+          setFetchedAllProposal((prevProposals: any[]) => [...prevProposals, ev]);
+        }).catch((e) => {
+          showMessage(e.toString(), 'error');
+        });
+      } else {
+        console.log("Already exists!");
+      }
+    }
+  };
+  init();
+}, []);
+
+  useEffect(() => {
+    console.log(filterType);
+    const init = async () => {
+      filterProposalsByTime();
+    };
+    init();
+  }, [filterType]);
+
+  function filterProposalsByTime(  ) {
+    let filteredProposals = [];
+    if (filterType === PROPOSAL_TYPES.active) {
+      filteredProposals = fetchedAllProposal.filter((proposal: any) => {
+        console.log(proposal.created_at, votingPeriod)
+        return !isTimeRemaining(proposal.created_at , votingPeriod);
+      });
+    } else if (filterType === PROPOSAL_TYPES.expired) {
+      filteredProposals = fetchedAllProposal.filter((proposal: any) => {
+        return isTimeRemaining(proposal.created_at, votingPeriod);
+      });
+    } else if (filterType === PROPOSAL_TYPES.all) {
+      filteredProposals = fetchedAllProposal;
+    }
+
+    setAllProposal(filteredProposals);
+  }
+  return (
+    <>
+      <div>
+        <Box
+          sx={{
+            mt: '10px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Box
+            sx={{
+              fontFamily: 'Faktum, sans-serif',
+              fontWeight: 'bold',
+              color: theme.palette.primary.dark,
+            }}
+          >
+            <h3 onClick={async e => console.log('p...', channels)}>
+              {t('Proposal History')}
+            </h3>
+          </Box>
+          <ChannelAddMenu />
+        </Box>
+        <hr />
+        {(() => {
+          if (channels.length === 1) {
+            return (
+              <Box
+                component="span"
+                sx={{
+                  color: theme.palette.primary.dark,
+                  fontSize: '85%',
+                  opacity: '0.6',
+                }}
+              >
+                <h4 className="text-center">
+                  {t('No Proposal Finded')} <CiFileOff />
+                </h4>
+              </Box>
+            );
+          } else {
+            return channels.map(c => <ChannelListItem key={c.id} c={c} />);
+          }
+        })()}
+      </div>
+
+      <div>
+        <Box
+          sx={{
+            mt: '50px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Box
+            sx={{
+              fontFamily: 'Faktum, sans-serif',
+              fontWeight: 'bold',
+              color: theme.palette.primary.dark,
+            }}
+          >
+            <h3 onClick={e => console.log(allProposal)}>
+              {t(`${filterType} Proposal `)}
+            </h3>
+          </Box>
+          <FilterProposalDropdown proposalTypeSetter={setfilterType} />
+        </Box>
+
+        {(() => {
+  if (!allProposal || allProposal.length === 0) {
+    return (
+      <Box
+        component="span"
+        sx={{
+          color: theme.palette.primary.dark,
+          fontSize: '85%',
+          opacity: '0.6',
+        }}
+      >
+        <h4 className="text-center">
+          {t('No Proposal Found')} <CiFileOff />
+        </h4>
+      </Box>
+    );
+  } else {
+    return allProposal.map((c: any) => (
+      <>
+        <AllProposalChannelListItem key={c.id} c={c} />
+      </>
+    ));
+  }
+})()}
+      </div>
+    </>
+  );
+};
+
+export default ChannelList;

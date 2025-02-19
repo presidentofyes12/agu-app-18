@@ -1,0 +1,146 @@
+// src/components/common/FontSizeControl.tsx
+import React, { useEffect } from 'react';
+import { useAtom } from 'jotai';
+import { Box, Slider, IconButton, Typography, useTheme, Tooltip } from '@mui/material';
+import { Add as AddIcon, Remove as RemoveIcon, Refresh as RefreshIcon } from '@mui/icons-material';
+import useMediaBreakPoint from 'hooks/use-media-break-point';
+import useTranslation from 'hooks/use-translation';
+import { 
+  persistentFontSizeAtom, 
+  FONT_SIZE_MIN, 
+  FONT_SIZE_MAX, 
+  FONT_SIZE_STEP,
+  FONT_SIZE_DEFAULT 
+} from '../../atoms/fontSizeAtoms';
+
+interface FontSizeControlProps {
+  hideControls?: boolean;
+}
+
+const FontSizeControl: React.FC<FontSizeControlProps> = ({ hideControls = false }) => {
+  const theme = useTheme();
+  const { isSm } = useMediaBreakPoint();
+  const [t] = useTranslation();
+  const [fontSize, setFontSize] = useAtom(persistentFontSizeAtom);
+
+  // Update document font size when the value changes
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.fontSize = `${fontSize}%`;
+    
+    // Add a data attribute for potential CSS targeting
+    root.dataset.fontSize = fontSize.toString();
+    
+    return () => {
+      root.style.fontSize = `${FONT_SIZE_DEFAULT}%`;
+      delete root.dataset.fontSize;
+    };
+  }, [fontSize]);
+
+  if (hideControls) return null;
+
+  const adjustSize = (amount: number) => {
+    setFontSize(fontSize + amount);
+  };
+
+  const handleSliderChange = (_: Event, value: number | number[]) => {
+    setFontSize(Array.isArray(value) ? value[0] : value);
+  };
+
+  const handleReset = () => {
+    setFontSize(FONT_SIZE_DEFAULT);
+  };
+
+  return (
+    <Box
+      sx={{
+        position: 'fixed',
+        bottom: theme.spacing(2),
+        right: theme.spacing(2),
+        zIndex: theme.zIndex.drawer + 1,
+        backgroundColor: theme.palette.background.paper,
+        padding: theme.spacing(1.5),
+        borderRadius: theme.shape.borderRadius,
+        boxShadow: theme.shadows[3],
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1,
+        width: isSm ? '90%' : 'auto',
+        maxWidth: '300px',
+        transition: theme.transitions.create(['width', 'background-color']),
+        '&:hover': {
+          backgroundColor: theme.palette.background.default,
+        },
+      }}
+      role="region"
+      aria-label={t('Font size controls')}
+    >
+      <Tooltip title={t('Decrease font size')}>
+        <IconButton
+          size="small"
+          onClick={() => adjustSize(-FONT_SIZE_STEP)}
+          sx={{ bgcolor: 'action.hover' }}
+          aria-label={t('Decrease font size')}
+          disabled={fontSize <= FONT_SIZE_MIN}
+        >
+          <RemoveIcon />
+        </IconButton>
+      </Tooltip>
+
+      <Box sx={{ flexGrow: 1, mx: 2 }}>
+        <Slider
+          value={fontSize}
+          onChange={handleSliderChange}
+          min={FONT_SIZE_MIN}
+          max={FONT_SIZE_MAX}
+          step={FONT_SIZE_STEP}
+          aria-label={t('Font size')}
+          valueLabelDisplay="auto"
+          valueLabelFormat={(value) => `${value}%`}
+          marks={[
+            { value: FONT_SIZE_MIN, label: `${FONT_SIZE_MIN}%` },
+            { value: FONT_SIZE_DEFAULT, label: `${FONT_SIZE_DEFAULT}%` },
+            { value: FONT_SIZE_MAX, label: `${FONT_SIZE_MAX}%` }
+          ]}
+        />
+      </Box>
+
+      <Tooltip title={t('Increase font size')}>
+        <IconButton
+          size="small"
+          onClick={() => adjustSize(FONT_SIZE_STEP)}
+          sx={{ bgcolor: 'action.hover' }}
+          aria-label={t('Increase font size')}
+          disabled={fontSize >= FONT_SIZE_MAX}
+        >
+          <AddIcon />
+        </IconButton>
+      </Tooltip>
+
+      <Typography 
+        variant="caption" 
+        sx={{ 
+          minWidth: '3em',
+          textAlign: 'right',
+          userSelect: 'none',
+        }}
+      >
+        {fontSize}%
+      </Typography>
+
+      <Tooltip title={t('Reset font size')}>
+        <IconButton
+          size="small"
+          onClick={handleReset}
+          sx={{ bgcolor: 'action.hover' }}
+          aria-label={t('Reset font size')}
+          disabled={fontSize === FONT_SIZE_DEFAULT}
+        >
+          <RefreshIcon />
+        </IconButton>
+      </Tooltip>
+    </Box>
+  );
+};
+
+export default FontSizeControl;

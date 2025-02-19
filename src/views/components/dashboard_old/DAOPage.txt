@@ -1,0 +1,310 @@
+import React, { useState } from 'react';
+import { useContractEvents } from 'hooks/useContractEvents';
+
+import { 
+  Card,
+  CardHeader,
+  CardContent,
+  Typography,
+  Alert,
+  AlertTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Tabs,
+  Tab,
+  Box,
+  CircularProgress
+} from '@mui/material';
+
+import { 
+  LayoutDashboard,
+  Vote,
+  Wallet,
+  Users,
+  Settings,
+  AlertCircle
+} from 'lucide-react';
+import { ethers } from 'ethers';
+
+import DAODashboard from './DAODashboard';
+import ProposalCreation from './ProposalCreation';
+import VotingInterface from './VotingInterface';
+import TokenMetrics from './TokenMetrics';
+import MembershipStats from './MembershipStats';
+
+import { useWeb3React } from 'hooks/useWeb3ReactProvider';
+import { injected } from '../../../connectors/injected';
+import { CustomConnectButton } from 'components/ConnectButton';
+
+// Create a TabPanel component to handle content display
+function TabPanel(props: {
+  children?: React.ReactNode;
+  value: string;
+  index: string;
+}) {
+  const { children, value, index } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+    >
+      {value === index && (
+        <Box sx={{ py: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
+const DAOPage = () => {
+  const { isInitialized, error: contractError } = useContractEvents();
+  const { 
+    active,
+    connect,
+    error: web3Error,
+    isActivating,
+    chainId 
+  } = useWeb3React();
+  
+  const [currentTab, setCurrentTab] = useState('dashboard');
+  
+  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    setCurrentTab(newValue);
+  };
+
+  const connectWallet = async () => {
+    try {
+      await connect();
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+    }
+  };
+  
+  console.log('DAOPage: Render state', {
+    isInitialized,
+    hasError: !!contractError,
+    errorMessage: contractError?.message,
+    isWalletConnected: active
+  });
+
+  // Check if we're on PulseChain
+  const isPulseChain = chainId === 369 || chainId === 943;
+  
+  /*if (!active || !isPulseChain) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <h2 className="mb-4 text-xl font-semibold">Connect Your Wallet</h2>
+          {web3Error && (
+            <p className="mb-4 text-red-500">
+              {web3Error.message}
+            </p>
+          )}
+          <Button 
+            onClick={connectWallet}
+            disabled={isActivating}
+            className="px-6 py-2"
+          >
+            {isActivating ? 'Connecting...' : 'Connect Wallet'}
+          </Button>
+          {active && !isPulseChain && (
+            <p className="mt-2 text-sm text-red-500">
+              Please switch to PulseChain network
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }*/
+  
+  if (!active || !isPulseChain) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <h2 className="mb-4 text-xl font-semibold">Connect Your Wallet</h2>
+          <CustomConnectButton />
+        </div>
+      </div>
+    );
+  }
+
+  // Only show loading state if wallet is connected but contracts aren't initialized
+  if (!isInitialized && !contractError) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-blue-500"></div>
+          <h2 className="text-xl font-semibold">
+            Initializing DAO Interface...
+          </h2>
+        </div>
+      </div>
+    );
+  }
+
+  if (contractError) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Alert severity="error">
+          <AlertTitle>Error</AlertTitle>
+          <Typography>
+            {contractError.message}
+            <Button 
+              variant="text"
+              onClick={() => window.location.reload()}
+              sx={{ mt: 2, display: 'block' }}
+            >
+              Try refreshing the page
+            </Button>
+          </Typography>
+        </Alert>
+      </Box>
+    );
+  }
+
+  return (
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {/* Navigation Header */}
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ 
+          maxWidth: 'lg', 
+          mx: 'auto', 
+          height: 64, 
+          display: 'flex', 
+          alignItems: 'center',
+          px: 3
+        }}>
+          <Typography variant="h6">DAO Dashboard</Typography>
+        </Box>
+      </Box>
+
+      {/* Main Content */}
+      <Box sx={{ flex: 1, p: 3 }}>
+        <Box sx={{ display: 'flex', gap: 3 }}>
+          {/* Sidebar Navigation */}
+          <Box sx={{ width: 240, flexShrink: 0 }}>
+            <Tabs
+              orientation="vertical"
+              value={currentTab}
+              onChange={handleTabChange}
+              sx={{
+                borderRight: 1,
+                borderColor: 'divider',
+                '& .MuiTab-root': {
+                  justifyContent: 'flex-start',
+                  textAlign: 'left',
+                  alignItems: 'center',
+                  gap: 1
+                }
+              }}
+            >
+              <Tab 
+                icon={<LayoutDashboard />} 
+                label="Overview" 
+                value="dashboard"
+                iconPosition="start"
+              />
+              <Tab 
+                icon={<Vote />} 
+                label="Proposals" 
+                value="proposals"
+                iconPosition="start"
+              />
+              <Tab 
+                icon={<Wallet />} 
+                label="Treasury" 
+                value="treasury"
+                iconPosition="start"
+              />
+              <Tab 
+                icon={<Users />} 
+                label="Members" 
+                value="members"
+                iconPosition="start"
+              />
+              <Tab 
+                icon={<Settings />} 
+                label="Settings" 
+                value="settings"
+                iconPosition="start"
+              />
+            </Tabs>
+
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ mt: 2 }}
+            >
+              Connect Wallet
+            </Button>
+          </Box>
+
+          {/* Main Content Area */}
+          <Box sx={{ flex: 1 }}>
+            <TabPanel value={currentTab} index="dashboard">
+              <DAODashboard />
+            </TabPanel>
+
+            <TabPanel value={currentTab} index="proposals">
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <ProposalCreation />
+                <VotingInterface proposal={{
+                  id: "1",
+                  title: "Example Proposal",
+                  description: "This is an example proposal",
+                  proposer: "0x1234...5678",
+                  startTime: Date.now() / 1000,
+                  endTime: (Date.now() / 1000) + 86400,
+                  forVotes: ethers.BigNumber.from("1000000"),
+                  againstVotes: ethers.BigNumber.from("500000"),
+                  executed: false,
+                  category: 1
+                }} />
+              </Box>
+            </TabPanel>
+
+            <TabPanel value={currentTab} index="treasury">
+              <TokenMetrics />
+            </TabPanel>
+
+            <TabPanel value={currentTab} index="members">
+              <MembershipStats />
+            </TabPanel>
+
+            <TabPanel value={currentTab} index="settings">
+              <Card>
+                <CardContent>
+                  <Typography variant="h6">DAO Settings</Typography>
+                  <Typography color="textSecondary" sx={{ mt: 1 }}>
+                    Configure your DAO preferences and parameters.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </TabPanel>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Footer */}
+      <Box sx={{ 
+        borderTop: 1, 
+        borderColor: 'divider',
+        p: 2,
+        mt: 'auto'
+      }}>
+        <Typography color="textSecondary" variant="body2">
+          Running on PulseChain Network • Block: #1234567
+        </Typography>
+      </Box>
+    </Box>
+  );
+};
+
+export default DAOPage;

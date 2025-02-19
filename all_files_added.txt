@@ -1,0 +1,6365 @@
+src/types/contracts.ts
+ 
+// src/types/contracts.ts
+
+import { BigNumber } from 'ethers';
+import { EventEmitter } from 'events';
+import { ethers } from 'ethers';
+
+// First, let's define the core address type for type safety
+export type Address = string;
+
+export interface IContractWithEvents extends EventEmitter {
+  on(event: string, listener: (...args: any[]) => void): this;
+  off(event: string, listener: (...args: any[]) => void): this;
+}
+
+export interface IContractEvents {
+  on(event: string, listener: (...args: any[]) => void): this;
+  off(event: string, listener: (...args: any[]) => void): this;
+  removeAllListeners(event?: string): this;
+}
+
+
+// Define the base proposal state that will be shared between Nostr and blockchain
+export enum ProposalState {
+  // Off-chain states (Nostr)
+  DRAFT = 'DRAFT',
+  DISCUSSION = 'DISCUSSION',
+  PENDING_SUBMISSION = 'PENDING_SUBMISSION',
+  
+  // On-chain states
+  SUBMITTED = 'SUBMITTED',
+  ACTIVE = 'ACTIVE',
+  SUCCEEDED = 'SUCCEEDED',
+  QUEUED = 'QUEUED',
+  EXECUTED = 'EXECUTED',
+  DEFEATED = 'DEFEATED',
+  EXPIRED = 'EXPIRED',
+  CANCELED = 'CANCELED'
+}
+
+// Define the core proposal structure that combines Nostr and blockchain data
+export interface Proposal {
+  // Identifiers
+  id: string;
+  nostrEventId?: string;
+  creator: Address;
+  nostrPubkey?: string;
+
+  // Core proposal data
+  title: string;
+  description: string;
+  category: number;
+  
+  // Timing parameters
+  createdAt: number;
+  startEpoch: BigNumber;
+  endEpoch: BigNumber;
+  executionDelay: BigNumber;
+  
+  // State tracking
+  currentState: ProposalState;
+  forVotes: BigNumber;
+  againstVotes: BigNumber;
+  quorum: BigNumber;
+  
+  // Transaction data
+  submissionTx?: string;
+  executionTx?: string;
+  cancelTx?: string;
+}
+
+// Define the member state structure
+export interface Member {
+  address: Address;
+  nostrPubkey?: string;
+  reputationScore: BigNumber;
+  stakingBalance: BigNumber;
+  lastActivityTimestamp: BigNumber;
+  isActive: boolean;
+  daoBiddingShares: BigNumber;
+}
+
+// Define vote structure
+export interface Vote {
+  proposalId: string;
+  voter: Address;
+  nostrPubkey?: string;
+  support: boolean;
+  votes: BigNumber;
+  reason?: string;
+  timestamp: number;
+}
+
+// Define token distribution state
+export interface TokenDistribution {
+  dailyAllocation: BigNumber;
+  treasuryBalance: BigNumber;
+  lastDailyPrice: BigNumber;
+  currentDailyPrice: BigNumber;
+}
+
+// Define committee structure
+export interface Committee {
+  id: string;
+  name: string;
+  members: Address[];
+  requiredVotes: BigNumber;
+  proposalCount: BigNumber;
+}
+
+// Define the interfaces for each constituent contract
+export interface IStateConstituent extends IContractEvents {
+  // Proposal management
+  createProposal(
+    title: string, 
+    description: string, 
+    category: number
+  ): Promise<ethers.ContractTransaction>;
+  getProposal: (proposalId: string) => Promise<ProposalData>;
+  castVote(proposalId: string, support: boolean): Promise<ethers.ContractTransaction>;
+  executeProposal: (proposalId: string) => Promise<void>;
+  cancelProposal: (proposalId: string) => Promise<void>;
+
+  // Member management
+  getMember: (address: Address) => Promise<Member>;
+  isActiveMember: (address: Address) => Promise<boolean>;
+  updateMemberActivity: (address: Address) => Promise<void>;
+
+  // Committee management
+  getCommittee: (committeeId: string) => Promise<Committee>;
+  addCommitteeMember: (committeeId: string, member: Address) => Promise<void>;
+  removeCommitteeMember: (committeeId: string, member: Address) => Promise<void>;
+}
+
+export interface ILogicConstituent {
+  // Validation functions
+  validateQuorum: (
+    totalVotes: BigNumber,
+    forVotes: BigNumber,
+    againstVotes: BigNumber,
+    votedMembers: BigNumber,
+    activeMemberCount: BigNumber,
+    currentStage: BigNumber
+  ) => Promise<boolean>;
+
+  validateRootDAO: (
+    localId: BigNumber,
+    level: BigNumber,
+    countAtLevel: BigNumber
+  ) => Promise<boolean>;
+
+  // Calculation functions
+  calculateStakingBonus: (
+    stakeDuration: BigNumber,
+    stakeAmount: BigNumber
+  ) => Promise<BigNumber>;
+
+  calculateReputation: (
+    baseScore: BigNumber,
+    trustScores: BigNumber[],
+    isFamilial: boolean[],
+    isInstitutional: boolean[]
+  ) => Promise<BigNumber>;
+}
+
+export interface IViewConstituent {
+  // State queries
+  getProposalState: (
+    stateContract: Address,
+    proposalId: string
+  ) => Promise<[number, BigNumber, BigNumber, boolean, boolean, BigNumber, BigNumber, number, BigNumber]>;
+
+  getStakingInfo: (
+    stateContract: Address,
+    user: Address
+  ) => Promise<[BigNumber, BigNumber]>;
+
+  getUserReputation: (
+    stateContract: Address,
+    user: Address
+  ) => Promise<BigNumber>;
+
+  getDAOInfo: (
+    stateContract: Address,
+    globalId: BigNumber
+  ) => Promise<[BigNumber, BigNumber, boolean]>;
+}
+
+export interface IDAOToken extends IContractEvents {
+  // Token info
+  name: () => Promise<string>;
+  symbol: () => Promise<string>;
+  decimals: () => Promise<number>;
+  totalSupply: () => Promise<BigNumber>;
+  
+  dailyAllocation(): Promise<BigNumber>;
+  treasuryBalance(): Promise<BigNumber>;
+  lastDailyPrice(): Promise<BigNumber>;
+  currentDailyPrice(): Promise<BigNumber>;
+  
+  // Token operations
+  balanceOf: (account: Address) => Promise<BigNumber>;
+  transfer: (recipient: Address, amount: BigNumber) => Promise<boolean>;
+  approve: (spender: Address, amount: BigNumber) => Promise<boolean>;
+  
+  // DAO-specific functions
+  placeBid: (amount: BigNumber, price: BigNumber, isPermanent: boolean) => Promise<void>;
+  getDaoLimit: (dao: Address) => Promise<BigNumber>;
+  calculateDailyAllocation: () => Promise<void>;
+  recordActivity: (user: Address) => Promise<void>;
+}
+
+export interface ProposalData {
+  creator: string;
+  title: string;
+  description: string;
+  category: number;
+  createdAt: BigNumber; // Contract returns BigNumber
+  startEpoch: BigNumber;
+  endEpoch: BigNumber;
+  executionDelay: BigNumber;
+  currentState: ProposalState;
+  forVotes: BigNumber;
+  againstVotes: BigNumber;
+  quorum: BigNumber;
+}
+
+// Define the events that we'll need to handle
+export interface ContractEvent {
+  blockNumber: number;
+  transactionHash: string;
+  timestamp: number;
+}
+
+export interface ProposalCreatedEvent extends ContractEvent {
+  proposalId: BigNumber;
+  creator: Address;
+  startEpoch: BigNumber;
+  endEpoch: BigNumber;
+}
+
+export interface VoteCastEvent extends ContractEvent {
+  proposalId: BigNumber;
+  voter: Address;
+  support: boolean;
+  votes: BigNumber;
+}
+
+// Contract instances container type
+export interface ContractInstances {
+  daoToken: IDAOToken;
+  logicConstituent: ILogicConstituent;
+  stateConstituent: IStateConstituent;
+  viewConstituent: IViewConstituent;
+}
+ 
+src/state/contractState.ts
+ 
+// src/state/contractState.ts
+
+import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
+import { ethers, BigNumber } from 'ethers';
+import {
+  Address,
+  Proposal,
+  Member,
+  Vote,
+  TokenDistribution,
+  Committee,
+  ContractInstances,
+  ProposalState,
+  ContractEvent
+} from '../types/contracts';
+
+// First, we create atoms for the core contract instances. These are the base
+// building blocks that will allow us to interact with our smart contracts.
+export const contractInstancesAtom = atom<ContractInstances | null>(null);
+
+// We create atoms for provider and signer to handle Web3 connectivity
+export const providerAtom = atom<ethers.providers.Provider | null>(null);
+export const signerAtom = atom<ethers.Signer | null>(null);
+
+// This atom tracks the connection status to both the blockchain and our contracts
+export const contractConnectionAtom = atom<{
+  isConnected: boolean;
+  chainId: number | null;
+  error: Error | null;
+}>({
+  isConnected: false,
+  chainId: null,
+  error: null
+});
+
+// We create cache duration constants to help manage state freshness
+const CACHE_DURATION = {
+  PROPOSALS: 5 * 60 * 1000, // 5 minutes
+  MEMBERS: 5 * 60 * 1000,   // 5 minutes
+  EVENTS: 1 * 60 * 1000,    // 1 minute
+  TOKEN: 30 * 1000          // 30 seconds
+};
+
+// We define interfaces for our cached data to ensure type safety
+interface CachedData<T> {
+  data: T;
+  timestamp: number;
+}
+
+interface ProposalCache {
+  [id: string]: CachedData<Proposal>;
+}
+
+interface MemberCache {
+  [address: string]: CachedData<Member>;
+}
+
+// Create atoms for caching proposal and member data to improve performance
+export const proposalCacheAtom = atomWithStorage<ProposalCache>('dao-proposal-cache', {});
+export const memberCacheAtom = atomWithStorage<MemberCache>('dao-member-cache', {});
+
+// Create atoms for active state tracking
+export const activeProposalsAtom = atom<Proposal[]>([]);
+export const activeMembersAtom = atom<Member[]>([]);
+export const activeCommitteesAtom = atom<Committee[]>([]);
+
+// Create atoms for token-related state
+export const tokenDistributionAtom = atom<TokenDistribution | null>(null);
+export const tokenPriceAtom = atom<BigNumber>(BigNumber.from(0));
+export const treasuryBalanceAtom = atom<BigNumber>(BigNumber.from(0));
+
+// Create atoms for proposal-related state
+export const proposalCountAtom = atom<number>(0);
+export const currentEpochAtom = atom<number>(0);
+
+// Create atoms for tracking votes and participation
+export const votingPowerAtom = atom<BigNumber>(BigNumber.from(0));
+export const participationRateAtom = atom<number>(0);
+
+// Create an atom for event tracking
+export const contractEventsAtom = atom<ContractEvent[]>([]);
+
+// Create helper functions for state management
+export const contractStateUtils = {
+  // Function to check if cached data is still valid
+  isCacheValid: (timestamp: number, duration: number): boolean => {
+    return Date.now() - timestamp < duration;
+  },
+
+  // Function to get cached proposal data
+  getCachedProposal: (
+    cache: ProposalCache,
+    proposalId: string
+  ): Proposal | null => {
+    const cached = cache[proposalId];
+    if (!cached || !contractStateUtils.isCacheValid(cached.timestamp, CACHE_DURATION.PROPOSALS)) {
+      return null;
+    }
+    return cached.data;
+  },
+
+  // Function to get cached member data
+  getCachedMember: (
+    cache: MemberCache,
+    address: Address
+  ): Member | null => {
+    const cached = cache[address];
+    if (!cached || !contractStateUtils.isCacheValid(cached.timestamp, CACHE_DURATION.MEMBERS)) {
+      return null;
+    }
+    return cached.data;
+  }
+};
+
+// Create derived atoms that combine data from multiple sources
+export const proposalStatsAtom = atom((get) => {
+  const proposals = get(activeProposalsAtom);
+  return {
+    total: proposals.length,
+    active: proposals.filter(p => p.currentState === ProposalState.ACTIVE).length,
+    succeeded: proposals.filter(p => p.currentState === ProposalState.SUCCEEDED).length,
+    defeated: proposals.filter(p => p.currentState === ProposalState.DEFEATED).length
+  };
+});
+
+export const memberStatsAtom = atom((get) => {
+  const members = get(activeMembersAtom);
+  const totalStaked = members.reduce(
+    (sum, member) => sum.add(member.stakingBalance),
+    BigNumber.from(0)
+  );
+  
+  return {
+    totalMembers: members.length,
+    activeMembers: members.filter(m => m.isActive).length,
+    totalStaked,
+    averageReputation: members.reduce((sum, m) => sum + m.reputationScore.toNumber(), 0) / members.length
+  };
+});
+
+// Create an atom for tracking the synchronization status of our state
+export const syncStatusAtom = atom<{
+  lastSync: number;
+  isSyncing: boolean;
+  error: Error | null;
+}>({
+  lastSync: 0,
+  isSyncing: false,
+  error: null
+});
+
+// Create a utility atom for managing loading states
+export const loadingStatesAtom = atom<{
+  [key: string]: boolean;
+}>({});
+
+// Create an atom for error tracking
+export const contractErrorsAtom = atom<{
+  [key: string]: Error;
+}>({});
+
+// Create derived atoms for filtering and sorting proposals
+export const filteredProposalsAtom = atom((get) => {
+  const proposals = get(activeProposalsAtom);
+  // Helper function to check if a proposal is recent (within last 7 days)
+  const isRecent = (timestamp: number) => {
+    return Date.now() - timestamp < 7 * 24 * 60 * 60 * 1000;
+  };
+
+  return {
+    recent: proposals.filter(p => isRecent(p.createdAt)),
+    needsAction: proposals.filter(p => p.currentState === ProposalState.ACTIVE),
+    completed: proposals.filter(p => 
+      p.currentState === ProposalState.EXECUTED || 
+      p.currentState === ProposalState.DEFEATED
+    )
+  };
+});
+
+// Create an atom for tracking user-specific state
+export const userStateAtom = atom<{
+  votingPower: BigNumber;
+  proposalsVoted: string[];
+  ownProposals: string[];
+}>({
+  votingPower: BigNumber.from(0),
+  proposalsVoted: [],
+  ownProposals: []
+});
+
+// Export utility functions for state updates
+export const getProposalUpdater = (set: (value: any) => void) => ({
+  addProposal: (proposal: Proposal) => {
+    set((prev: Proposal[]) => [...prev, proposal]);
+  },
+  updateProposal: (proposalId: string, updates: Partial<Proposal>) => {
+    set((prev: Proposal[]) => prev.map(p => 
+      p.id === proposalId ? { ...p, ...updates } : p
+    ));
+  },
+  removeProposal: (proposalId: string) => {
+    set((prev: Proposal[]) => prev.filter(p => p.id !== proposalId));
+  }
+});
+ 
+src/hooks/useDAOContracts.ts
+ 
+// src/hooks/useDAOContracts.ts
+
+import { useEffect, useCallback, useState } from 'react';
+import { useAtom } from 'jotai';
+import { ethers } from 'ethers';
+import {
+  contractInstancesAtom,
+  providerAtom,
+  signerAtom,
+  contractConnectionAtom,
+  proposalCacheAtom,
+  memberCacheAtom,
+  activeProposalsAtom,
+  activeMembersAtom,
+  tokenDistributionAtom,
+  syncStatusAtom,
+  loadingStatesAtom,
+  contractErrorsAtom
+} from '../state/contractState';
+
+import { ContractReceipt, BigNumber } from 'ethers'; // ContractTransaction
+import { ContractTransaction } from '@ethersproject/contracts';
+
+import {
+  Proposal,
+  Member,
+  Vote,
+  TokenDistribution,
+  ProposalState,
+  ContractInstances,
+  Address,
+  IDAOToken,
+  ILogicConstituent,
+  IStateConstituent,
+  IViewConstituent
+} from '../types/contracts';
+
+// Import contract ABIs
+import DAOTokenABI from '../abi/DAOToken.json';
+import LogicConstituentABI from '../abi/LogicConstituent.json';
+import StateConstituentABI from '../abi/StateConstituent.json';
+import ViewConstituentABI from '../abi/ViewConstituent.json';
+
+// Define contract addresses
+const CONTRACT_ADDRESSES = {
+  DAO_TOKEN: '0x972Dc127cD4bbAfC87f885a554d8208113d768C6',
+  LOGIC_CONSTITUENT: '0x5215bcD28f7A54E11F5A0ca3A687a679Ff69FeCC',
+  STATE_CONSTITUENT: '0x98f345C539f67e8D6D5B7ceD4048b4Ee99307910',
+  VIEW_CONSTITUENT: '0x8A2F613a31d6FdB9EEA3b6e6DD45959d832224FD'
+};
+
+export function useDAOContracts() {
+  // Get atoms for state management
+  const [contractInstances, setContractInstances] = useAtom(contractInstancesAtom);
+  const [provider] = useAtom(providerAtom);
+  const [signer] = useAtom(signerAtom);
+  const [connectionState, setConnectionState] = useAtom(contractConnectionAtom);
+  const [proposalCache, setProposalCache] = useAtom(proposalCacheAtom);
+  const [memberCache, setMemberCache] = useAtom(memberCacheAtom);
+  const [activeProposals, setActiveProposals] = useAtom(activeProposalsAtom);
+  const [activeMembers, setActiveMembers] = useAtom(activeMembersAtom);
+  const [tokenDistribution, setTokenDistribution] = useAtom(tokenDistributionAtom);
+  const [syncStatus, setSyncStatus] = useAtom(syncStatusAtom);
+  const [loadingStates, setLoadingStates] = useAtom(loadingStatesAtom);
+  const [errors, setErrors] = useAtom(contractErrorsAtom);
+
+  // Initialize contract instances
+const initializeContracts = useCallback(async () => {
+  if (!provider || !signer) {
+    throw new Error('Provider or signer not available');
+  }
+
+  try {
+    setLoadingStates(prev => ({ ...prev, initialization: true }));
+
+    // Get network information first
+    const network = await provider.getNetwork();
+    const chainId = network.chainId;
+
+    const instances: ContractInstances = {
+      daoToken: new ethers.Contract(
+        CONTRACT_ADDRESSES.DAO_TOKEN,
+        DAOTokenABI,
+        signer
+      ) as unknown as IDAOToken,
+   
+        logicConstituent: new ethers.Contract(
+          CONTRACT_ADDRESSES.LOGIC_CONSTITUENT,
+          LogicConstituentABI,
+          signer
+        ) as unknown as ILogicConstituent,
+        stateConstituent: new ethers.Contract(
+          CONTRACT_ADDRESSES.STATE_CONSTITUENT,
+          StateConstituentABI,
+          signer
+        ) as unknown as IStateConstituent,
+        viewConstituent: new ethers.Contract(
+          CONTRACT_ADDRESSES.VIEW_CONSTITUENT,
+          ViewConstituentABI,
+          signer
+        ) as unknown as IViewConstituent
+      };
+
+    setContractInstances(instances);
+    setConnectionState(prev => ({
+      ...prev,
+      isConnected: true,
+      chainId // Now chainId is properly defined
+    }));
+
+      // Set up event listeners
+      setupEventListeners(instances);
+
+      return instances;
+    } catch (error) {
+      setErrors(prev => ({
+        ...prev,
+        initialization: error as Error
+      }));
+      throw error;
+    } finally {
+      setLoadingStates(prev => ({ ...prev, initialization: false }));
+    }
+  }, [provider, signer]);
+
+  // Set up event listeners for contract events
+  const setupEventListeners = useCallback((instances: ContractInstances) => {
+    // Listen for proposal events
+    instances.stateConstituent.on('ProposalCreated', async (proposalId: BigNumber, creator: string) => {
+      const proposal = await fetchProposal(proposalId.toString());
+      if (proposal) {
+        setActiveProposals(prev => [...prev, proposal]);
+      }
+    });
+
+    // Listen for vote events
+    instances.stateConstituent.on('VoteCast', async (proposalId: BigNumber, voter: string, support: boolean) => {
+      const proposal = await fetchProposal(proposalId.toString());
+      if (proposal) {
+        setActiveProposals(prev => 
+          prev.map(p => p.id === proposalId.toString() ? proposal : p)
+        );
+      }
+    });
+
+    // Listen for token distribution updates
+    instances.daoToken.on('DailyAllocationUpdated', async (allocation: BigNumber) => {
+      await syncTokenDistribution();
+    });
+  }, []);
+
+  // Fetch proposal data from contracts
+  const fetchProposal = async (proposalId: string): Promise<Proposal | null> => {
+    if (!contractInstances) return null;
+
+  try {
+    setLoadingStates(prev => ({ ...prev, [`proposal-${proposalId}`]: true }));
+
+    // Check cache first
+    const cached = proposalCache[proposalId];
+    if (cached && Date.now() - cached.timestamp < 5 * 60 * 1000) {
+      return cached.data;
+    }
+
+    // Fetch from contract - now we know this returns ProposalData
+    const proposalData = await contractInstances.stateConstituent.getProposal(proposalId);
+
+    const createdAtValue = proposalData.createdAt instanceof BigNumber ? 
+      proposalData.createdAt.toNumber() : 
+      proposalData.createdAt;
+
+    const proposal: Proposal = {
+      id: proposalId,
+      creator: proposalData.creator,
+      title: proposalData.title,
+      description: proposalData.description,
+      category: proposalData.category,
+      // Convert BigNumber to number for frontend use
+      createdAt: proposalData.createdAt.toNumber(),
+      startEpoch: proposalData.startEpoch,
+      endEpoch: proposalData.endEpoch,
+      executionDelay: proposalData.executionDelay,
+      currentState: proposalData.currentState,
+      forVotes: proposalData.forVotes,
+      againstVotes: proposalData.againstVotes,
+      quorum: proposalData.quorum
+    };
+
+    /*const proposal: Proposal = {
+      id: proposalId,
+      creator: proposalData.creator,
+      title: proposalData.title,
+      description: proposalData.description,
+      category: proposalData.category,
+      createdAt: createdAtValue,
+      startEpoch: proposalData.startEpoch,
+      endEpoch: proposalData.endEpoch,
+      executionDelay: proposalData.executionDelay,
+      currentState: proposalData.currentState || proposalData.state || ProposalState.PENDING_SUBMISSION,
+      forVotes: proposalData.forVotes,
+      againstVotes: proposalData.againstVotes,
+      quorum: proposalData.quorum
+    };*/
+
+    // Update cache
+    setProposalCache(prev => ({
+      ...prev,
+      [proposalId]: {
+        data: proposal,
+        timestamp: Date.now()
+      }
+    }));
+
+    return proposal;
+  } catch (error) {
+    setErrors(prev => ({
+      ...prev,
+      [`proposal-${proposalId}`]: error as Error
+    }));
+    return null;
+  } finally {
+    setLoadingStates(prev => ({ ...prev, [`proposal-${proposalId}`]: false }));
+  }
+};
+
+  // Sync token distribution data
+  const syncTokenDistribution = async () => {
+    if (!contractInstances) return;
+
+    try {
+      setLoadingStates(prev => ({ ...prev, tokenDistribution: true }));
+
+      const distribution = await Promise.all([
+        contractInstances.daoToken.dailyAllocation(),
+        contractInstances.daoToken.treasuryBalance(),
+        contractInstances.daoToken.lastDailyPrice(),
+        contractInstances.daoToken.currentDailyPrice()
+      ]);
+
+      setTokenDistribution({
+        dailyAllocation: distribution[0],
+        treasuryBalance: distribution[1],
+        lastDailyPrice: distribution[2],
+        currentDailyPrice: distribution[3]
+      });
+    } catch (error) {
+      setErrors(prev => ({
+        ...prev,
+        tokenDistribution: error as Error
+      }));
+    } finally {
+      setLoadingStates(prev => ({ ...prev, tokenDistribution: false }));
+    }
+  };
+
+  // Vote on a proposal
+const castVote = async (proposalId: string, support: boolean): Promise<void> => {
+  if (!contractInstances) throw new Error('Contracts not initialized');
+
+  try {
+    setLoadingStates(prev => ({ ...prev, [`vote-${proposalId}`]: true }));
+
+    // We now know this returns ContractTransaction
+    const tx = await contractInstances.stateConstituent.castVote(proposalId, support);
+    await tx.wait();
+
+    // Refresh proposal data
+    await fetchProposal(proposalId);
+  } catch (error) {
+    setErrors(prev => ({
+      ...prev,
+      [`vote-${proposalId}`]: error as Error
+    }));
+    throw error;
+  } finally {
+    setLoadingStates(prev => ({ ...prev, [`vote-${proposalId}`]: false }));
+  }
+};
+
+  // Create a new proposal
+const createProposal = async (
+  title: string,
+  description: string,
+  category: number
+): Promise<string> => {
+  if (!contractInstances) throw new Error('Contracts not initialized');
+
+  try {
+    setLoadingStates(prev => ({ ...prev, createProposal: true }));
+
+    // We now know this returns ContractTransaction
+    const tx = await contractInstances.stateConstituent.createProposal(
+      title,
+      description,
+      category
+    );
+    
+    const receipt = await tx.wait();
+
+    // Get proposal ID from event
+    const event = receipt.events?.find(e => e.event === 'ProposalCreated');
+    const proposalId = event?.args?.proposalId.toString();
+
+    if (!proposalId) throw new Error('Failed to get proposal ID');
+
+    // Fetch and cache the new proposal
+    await fetchProposal(proposalId);
+
+    return proposalId;
+  } catch (error) {
+    setErrors(prev => ({
+      ...prev,
+      createProposal: error as Error
+    }));
+    throw error;
+  } finally {
+    setLoadingStates(prev => ({ ...prev, createProposal: false }));
+  }
+};
+
+  // Initialize contracts when provider and signer are available
+  useEffect(() => {
+    if (provider && signer && !contractInstances) {
+      initializeContracts().catch(console.error);
+    }
+  }, [provider, signer, contractInstances]);
+
+  // Return the hook's interface
+  return {
+    // Contract instances
+    contracts: contractInstances,
+    
+    // State
+    isConnected: connectionState.isConnected,
+    chainId: connectionState.chainId,
+    loading: loadingStates,
+    errors,
+    
+    // Data
+    activeProposals,
+    tokenDistribution,
+    
+    // Actions
+    createProposal,
+    castVote,
+    fetchProposal,
+    syncTokenDistribution,
+    
+    // Initialization
+    initializeContracts
+  };
+}
+ 
+src/services/ContractEventManager.ts
+ 
+// src/services/ContractEventManager.ts
+
+import { ethers } from 'ethers';
+import { EventEmitter } from 'events';
+
+// Import contract ABIs - we have these from the provided JSON files
+import DAOTokenABI from '../abi/DAOToken.json';
+import LogicConstituentABI from '../abi/LogicConstituent.json';
+import StateConstituentABI from '../abi/StateConstituent.json';
+import ViewConstituentABI from '../abi/ViewConstituent.json';
+
+// Define event types for better type safety
+export interface ContractEvent {
+  blockNumber: number;
+  transactionHash: string;
+  logIndex: number;
+  timestamp: number;
+}
+
+export interface BaseContractEvent extends ethers.Event {
+  blockNumber: number;
+  transactionHash: string;
+  logIndex: number;
+  timestamp?: number;
+  // Include ethers.js Event properties we need
+  event: string;
+  args: Array<any>;
+  removeListener: () => void;
+  getBlock: () => Promise<ethers.providers.Block>;
+  getTransaction: () => Promise<ethers.providers.TransactionResponse>;
+  getTransactionReceipt: () => Promise<ethers.providers.TransactionReceipt>;
+}
+
+/*export interface ProposalCreatedEvent extends ContractEvent {
+  proposalId: string;
+  creator: string;
+  startEpoch: number;
+  endEpoch: number;
+}
+
+export interface VoteCastEvent extends ContractEvent {
+  proposalId: string;
+  voter: string;
+  support: boolean;
+  votes: ethers.BigNumber;
+}*/
+
+export interface DAORegisteredEvent extends ContractEvent {
+  globalId: ethers.BigNumber;
+  daoAddress: string;
+  level: number;
+}
+
+// First, let's define an interface for the event structure we expect
+export interface ContractEventWithArgs extends ethers.Event {
+  event: string;
+  args: any[]; // We'll make this more specific below
+}
+
+// Now we can define our specific event interfaces
+export interface ProposalCreatedEventArgs {
+  proposalId: ethers.BigNumber;
+  creator: string;
+  startEpoch: ethers.BigNumber;
+  endEpoch: ethers.BigNumber;
+}
+
+export interface ProposalCreatedEvent extends BaseContractEvent {
+  args: [ProposalCreatedEventArgs];
+  event: 'ProposalCreated';
+}
+
+export interface VoteCastEventArgs {
+  proposalId: ethers.BigNumber;
+  voter: string;
+  support: boolean;
+  votes: ethers.BigNumber;
+}
+
+export interface VoteCastEvent extends BaseContractEvent {
+  args: [VoteCastEventArgs];
+  event: 'VoteCast';
+}
+
+export class ContractEventManager extends EventEmitter {
+  private provider: ethers.providers.Provider;
+  private signer: ethers.Signer | null;
+  private readonly contracts: {
+    daoToken: ethers.Contract;
+    logicConstituent: ethers.Contract;
+    stateConstituent: ethers.Contract;
+    viewConstituent: ethers.Contract;
+  };
+
+  private readonly contractAddresses = {
+    DAO_TOKEN: '0x972Dc127cD4bbAfC87f885a554d8208113d768C6',
+    LOGIC_CONSTITUENT: '0x5215bcD28f7A54E11F5A0ca3A687a679Ff69FeCC',
+    STATE_CONSTITUENT: '0x98f345C539f67e8D6D5B7ceD4048b4Ee99307910',
+    VIEW_CONSTITUENT: '0x8A2F613a31d6FdB9EEA3b6e6DD45959d832224FD'
+  };
+
+  constructor(provider: ethers.providers.Provider, signer?: ethers.Signer) {
+    super();
+    this.provider = provider;
+    this.signer = signer || null;
+
+    // Initialize contracts
+    this.contracts = {
+      daoToken: new ethers.Contract(
+        this.contractAddresses.DAO_TOKEN,
+        DAOTokenABI,
+        signer || provider
+      ),
+      logicConstituent: new ethers.Contract(
+        this.contractAddresses.LOGIC_CONSTITUENT,
+        LogicConstituentABI,
+        signer || provider
+      ),
+      stateConstituent: new ethers.Contract(
+        this.contractAddresses.STATE_CONSTITUENT,
+        StateConstituentABI,
+        signer || provider
+      ),
+      viewConstituent: new ethers.Contract(
+        this.contractAddresses.VIEW_CONSTITUENT,
+        ViewConstituentABI,
+        signer || provider
+      )
+    };
+
+    this.setupEventListeners();
+  }
+
+  private setupEventListeners(): void {
+    // Listen for proposal-related events
+    this.contracts.stateConstituent.on('ProposalCreated', 
+      async (proposalId: ethers.BigNumber, creator: string, startEpoch: ethers.BigNumber, endEpoch: ethers.BigNumber, event: ProposalCreatedEvent) => {
+        const block = await event.getBlock();
+        
+        // Create our processed event object
+        const processedEvent = {
+          type: 'ProposalCreated',
+          blockNumber: event.blockNumber,
+          transactionHash: event.transactionHash,
+          logIndex: event.logIndex,
+          timestamp: block.timestamp,
+          data: {
+            proposalId: proposalId.toString(),
+            creator,
+            startEpoch: startEpoch.toNumber(),
+            endEpoch: endEpoch.toNumber()
+          }
+        };
+
+        this.emit('ProposalCreated', processedEvent);
+    });
+
+    this.contracts.stateConstituent.on('VoteCast',
+      async (proposalId: ethers.BigNumber, voter: string, support: boolean, votes: ethers.BigNumber, event: VoteCastEvent) => {
+        const block = await event.getBlock();
+        
+        const processedEvent = {
+          type: 'VoteCast',
+          blockNumber: event.blockNumber,
+          transactionHash: event.transactionHash,
+          logIndex: event.logIndex,
+          timestamp: block.timestamp,
+          data: {
+            proposalId: proposalId.toString(),
+            voter,
+            support,
+            votes: votes.toString()
+          }
+        };
+
+        this.emit('VoteCast', processedEvent);
+    });
+
+    // Monitor DAO registrations
+    this.contracts.stateConstituent.on('DAORegistered',
+      async (globalId, daoAddress, level, event) => {
+        const block = await event.getBlock();
+        const timestamp = block.timestamp;
+
+        const daoEvent: DAORegisteredEvent = {
+          globalId,
+          daoAddress,
+          level,
+          blockNumber: event.blockNumber,
+          transactionHash: event.transactionHash,
+          logIndex: event.logIndex,
+          timestamp
+        };
+
+        this.emit('DAORegistered', daoEvent);
+    });
+
+    // Add error handling for contract events
+    Object.values(this.contracts).forEach(contract => {
+      contract.on('error', (error: Error) => {
+        console.error('Contract event error:', error);
+        this.emit('error', error);
+      });
+    });
+  }
+
+  public async createProposal(description: string, category: number): Promise<string> {
+    if (!this.signer) {
+      throw new Error('No signer available');
+    }
+
+    const startEpoch = Math.floor(Date.now() / 1000);
+    const endEpoch = startEpoch + (7 * 24 * 60 * 60); // 7 days voting period
+
+    const tx = await this.contracts.stateConstituent.createProposal(
+      await this.signer.getAddress(),
+      category,
+      startEpoch,
+      endEpoch
+    );
+
+    const receipt = await tx.wait();
+    // Type casting the event appropriately
+    const event = receipt.events?.find(
+      (e: ethers.Event): e is ProposalCreatedEvent => e.event === 'ProposalCreated'
+    );
+
+    if (!event) {
+      throw new Error('Proposal creation event not found');
+    }
+
+    return event.args[0].proposalId.toString();
+  }
+
+  public async castVote(proposalId: string, support: boolean): Promise<void> {
+    if (!this.signer) {
+      throw new Error('No signer available');
+    }
+
+    const tx = await this.contracts.stateConstituent.castVote(
+      proposalId,
+      support
+    );
+
+    await tx.wait();
+  }
+
+  // Query methods
+  public async getProposal(proposalId: string) {
+    const proposal = await this.contracts.stateConstituent.getProposalBasicInfo(proposalId);
+    const state = await this.contracts.viewConstituent.getProposalState(
+      this.contractAddresses.STATE_CONSTITUENT,
+      proposalId
+    );
+
+    return {
+      ...proposal,
+      state: state[0],
+      forVotes: state[5],
+      againstVotes: state[6]
+    };
+  }
+
+  public async getActiveMemberCount(): Promise<number> {
+    return (await this.contracts.stateConstituent.activeMemberCount()).toNumber();
+  }
+
+  // Cleanup method
+  public cleanup(): void {
+    Object.values(this.contracts).forEach(contract => {
+      contract.removeAllListeners();
+    });
+  }
+}
+ 
+src/hooks/useContractEvents.ts
+ 
+// src/hooks/useContractEvents.ts
+
+import { useState, useEffect, useCallback } from 'react';
+import { useAtom } from 'jotai';
+import { ethers } from 'ethers';
+import { ContractEventManager } from '../services/ContractEventManager';
+import {
+  providerAtom,
+  signerAtom,
+  accountAtom,
+  chainIdAtom
+} from '../state/web3State';
+
+// Define interface for event handling
+interface EventHandlers {
+  onProposalCreated?: (event: any) => void;
+  onVoteCast?: (event: any) => void;
+  onDAORegistered?: (event: any) => void;
+}
+
+// Define return type for our hook
+interface UseContractEventsReturn {
+  // Event manager status
+  isInitialized: boolean;
+  error: Error | null;
+  
+  // Contract interaction methods
+  createProposal: (description: string, category: number) => Promise<string>;
+  castVote: (proposalId: string, support: boolean) => Promise<void>;
+  
+  // Event subscription method
+  subscribeToEvents: (handlers: EventHandlers) => void;
+  
+  // Contract state queries
+  getProposal: (proposalId: string) => Promise<any>;
+  getActiveMemberCount: () => Promise<number>;
+  
+  // Manual refresh method
+  refreshState: () => Promise<void>;
+  
+  // Add contract instances
+  daoToken: ethers.Contract | null;
+  stateConstituent: ethers.Contract | null;
+  logicConstituent: ethers.Contract | null;
+  viewConstituent: ethers.Contract | null;
+}
+
+export function useContractEvents(): UseContractEventsReturn {
+  // Get atoms from global state
+  const [provider] = useAtom(providerAtom);
+  const [signer] = useAtom(signerAtom);
+  const [account] = useAtom(accountAtom);
+  const [chainId] = useAtom(chainIdAtom);
+
+  // Local state for event manager
+  const [eventManager, setEventManager] = useState<ContractEventManager | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  
+  const [contracts, setContracts] = useState<{
+    daoToken: ethers.Contract | null;
+    stateConstituent: ethers.Contract | null;
+    logicConstituent: ethers.Contract | null;
+    viewConstituent: ethers.Contract | null;
+  }>({
+    daoToken: null,
+    stateConstituent: null,
+    logicConstituent: null,
+    viewConstituent: null
+  });
+
+  // Initialize the event manager when dependencies change
+  useEffect(() => {
+    // We need both provider and signer to proceed
+    if (!provider || !signer) {
+      setIsInitialized(false);
+      return;
+    }
+
+    try {
+      // Create new event manager instance
+      const DAOTokenABI = require('../contracts/abis/DAOToken.json');
+      const StateConstituentABI = require('../contracts/abis/StateConstituent.json');
+      const LogicConstituentABI = require('../contracts/abis/LogicConstituent.json');
+      const ViewConstituentABI = require('../contracts/abis/ViewConstituent.json');
+      
+      // Contract addresses - you should get these from your environment config
+      const addresses = {
+        daoToken: '0x972Dc127cD4bbAfC87f885a554d8208113d768C6',
+        logicConstituent: '0x5215bcD28f7A54E11F5A0ca3A687a679Ff69FeCC',
+        stateConstituent: '0x98f345C539f67e8D6D5B7ceD4048b4Ee99307910',
+        viewConstituent: '0x8A2F613a31d6FdB9EEA3b6e6DD45959d832224FD'
+      };
+      
+      // Initialize contracts
+      const newContracts = {
+        daoToken: new ethers.Contract(addresses.daoToken, DAOTokenABI, signer),
+        stateConstituent: new ethers.Contract(addresses.stateConstituent, StateConstituentABI, signer),
+        logicConstituent: new ethers.Contract(addresses.logicConstituent, LogicConstituentABI, signer),
+        viewConstituent: new ethers.Contract(addresses.viewConstituent, ViewConstituentABI, signer)
+      };
+      
+      const manager = new ContractEventManager(provider, signer);
+      setEventManager(manager);
+      setContracts(newContracts);
+      setIsInitialized(true);
+      setError(null);
+
+      // Cleanup function to remove listeners when component unmounts
+      return () => {
+        manager.cleanup();
+        setEventManager(null);
+        setIsInitialized(false);
+      };
+    } catch (err) {
+      console.error('Failed to initialize contracts:', err);
+      setError(err instanceof Error ? err : new Error('Unknown error initializing contracts'));
+      setIsInitialized(false);
+    }
+  }, [provider, signer, chainId]); // Reinitialize if these dependencies change
+
+  // Contract interaction methods wrapped in useCallback
+  const createProposal = useCallback(async (
+    description: string,
+    category: number
+  ): Promise<string> => {
+    if (!eventManager) {
+      throw new Error('Contract event manager not initialized');
+    }
+
+    try {
+      return await eventManager.createProposal(description, category);
+    } catch (err) {
+      console.error('Error creating proposal:', err);
+      throw err;
+    }
+  }, [eventManager]);
+
+  const castVote = useCallback(async (
+    proposalId: string,
+    support: boolean
+  ): Promise<void> => {
+    if (!eventManager) {
+      throw new Error('Contract event manager not initialized');
+    }
+
+    try {
+      await eventManager.castVote(proposalId, support);
+    } catch (err) {
+      console.error('Error casting vote:', err);
+      throw err;
+    }
+  }, [eventManager]);
+
+  // Event subscription method
+  const subscribeToEvents = useCallback((handlers: EventHandlers) => {
+    if (!eventManager) {
+      console.warn('Cannot subscribe to events: manager not initialized');
+      return;
+    }
+
+    // Set up event listeners based on provided handlers
+    if (handlers.onProposalCreated) {
+      eventManager.on('ProposalCreated', handlers.onProposalCreated);
+    }
+    if (handlers.onVoteCast) {
+      eventManager.on('VoteCast', handlers.onVoteCast);
+    }
+    if (handlers.onDAORegistered) {
+      eventManager.on('DAORegistered', handlers.onDAORegistered);
+    }
+  }, [eventManager]);
+
+  // Query methods
+  const getProposal = useCallback(async (proposalId: string) => {
+    if (!eventManager) {
+      throw new Error('Contract event manager not initialized');
+    }
+    return await eventManager.getProposal(proposalId);
+  }, [eventManager]);
+
+  const getActiveMemberCount = useCallback(async () => {
+    if (!eventManager) {
+      throw new Error('Contract event manager not initialized');
+    }
+    return await eventManager.getActiveMemberCount();
+  }, [eventManager]);
+
+  // Manual refresh method for forcing state updates
+  const refreshState = useCallback(async () => {
+    if (!eventManager) {
+      throw new Error('Contract event manager not initialized');
+    }
+
+    try {
+      // Cleanup existing manager
+      eventManager.cleanup();
+      
+      // Create new manager instance to refresh all listeners
+      if (provider && signer) {
+        const newManager = new ContractEventManager(provider, signer);
+        setEventManager(newManager);
+      }
+    } catch (err) {
+      console.error('Error refreshing contract state:', err);
+      throw err;
+    }
+  }, [eventManager, provider, signer]);
+
+  // Return the contracts along with other values
+  return {
+    isInitialized,
+    error,
+    createProposal,
+    castVote,
+    subscribeToEvents,
+    getProposal,
+    getActiveMemberCount,
+    refreshState,
+    // Add contract instances to return value
+    daoToken: contracts.daoToken,
+    stateConstituent: contracts.stateConstituent,
+    logicConstituent: contracts.logicConstituent,
+    viewConstituent: contracts.viewConstituent
+  };
+}
+
+// Usage example in a component:
+/*
+function ProposalComponent() {
+  const {
+    isInitialized,
+    error,
+    createProposal,
+    castVote
+  } = useContractEvents();
+
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    const handlers = {
+      onProposalCreated: (event) => {
+        console.log('New proposal created:', event);
+      },
+      onVoteCast: (event) => {
+        console.log('Vote cast:', event);
+      }
+    };
+
+    subscribeToEvents(handlers);
+  }, [isInitialized]);
+
+  const handleCreateProposal = async () => {
+    try {
+      const proposalId = await createProposal(
+        "My proposal description",
+        1 // category
+      );
+      console.log('Created proposal:', proposalId);
+    } catch (err) {
+      console.error('Failed to create proposal:', err);
+    }
+  };
+
+  return (
+    <div>
+      {error && <div>Error: {error.message}</div>}
+      {!isInitialized && <div>Loading...</div>}
+      {isInitialized && (
+        <button onClick={handleCreateProposal}>
+          Create Proposal
+        </button>
+      )}
+    </div>
+  );
+}
+*/
+ 
+src/services/TransactionManager.ts
+ 
+// src/services/TransactionManager.ts
+
+import { ethers } from 'ethers';
+import { EventEmitter } from 'events';
+
+// First, let's define our transaction states and types
+export enum TransactionState {
+  PENDING = 'PENDING',       // Transaction is waiting to be sent
+  SUBMITTED = 'SUBMITTED',   // Transaction has been sent to network
+  MINING = 'MINING',        // Transaction is being mined
+  CONFIRMING = 'CONFIRMING', // Waiting for confirmation blocks
+  COMPLETED = 'COMPLETED',   // Transaction successfully completed
+  FAILED = 'FAILED',        // Transaction failed
+  CANCELLED = 'CANCELLED'    // Transaction was cancelled
+}
+
+export interface Transaction {
+  id: string;               // Unique identifier for tracking
+  hash?: string;           // Transaction hash once submitted
+  description: string;     // Human-readable description
+  method: string;          // Contract method being called
+  params: any[];          // Method parameters
+  state: TransactionState; // Current transaction state
+  confirmations: number;   // Number of confirmations received
+  error?: Error;          // Error if transaction failed
+  gasPrice?: ethers.BigNumber; // Gas price used
+  gasLimit?: ethers.BigNumber; // Gas limit used
+  nonce?: number;         // Transaction nonce
+  contract: ethers.Contract; // Contract instance
+  createTime: number;     // When transaction was created
+  submitTime?: number;    // When transaction was submitted
+  completeTime?: number;  // When transaction completed/failed
+  retryCount?: number;
+}
+
+// Configuration options for transaction management
+interface TransactionConfig {
+  minGasPrice?: ethers.BigNumber;
+  maxGasPrice?: ethers.BigNumber;
+  gasIncreasePercentage?: number; // For retry with higher gas
+  requiredConfirmations?: number;
+  maxRetries?: number;
+  retryInterval?: number; // ms between retries
+}
+
+export class TransactionManager extends EventEmitter {
+  private transactions: Map<string, Transaction>;
+  private provider: ethers.providers.Provider;
+  private signer: ethers.Signer;
+  
+  // Default configuration values
+  private readonly config: Required<TransactionConfig> = {
+    minGasPrice: ethers.utils.parseUnits('1', 'gwei'),
+    maxGasPrice: ethers.utils.parseUnits('500', 'gwei'),
+    gasIncreasePercentage: 10,
+    requiredConfirmations: 2,
+    maxRetries: 3,
+    retryInterval: 15000 // 15 seconds
+  };
+
+  constructor(
+    provider: ethers.providers.Provider,
+    signer: ethers.Signer,
+    config?: Partial<TransactionConfig>
+  ) {
+    super();
+    this.provider = provider;
+    this.signer = signer;
+    this.transactions = new Map();
+
+    // Override default config with provided values
+    if (config) {
+      this.config = { ...this.config, ...config };
+    }
+
+    // Start listening for network events
+    this.setupNetworkListeners();
+  }
+
+  private setupNetworkListeners(): void {
+    // Monitor block events to track confirmations
+    this.provider.on('block', this.handleNewBlock.bind(this));
+    
+    // Handle network changes
+    this.provider.on('network', (newNetwork, oldNetwork) => {
+      if (oldNetwork) {
+        // Network changed - check pending transactions
+        this.handleNetworkChange(newNetwork.chainId);
+      }
+    });
+  }
+
+  private async handleNewBlock(blockNumber: number): Promise<void> {
+    // Update confirmations for all mining/confirming transactions
+    const promises = Array.from(this.transactions.values())
+      .filter(tx => tx.state === TransactionState.MINING || 
+                    tx.state === TransactionState.CONFIRMING)
+      .map(async (tx) => {
+        if (!tx.hash) return;
+
+        try {
+          const receipt = await this.provider.getTransactionReceipt(tx.hash);
+          if (receipt) {
+            // Update confirmation count
+            tx.confirmations = blockNumber - receipt.blockNumber + 1;
+
+            // Check if we have enough confirmations
+            if (tx.confirmations >= this.config.requiredConfirmations) {
+              await this.finalizeTransaction(tx.id, receipt);
+            } else if (tx.state === TransactionState.MINING) {
+              // Move to confirming state once we have first confirmation
+              this.updateTransactionState(tx.id, TransactionState.CONFIRMING);
+            }
+          }
+        } catch (error) {
+          console.error(`Error checking receipt for transaction ${tx.id}:`, error);
+        }
+      });
+
+    await Promise.all(promises);
+  }
+
+  private handleNetworkChange(newChainId: number): void {
+    // Check all pending transactions when network changes
+    const pending = Array.from(this.transactions.values())
+      .filter(tx => tx.state === TransactionState.SUBMITTED || 
+                    tx.state === TransactionState.MINING);
+
+    pending.forEach(tx => {
+      this.updateTransactionState(tx.id, TransactionState.FAILED, 
+        new Error('Network changed while transaction was pending'));
+    });
+  }
+
+  // Create and submit a new transaction
+  public async submitTransaction(
+    contract: ethers.Contract,
+    method: string,
+    params: any[],
+    description: string
+  ): Promise<string> {
+    // Create transaction ID and record
+    const id = ethers.utils.id(Date.now().toString() + Math.random());
+    const transaction: Transaction = {
+      id,
+      description,
+      method,
+      params,
+      state: TransactionState.PENDING,
+      confirmations: 0,
+      contract,
+      createTime: Date.now()
+    };
+
+    this.transactions.set(id, transaction);
+    this.emit('transactionCreated', { ...transaction });
+
+    try {
+      // Get gas estimate and price
+      const gasLimit = await contract.estimateGas[method](...params);
+      const gasPrice = await this.getGasPrice();
+
+      // Update transaction with gas info
+      transaction.gasLimit = gasLimit;
+      transaction.gasPrice = gasPrice;
+      
+      // Get nonce
+      transaction.nonce = await this.signer.getTransactionCount();
+
+      // Submit transaction
+      await this.sendTransaction(id);
+
+      return id;
+    } catch (error) {
+      this.handleTransactionError(id, error as Error);
+      throw error;
+    }
+  }
+
+  private async sendTransaction(id: string): Promise<void> {
+    const tx = this.transactions.get(id);
+    if (!tx) throw new Error('Transaction not found');
+
+    try {
+      // Update state to submitted
+      this.updateTransactionState(id, TransactionState.SUBMITTED);
+      
+      // Send transaction
+      const response = await tx.contract[tx.method](...tx.params, {
+        gasLimit: tx.gasLimit,
+        gasPrice: tx.gasPrice,
+        nonce: tx.nonce
+      });
+
+      // Update transaction with hash
+      tx.hash = response.hash;
+      tx.submitTime = Date.now();
+      this.updateTransactionState(id, TransactionState.MINING);
+
+      // Wait for transaction to be mined
+      const receipt = await response.wait(1); // Wait for 1 confirmation
+      
+      // Update confirmation count
+      tx.confirmations = 1;
+      
+      if (receipt.status === 0) {
+        throw new Error('Transaction reverted');
+      }
+    } catch (error) {
+      await this.handleTransactionError(id, error as Error);
+    }
+  }
+
+  private async handleTransactionError(id: string, error: Error): Promise<void> {
+    const tx = this.transactions.get(id);
+    if (!tx) return;
+
+    // Check if we should retry
+    if (this.shouldRetry(tx, error)) {
+      // Increase gas price for retry
+      if (tx.gasPrice) {
+        const newGasPrice = tx.gasPrice.mul(100 + this.config.gasIncreasePercentage)
+                                     .div(100);
+        if (newGasPrice.lte(this.config.maxGasPrice)) {
+          tx.gasPrice = newGasPrice;
+          // Wait before retry
+          await new Promise(resolve => setTimeout(resolve, this.config.retryInterval));
+          // Retry transaction
+          await this.sendTransaction(id);
+          return;
+        }
+      }
+    }
+
+    // If we get here, we're not retrying
+    this.updateTransactionState(id, TransactionState.FAILED, error);
+  }
+
+  private shouldRetry(tx: Transaction, error: Error): boolean {
+    // Only retry if under max attempts
+    const attempts = tx.retryCount || 0;
+    if (attempts >= this.config.maxRetries) return false;
+
+    // Check error types that warrant retry
+    const message = error.message.toLowerCase();
+    return message.includes('nonce too low') ||
+           message.includes('replacement fee too low') ||
+           message.includes('transaction underpriced') ||
+           message.includes('network error') ||
+           message.includes('timeout');
+  }
+
+  private async getGasPrice(): Promise<ethers.BigNumber> {
+    const gasPrice = await this.provider.getGasPrice();
+    
+    // Ensure gas price is within bounds
+    if (gasPrice.lt(this.config.minGasPrice)) {
+      return this.config.minGasPrice;
+    }
+    if (gasPrice.gt(this.config.maxGasPrice)) {
+      return this.config.maxGasPrice;
+    }
+    
+    return gasPrice;
+  }
+
+  private async finalizeTransaction(
+    id: string,
+    receipt: ethers.providers.TransactionReceipt
+  ): Promise<void> {
+    const tx = this.transactions.get(id);
+    if (!tx) return;
+
+    // Update final state based on receipt status
+    const finalState = receipt.status === 1 ? 
+      TransactionState.COMPLETED : 
+      TransactionState.FAILED;
+
+    tx.completeTime = Date.now();
+    this.updateTransactionState(id, finalState);
+  }
+
+  private updateTransactionState(
+    id: string,
+    state: TransactionState,
+    error?: Error
+  ): void {
+    const tx = this.transactions.get(id);
+    if (!tx) return;
+
+    tx.state = state;
+    if (error) tx.error = error;
+
+    // Emit state change event
+    this.emit('transactionUpdated', { ...tx });
+
+    // Emit specific events based on state
+    switch (state) {
+      case TransactionState.COMPLETED:
+        this.emit('transactionCompleted', { ...tx });
+        break;
+      case TransactionState.FAILED:
+        this.emit('transactionFailed', { ...tx, error });
+        break;
+    }
+  }
+
+  // Public methods for transaction info
+  public getTransaction(id: string): Transaction | undefined {
+    return this.transactions.get(id);
+  }
+
+  public getPendingTransactions(): Transaction[] {
+    return Array.from(this.transactions.values())
+      .filter(tx => 
+        tx.state === TransactionState.PENDING ||
+        tx.state === TransactionState.SUBMITTED ||
+        tx.state === TransactionState.MINING ||
+        tx.state === TransactionState.CONFIRMING
+      );
+  }
+
+  // Cleanup method
+  public cleanup(): void {
+    this.provider.removeAllListeners('block');
+    this.provider.removeAllListeners('network');
+    this.removeAllListeners();
+  }
+}
+ 
+src/views/components/dashboard/DAODashboard.tsx
+ 
+// src/views/components/dashboard/DAODashboard.tsx
+
+import React, { useEffect, useState } from 'react';
+import { useContractEvents } from 'hooks/useContractEvents';
+import { ethers } from 'ethers';
+/*import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle 
+} from 'components/ui/card';
+import { 
+  Alert,
+  AlertDescription,
+  AlertTitle 
+} from 'components/ui/alert';*/
+
+import { 
+  Card,
+  CardHeader,
+  CardContent,
+  Typography,
+  Alert,
+  AlertTitle 
+} from '@mui/material';
+
+import { 
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line 
+} from 'recharts';
+import { Loader2 } from 'lucide-react';
+
+// Import subcomponents we'll create next
+import ProposalCreation from './ProposalCreation';
+import ProposalList from './ProposalList';
+import VotingInterface from './VotingInterface';
+import TokenMetrics from './TokenMetrics';
+import MembershipStats from './MembershipStats';
+
+interface ActivityItem {
+  timestamp: number;
+  type: string;
+  details: string;
+}
+
+interface VotingHistoryItem {
+  proposal: string;
+  for: number;
+  against: number;
+}
+
+interface MemberGrowthItem {
+  month: string;
+  members: number;
+}
+
+// Then create an interface for the entire dashboard data structure
+interface DashboardData {
+  proposalCount: number;
+  activeProposals: number;
+  totalMembers: number;
+  voterParticipation: number;
+  tokenPrice: number;
+  treasuryBalance: number;
+  recentActivity: ActivityItem[];
+  votingHistory: VotingHistoryItem[];
+  memberGrowth: MemberGrowthItem[];
+}
+
+const DAODashboard = () => {
+  const { 
+    isInitialized,
+    error,
+    refreshState
+  } = useContractEvents();
+
+  const [dashboardData, setDashboardData] = useState<DashboardData>({
+    proposalCount: 0,
+    activeProposals: 0,
+    totalMembers: 0,
+    voterParticipation: 0,
+    tokenPrice: 0,
+    treasuryBalance: 0,
+    recentActivity: [],
+    votingHistory: [],
+    memberGrowth: []
+  });
+
+  // Fetch dashboard data when initialized
+  useEffect(() => {
+    if (!isInitialized) return;
+    fetchDashboardData();
+  }, [isInitialized]);
+
+  const fetchDashboardData = async () => {
+    try {
+      // ... Fetch data using contract events context
+      // This would be implemented fully with actual contract calls
+      setDashboardData({
+        proposalCount: 12,
+        activeProposals: 3,
+        totalMembers: 150,
+        voterParticipation: 78,
+        tokenPrice: 1.24,
+        treasuryBalance: 50000,
+        recentActivity: [
+          { timestamp: Date.now() - 3600000, type: 'proposal_created', details: 'New governance proposal' },
+          { timestamp: Date.now() - 7200000, type: 'vote_cast', details: 'Votes cast on Proposal #11' }
+        ],
+        votingHistory: [
+          { proposal: 'Prop 1', for: 75, against: 25 },
+          { proposal: 'Prop 2', for: 60, against: 40 }
+        ],
+        memberGrowth: [
+          { month: 'Jan', members: 100 },
+          { month: 'Feb', members: 120 },
+          { month: 'Mar', members: 150 }
+        ]
+      });
+    } catch (err) {
+      console.error('Error fetching dashboard data:', err);
+    }
+  };
+
+  if (!isInitialized) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="w-8 h-8 animate-spin" />
+        <span className="ml-2">Initializing DAO Dashboard...</span>
+      </div>
+    );
+  }
+
+if (error) {
+  return (
+    <Alert 
+      severity="error"  // Material-UI uses severity instead of variant
+      sx={{            // We can use sx prop for additional styling
+        margin: 2,     // Adds some spacing around the alert
+        '& .MuiAlert-message': {  // Targets the message area of the alert
+          width: '100%'  // Ensures message takes full width
+        }
+      }}
+    >
+      <Typography variant="subtitle1" component="h2" sx={{ fontWeight: 'bold', mb: 1 }}>
+        Error
+      </Typography>
+      <Typography variant="body2">
+        Failed to load dashboard: {error.message}
+      </Typography>
+    </Alert>
+  );
+}
+
+  return (
+    <div className="container mx-auto p-6 space-y-6">
+      {/* Overview Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader>
+            <Typography variant="h6">Total Proposals</Typography>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">
+              {dashboardData.proposalCount}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {dashboardData.activeProposals} active
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <Typography variant="h6">Members</Typography>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">
+              {dashboardData.totalMembers}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {dashboardData.voterParticipation}% participation
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <Typography variant="h6">Token Price</Typography>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">
+              ${dashboardData.tokenPrice}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              24h volume: $25,420
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <Typography variant="h6">Treasury</Typography>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">
+              ${dashboardData.treasuryBalance.toLocaleString()}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              +2.5% from last month
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Proposals Section */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card>
+            <CardHeader>
+              <Typography variant="h6">Create Proposal</Typography>
+            </CardHeader>
+            <CardContent>
+              <ProposalCreation />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <Typography variant="h6">Active Proposals</Typography>
+            </CardHeader>
+            <CardContent>
+              <ProposalList proposals={[]} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <Typography variant="h6">Voting History</Typography>
+            </CardHeader>
+            <CardContent className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={dashboardData.votingHistory}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="proposal" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="for" fill="#4ade80" name="For" />
+                  <Bar dataKey="against" fill="#f87171" name="Against" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <Typography variant="h6">Member Growth</Typography>
+            </CardHeader>
+            <CardContent className="h-[200px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={dashboardData.memberGrowth}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line 
+                    type="monotone" 
+                    dataKey="members" 
+                    stroke="#8884d8" 
+                    name="Members"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <Typography variant="h6">Recent Activity</Typography>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {dashboardData.recentActivity.map((activity, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <div className="w-2 h-2 rounded-full bg-primary" />
+                    <div>
+                      <div className="text-sm font-medium">
+                        {activity.details}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {new Date(activity.timestamp).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <TokenMetrics />
+          <MembershipStats />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DAODashboard;
+ 
+src/views/components/dashboard/ProposalCreation.tsx
+ 
+// src/views/components/dashboard/ProposalCreation.tsx
+
+/*import React, { useState } from 'react';
+import { useContractEventsContext } from 'hooks/useContractEvents';
+import { 
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";*/
+
+import React, { useState } from 'react';
+import { useContractEvents } from 'hooks/useContractEvents';
+import {
+  TextField,
+  FormControl,
+  FormLabel,
+  Select,
+  MenuItem,
+  Button,
+  Box,
+  Grid,
+  Paper,
+  Typography,
+  CircularProgress,
+  Snackbar,
+  Alert
+} from '@mui/material';
+
+import { Loader2 } from 'lucide-react';
+
+const PROPOSAL_CATEGORIES = [
+  { id: 1, name: 'Governance' },
+  { id: 2, name: 'Treasury' },
+  { id: 3, name: 'Technical' },
+  { id: 4, name: 'Community' }
+];
+
+const ProposalCreation = () => {
+  // Keep the existing state setup
+  const { createProposal } = useContractEvents();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    category: '',
+    votingPeriod: '7'
+  });
+  
+  // Add state for the Snackbar (replacing toast)
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
+
+  // Keep the existing handleSubmit with minor modifications
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const proposalData = {
+        title: formData.title,
+        description: formData.description,
+        category: parseInt(formData.category),
+        votingPeriod: parseInt(formData.votingPeriod) * 24 * 60 * 60
+      };
+
+      await createProposal(
+        JSON.stringify(proposalData),
+        proposalData.category
+      );
+
+      setSnackbar({
+        open: true,
+        message: "Your proposal has been successfully submitted to the DAO.",
+        severity: 'success'
+      });
+
+      setFormData({
+        title: '',
+        description: '',
+        category: '',
+        votingPeriod: '7'
+      });
+    } catch (error) {
+      console.error('Error creating proposal:', error);
+      setSnackbar({
+        open: true,
+        message: "Failed to create proposal. Please try again.",
+        severity: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Box component="form" onSubmit={handleSubmit} sx={{ '& > *': { mb: 3 } }}>
+      {/* Title Field */}
+      <FormControl fullWidth>
+        <FormLabel>Proposal Title</FormLabel>
+        <TextField
+          placeholder="Enter proposal title"
+          value={formData.title}
+          onChange={(e) => setFormData(prev => ({
+            ...prev,
+            title: e.target.value
+          }))}
+          disabled={loading}
+          required
+          variant="outlined"
+        />
+      </FormControl>
+
+      {/* Description Field */}
+      <FormControl fullWidth>
+        <FormLabel>Description</FormLabel>
+        <TextField
+          placeholder="Describe your proposal"
+          value={formData.description}
+          onChange={(e) => setFormData(prev => ({
+            ...prev,
+            description: e.target.value
+          }))}
+          disabled={loading}
+          required
+          multiline
+          rows={4}
+          variant="outlined"
+        />
+      </FormControl>
+
+      {/* Category and Voting Period Fields */}
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          <FormControl fullWidth>
+            <FormLabel>Category</FormLabel>
+            <Select
+              value={formData.category}
+              onChange={(e) => setFormData(prev => ({
+                ...prev,
+                category: e.target.value
+              }))}
+              disabled={loading}
+              displayEmpty
+            >
+              <MenuItem value="" disabled>Select category</MenuItem>
+              {PROPOSAL_CATEGORIES.map((category) => (
+                <MenuItem 
+                  key={category.id} 
+                  value={category.id.toString()}
+                >
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <FormControl fullWidth>
+            <FormLabel>Voting Period (days)</FormLabel>
+            <TextField
+              type="number"
+              InputProps={{ inputProps: { min: 1, max: 30 } }}
+              value={formData.votingPeriod}
+              onChange={(e) => setFormData(prev => ({
+                ...prev,
+                votingPeriod: e.target.value
+              }))}
+              disabled={loading}
+              required
+              variant="outlined"
+            />
+          </FormControl>
+        </Grid>
+      </Grid>
+
+      {/* Submit Button */}
+      <Button 
+        type="submit"
+        variant="contained"
+        fullWidth
+        disabled={loading || !formData.title || !formData.description || !formData.category}
+        sx={{ mt: 2 }}
+      >
+        {loading ? (
+          <>
+            <CircularProgress size={20} sx={{ mr: 1 }} />
+            Creating Proposal...
+          </>
+        ) : (
+          'Create Proposal'
+        )}
+      </Button>
+
+      {/* Preview Card */}
+      {formData.title && formData.description && (
+        <Paper sx={{ mt: 3, p: 2 }}>
+          <Typography variant="subtitle1" sx={{ mb: 2 }}>Preview</Typography>
+          <Box sx={{ '& > *': { mb: 1 } }}>
+            <Typography variant="body1" fontWeight="medium">
+              {formData.title}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {formData.description}
+            </Typography>
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'space-between',
+              color: 'text.secondary',
+              fontSize: '0.875rem'
+            }}>
+              <span>
+                Category: {PROPOSAL_CATEGORIES.find(c => 
+                  c.id.toString() === formData.category
+                )?.name}
+              </span>
+              <span>Voting Period: {formData.votingPeriod} days</span>
+            </Box>
+          </Box>
+        </Paper>
+      )}
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+      >
+        <Alert 
+          onClose={() => setSnackbar(prev => ({ ...prev, open: false }))} 
+          severity={snackbar.severity as 'success' | 'error'}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </Box>
+  );
+};
+
+export default ProposalCreation;
+ 
+src/views/components/dashboard/VotingInterface.tsx
+ 
+// src/views/components/dashboard/VotingInterface.tsx
+
+import React, { useState, useEffect } from 'react';
+import { useContractEvents } from 'hooks/useContractEvents';
+import { ethers } from 'ethers';
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Button,
+  LinearProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Box
+} from '@mui/material';
+// Timer and other icons can still come from lucide-react
+import { Loader2, ThumbsUp, ThumbsDown, Timer, Users } from 'lucide-react';
+
+/*import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";*/
+import useToast from 'hooks/use-toast';
+
+interface Proposal {
+  id: string;
+  title: string;
+  description: string;
+  proposer: string;
+  startTime: number;
+  endTime: number;
+  forVotes: ethers.BigNumber;
+  againstVotes: ethers.BigNumber;
+  executed: boolean;
+  category: number;
+}
+
+interface VotingInterfaceProps {
+  proposal: Proposal;
+}
+
+const VotingInterface: React.FC<VotingInterfaceProps> = ({ proposal }) => {
+  const { castVote } = useContractEvents();
+  //const { toast } = useToast();
+  const [_, showMessage, __] = useToast();
+  const [loading, setLoading] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState<string>('');
+  const [voteStatus, setVoteStatus] = useState<{
+    hasVoted: boolean;
+    support?: boolean;
+  }>({ hasVoted: false });
+  
+const [voteForDialogOpen, setVoteForDialogOpen] = useState(false);
+const [voteAgainstDialogOpen, setVoteAgainstDialogOpen] = useState(false);
+
+  // Calculate voting statistics
+  const totalVotes = proposal.forVotes.add(proposal.againstVotes);
+  const forPercentage = totalVotes.gt(0)
+    ? proposal.forVotes.mul(100).div(totalVotes).toNumber()
+    : 0;
+  const againstPercentage = 100 - forPercentage;
+
+  // Update time remaining
+  useEffect(() => {
+    const updateTimeRemaining = () => {
+      const now = Date.now();
+      const end = proposal.endTime * 1000;
+      const diff = end - now;
+
+      if (diff <= 0) {
+        setTimeRemaining('Voting ended');
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+      setTimeRemaining(
+        `${days}d ${hours}h ${minutes}m remaining`
+      );
+    };
+
+    updateTimeRemaining();
+    const interval = setInterval(updateTimeRemaining, 60000);
+    return () => clearInterval(interval);
+  }, [proposal.endTime]);
+
+  const handleVote = async (support: boolean) => {
+    setLoading(true);
+    try {
+      /*const tx = await castVote(proposal.id, support);
+      await tx.wait();*/
+      
+      await castVote(proposal.id, support);
+      
+      setVoteStatus({ hasVoted: true, support });
+      showMessage(
+        "You voted ${support ? 'for' : 'against'} the proposal.",
+        "success"
+      ); // title: "Vote Cast Successfully",
+    } catch (error) {
+      console.error('Error casting vote:', error);
+      showMessage(
+        "Failed to cast your vote. Please try again.",
+        "error"
+      ); // title: "Error Casting Vote"
+    } finally {
+    setLoading(false);
+    setVoteForDialogOpen(false);
+    setVoteAgainstDialogOpen(false);
+    }
+  };
+  
+  const isVotingActive = Date.now() < proposal.endTime * 1000;
+
+  return (
+    <Card className="w-full">
+    <CardHeader
+      title={
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Typography variant="h6">
+            {proposal.title}
+            <Typography
+              component="span"
+              variant="subtitle2"
+              sx={{ ml: 1, color: 'text.secondary' }}
+            >
+              #{proposal.id}
+            </Typography>
+          </Typography>
+        </Box>
+      }
+      subheader={
+        <Box sx={{ mt: 1 }}>
+          <Typography variant="body2" color="text.secondary">
+            {proposal.description}
+          </Typography>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 2, 
+            mt: 1,
+            color: 'text.secondary'
+          }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ mr: 0.5 }}>
+              <Timer size={16} />
+            </Box>
+            {timeRemaining}
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ mr: 0.5 }}>
+              <Users size={16} />
+            </Box>
+            {totalVotes.toString()} votes
+          </Box>
+          </Box>
+        </Box>
+      }
+    />
+<CardContent sx={{ py: 2 }}>
+  <Box sx={{ mb: 4 }}>
+    {/* For Votes */}
+    <Box sx={{ mb: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+        <Typography variant="body2">For</Typography>
+        <Typography variant="body2">{forPercentage}%</Typography>
+      </Box>
+      <LinearProgress 
+        variant="determinate" 
+        value={forPercentage}
+        sx={{
+          height: 8,
+          backgroundColor: 'error.light',
+          '& .MuiLinearProgress-bar': {
+            backgroundColor: 'success.main'
+          }
+        }}
+      />
+      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+        {ethers.utils.formatEther(proposal.forVotes)} votes
+      </Typography>
+    </Box>
+
+    {/* Against Votes */}
+    <Box sx={{ mb: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+        <Typography variant="body2">Against</Typography>
+        <Typography variant="body2">{againstPercentage}%</Typography>
+      </Box>
+      <LinearProgress 
+        variant="determinate" 
+        value={againstPercentage}
+        sx={{
+          height: 8,
+          backgroundColor: 'success.light',
+          '& .MuiLinearProgress-bar': {
+            backgroundColor: 'error.main'
+          }
+        }}
+      />
+      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+        {ethers.utils.formatEther(proposal.againstVotes)} votes
+      </Typography>
+    </Box>
+  </Box>
+</CardContent>
+<CardContent sx={{ 
+  display: 'flex', 
+  justifyContent: 'space-between', 
+  px: 2, 
+  pb: 2 
+}}>
+  {isVotingActive && !voteStatus.hasVoted ? (
+    <>
+      <Button
+        variant="outlined"
+        color="error"
+        onClick={() => setVoteAgainstDialogOpen(true)}
+        disabled={loading}
+        startIcon={<ThumbsDown />}
+        sx={{ flex: 1, mr: 1 }}
+      >
+        Vote Against
+      </Button>
+      <Button
+        variant="contained"
+        color="success"
+        onClick={() => setVoteForDialogOpen(true)}
+        disabled={loading}
+        startIcon={<ThumbsUp />}
+        sx={{ flex: 1, ml: 1 }}
+      >
+        Vote For
+      </Button>
+
+      {/* Vote Against Dialog */}
+      <Dialog 
+        open={voteAgainstDialogOpen} 
+        onClose={() => setVoteAgainstDialogOpen(false)}
+      >
+        <DialogTitle>Confirm Vote Against</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to vote against this proposal? 
+            This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setVoteAgainstDialogOpen(false)}>Cancel</Button>
+          <Button 
+            onClick={() => handleVote(false)}
+            color="error"
+            variant="contained"
+          >
+            {loading ? (
+              <Loader2 className="animate-spin mr-2 h-4 w-4" />
+            ) : 'Confirm Vote Against'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Vote For Dialog - Similar structure to Vote Against Dialog */}
+      {/* ... */}
+    </>
+  ) : (
+    <Box sx={{ 
+      width: '100%', 
+      textAlign: 'center',
+      color: 'text.secondary'
+    }}>
+      {voteStatus.hasVoted ? (
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Typography>
+            You voted {voteStatus.support ? 'for' : 'against'} this proposal
+          </Typography>
+          <Box sx={{ ml: 1 }}>
+            {voteStatus.support ? (
+              <ThumbsUp size={16} />
+            ) : (
+              <ThumbsDown size={16} />
+            )}
+          </Box>
+        </Box>
+      ) : (
+        <Typography>Voting has ended</Typography>
+      )}
+    </Box>
+  )}
+</CardContent>
+    </Card>
+  );
+};
+
+export default VotingInterface;
+ 
+src/views/components/dashboard/TokenMetrics.tsx
+ 
+// src/views/components/dashboard/TokenMetrics.tsx
+
+import React, { useEffect, useState } from 'react';
+import { useContractEvents } from 'hooks/useContractEvents';
+import { ethers } from 'ethers';
+/*import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";*/
+
+import { 
+  Card,
+  CardHeader,
+  CardContent,
+  Typography,
+  Alert,
+  AlertTitle 
+} from '@mui/material';
+
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts';
+import { Loader2 } from 'lucide-react';
+
+interface TokenMetrics {
+  price: number;
+  supply: string;
+  marketCap: string;
+  volume24h: string;
+  priceChange24h: number;
+  totalStaked: string;
+  treasuryBalance: string;
+  priceHistory: Array<{
+    timestamp: number;
+    price: number;
+  }>;
+}
+
+const TokenMetrics = () => {
+  const { daoToken } = useContractEvents();
+  const [loading, setLoading] = useState(true);
+  const [metrics, setMetrics] = useState<TokenMetrics>({
+    price: 0,
+    supply: '0',
+    marketCap: '0',
+    volume24h: '0',
+    priceChange24h: 0,
+    totalStaked: '0',
+    treasuryBalance: '0',
+    priceHistory: []
+  });
+
+  useEffect(() => {
+    fetchTokenMetrics();
+    const interval = setInterval(fetchTokenMetrics, 60000); // Update every minute
+    return () => clearInterval(interval);
+  }, [daoToken]);
+
+  const fetchTokenMetrics = async () => {
+    if (!daoToken) return;
+
+    try {
+      const [
+        currentPrice,
+        totalSupply,
+        treasuryBalance,
+        stakedBalance
+      ] = await Promise.all([
+        daoToken.currentDailyPrice(),
+        daoToken.totalSupply(),
+        daoToken.treasuryBalance(),
+        daoToken.totalStaked()
+      ]);
+
+      // Format values
+      const price = ethers.utils.formatEther(currentPrice);
+      const supply = ethers.utils.formatEther(totalSupply);
+      const marketCap = (parseFloat(price) * parseFloat(supply)).toFixed(2);
+
+      setMetrics(prev => ({
+        price: parseFloat(price),
+        supply,
+        marketCap,
+        volume24h: '150,000', // Example - would come from an oracle or aggregator
+        priceChange24h: 2.5,   // Example
+        totalStaked: ethers.utils.formatEther(stakedBalance),
+        treasuryBalance: ethers.utils.formatEther(treasuryBalance),
+        priceHistory: [
+          ...prev.priceHistory,
+          {
+            timestamp: Date.now(),
+            price: parseFloat(price)
+          }
+        ].slice(-24) // Keep last 24 data points
+      }));
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching token metrics:', error);
+      setLoading(false);
+    }
+  };
+
+  const formatUSD = (value: number | string) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(Number(value));
+  };
+
+  const formatPercent = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'percent',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+      signDisplay: 'exceptZero'
+    }).format(value / 100);
+  };
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <Typography variant="h6">Token Metrics</Typography>
+        </CardHeader>
+        <CardContent className="flex justify-center items-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <Typography variant="h6">Token Metrics</Typography>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Price and Change */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-baseline">
+            <div className="text-2xl font-bold">
+              {formatUSD(metrics.price)}
+            </div>
+            <div className={`text-sm font-medium ${
+              metrics.priceChange24h >= 0 ? 'text-green-500' : 'text-red-500'
+            }`}>
+              {formatPercent(metrics.priceChange24h)}
+            </div>
+          </div>
+          <div className="h-[120px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={metrics.priceHistory}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="timestamp"
+                  tickFormatter={(timestamp) => {
+                    return new Date(timestamp).toLocaleTimeString('en-US', {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    });
+                  }}
+                />
+                <YAxis 
+                  domain={['auto', 'auto']}
+                  tickFormatter={(value) => formatUSD(value)}
+                />
+                <Tooltip
+                  formatter={(value: number) => [formatUSD(value), 'Price']}
+                  labelFormatter={(label) => new Date(label).toLocaleString()}
+                />
+                <Line 
+                  type="monotone"
+                  dataKey="price"
+                  stroke="#8884d8"
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Key Metrics Grid */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <div className="text-sm text-muted-foreground">Market Cap</div>
+            <div className="font-medium">{formatUSD(metrics.marketCap)}</div>
+          </div>
+          <div className="space-y-1">
+            <div className="text-sm text-muted-foreground">24h Volume</div>
+            <div className="font-medium">{formatUSD(metrics.volume24h)}</div>
+          </div>
+          <div className="space-y-1">
+            <div className="text-sm text-muted-foreground">Total Supply</div>
+            <div className="font-medium">
+              {Number(metrics.supply).toLocaleString()} PITA
+            </div>
+          </div>
+          <div className="space-y-1">
+            <div className="text-sm text-muted-foreground">Total Staked</div>
+            <div className="font-medium">
+              {Number(metrics.totalStaked).toLocaleString()} PITA
+            </div>
+          </div>
+        </div>
+
+        {/* Treasury Balance */}
+        <div className="pt-4 border-t">
+          <div className="space-y-1">
+            <div className="text-sm text-muted-foreground">Treasury Balance</div>
+            <div className="text-xl font-bold">
+              {formatUSD(parseFloat(metrics.treasuryBalance) * metrics.price)}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {Number(metrics.treasuryBalance).toLocaleString()} PITA
+            </div>
+          </div>
+        </div>
+
+        {/* Additional Stats */}
+        <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+          <div className="space-y-1">
+            <div className="text-sm text-muted-foreground">Staking APR</div>
+            <div className="font-medium">
+              {formatPercent(12.5)} {/* Example APR - would be calculated */}
+            </div>
+          </div>
+          <div className="space-y-1">
+            <div className="text-sm text-muted-foreground">Supply Growth</div>
+            <div className="font-medium">
+              {formatPercent(2.1)} {/* Example growth rate - would be calculated */}
+            </div>
+          </div>
+        </div>
+
+        {/* Market Status Indicator */}
+        <div className="pt-4 border-t">
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-muted-foreground">Market Status</div>
+            <div className="flex items-center space-x-2">
+              <div className={`h-2 w-2 rounded-full ${
+                metrics.priceChange24h >= 0 ? 'bg-green-500' : 'bg-red-500'
+              }`} />
+              <span className="text-sm font-medium">
+                {metrics.priceChange24h >= 0 ? 'Bullish' : 'Bearish'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default TokenMetrics;
+ 
+src/views/components/dashboard/MembershipStats.tsx
+ 
+// src/views/components/dashboard/MembershipStats.tsx
+
+import React, { useEffect, useState } from 'react';
+import { useContractEvents } from 'hooks/useContractEvents';
+/*import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";*/
+
+import { 
+  Card,
+  CardHeader,
+  CardContent,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Paper
+} from '@mui/material';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip
+} from 'recharts';
+/*import { 
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";*/
+import { Loader2, Users, Vote, Wallet } from 'lucide-react';
+
+interface MembershipMetrics {
+  totalMembers: number;
+  activeMembersLast30Days: number;
+  averageParticipation: number;
+  memberCategories: {
+    name: string;
+    value: number;
+    color: string;
+  }[];
+  recentMembers: {
+    address: string;
+    joinDate: number;
+    proposalsParticipated: number;
+    stakingBalance: string;
+  }[];
+  stakingDistribution: {
+    range: string;
+    count: number;
+    percentage: number;
+  }[];
+}
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+
+const MembershipStats = () => {
+  const { stateConstituent } = useContractEvents();
+  const [loading, setLoading] = useState(true);
+  const [metrics, setMetrics] = useState<MembershipMetrics>({
+    totalMembers: 0,
+    activeMembersLast30Days: 0,
+    averageParticipation: 0,
+    memberCategories: [],
+    recentMembers: [],
+    stakingDistribution: []
+  });
+
+  useEffect(() => {
+    fetchMembershipMetrics();
+    const interval = setInterval(fetchMembershipMetrics, 300000); // Update every 5 minutes
+    return () => clearInterval(interval);
+  }, [stateConstituent]);
+
+  const fetchMembershipMetrics = async () => {
+    if (!stateConstituent) return;
+
+    try {
+      // In a real implementation, these would be actual contract calls
+      // For now, we'll use example data
+      setMetrics({
+        totalMembers: 1250,
+        activeMembersLast30Days: 875,
+        averageParticipation: 70,
+        memberCategories: [
+          { name: 'Regular Members', value: 850, color: '#0088FE' },
+          { name: 'Power Users', value: 250, color: '#00C49F' },
+          { name: 'Core Contributors', value: 100, color: '#FFBB28' },
+          { name: 'Council Members', value: 50, color: '#FF8042' }
+        ],
+        recentMembers: [
+          {
+            address: '0x1234...5678',
+            joinDate: Date.now() - 86400000,
+            proposalsParticipated: 5,
+            stakingBalance: '1000'
+          },
+          {
+            address: '0x5678...9012',
+            joinDate: Date.now() - 172800000,
+            proposalsParticipated: 3,
+            stakingBalance: '500'
+          },
+          {
+            address: '0x9012...3456',
+            joinDate: Date.now() - 259200000,
+            proposalsParticipated: 7,
+            stakingBalance: '2000'
+          }
+        ],
+        stakingDistribution: [
+          { range: '0-1000', count: 500, percentage: 40 },
+          { range: '1000-5000', count: 450, percentage: 36 },
+          { range: '5000-10000', count: 200, percentage: 16 },
+          { range: '10000+', count: 100, percentage: 8 }
+        ]
+      });
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching membership metrics:', error);
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <Typography variant="h6">Membership Statistics</Typography>
+        </CardHeader>
+        <CardContent className="flex justify-center items-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <Typography variant="h6">Membership Statistics</Typography>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Overview Stats */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center text-sm text-muted-foreground">
+              <Users className="mr-1 h-4 w-4" />
+              Total Members
+            </div>
+            <div className="text-xl font-bold">{metrics.totalMembers}</div>
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center text-sm text-muted-foreground">
+              <Vote className="mr-1 h-4 w-4" />
+              Active (30d)
+            </div>
+            <div className="text-xl font-bold">{metrics.activeMembersLast30Days}</div>
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center text-sm text-muted-foreground">
+              <Wallet className="mr-1 h-4 w-4" />
+              Participation
+            </div>
+            <div className="text-xl font-bold">{metrics.averageParticipation}%</div>
+          </div>
+        </div>
+
+        {/* Member Categories */}
+        <div className="pt-4">
+          <div className="h-[200px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={metrics.memberCategories}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  label
+                >
+                  {metrics.memberCategories.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={entry.color} 
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Recent Members */}
+{/* Recent Members */}
+<div className="pt-4 border-t">
+  <Typography variant="h6" sx={{ mb: 2 }}>Recent Members</Typography>
+  <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Address</TableCell>
+          <TableCell>Joined</TableCell>
+          <TableCell>Participation</TableCell>
+          <TableCell>Staking</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {metrics.recentMembers.map((member) => (
+          <TableRow key={member.address}>
+            <TableCell component="th" scope="row">
+              {member.address}
+            </TableCell>
+            <TableCell>
+              {new Date(member.joinDate).toLocaleDateString()}
+            </TableCell>
+            <TableCell>
+              <div className="px-2 py-1 bg-gray-200 rounded-full text-sm inline-block">
+                {member.proposalsParticipated} proposals
+              </div>
+            </TableCell>
+            <TableCell>{member.stakingBalance} PITA</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </Paper>
+</div>
+
+        {/* Staking Distribution */}
+        <div className="pt-4 border-t">
+          <h3 className="font-medium mb-3">Staking Distribution</h3>
+          <div className="space-y-2">
+            {metrics.stakingDistribution.map((dist) => (
+              <div key={dist.range} className="space-y-1">
+                <div className="flex justify-between text-sm">
+                  <span>{dist.range} PITA</span>
+                  <span>{dist.count} members</span>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div
+                    className="bg-primary rounded-full h-2 transition-all"
+                    style={{ width: `${dist.percentage}%` }}
+                  />
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {dist.percentage}% of total members
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Participation Metrics */}
+        <div className="pt-4 border-t">
+          <h3 className="font-medium mb-3">Participation History</h3>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Card className="bg-muted">
+                <CardContent className="pt-6">
+                  <div className="text-xs text-muted-foreground">
+                    Last Week Participation
+                  </div>
+                  <div className="text-2xl font-bold">82%</div>
+                  <div className="text-xs text-green-500 mt-1">
+                    +5% from previous week
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-muted">
+                <CardContent className="pt-6">
+                  <div className="text-xs text-muted-foreground">
+                    Average Voting Power Used
+                  </div>
+                  <div className="text-2xl font-bold">65%</div>
+                  <div className="text-xs text-orange-500 mt-1">
+                    -3% from previous month
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Top Contributors */}
+            <div className="pt-4">
+              <h4 className="text-sm font-medium mb-2">Top Contributors</h4>
+              <div className="space-y-2">
+                {[
+                  { address: '0x1234...5678', score: 95, proposals: 12 },
+                  { address: '0x8765...4321', score: 88, proposals: 10 },
+                  { address: '0x2468...1357', score: 82, proposals: 8 }
+                ].map((contributor, index) => (
+                  <div
+                    key={contributor.address}
+                    className="flex items-center justify-between p-2 bg-muted rounded-lg"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <div className={`
+                        w-6 h-6 rounded-full flex items-center justify-center
+                        ${index === 0 ? 'bg-yellow-500' : 
+                          index === 1 ? 'bg-gray-400' : 
+                          'bg-amber-600'}
+                      `}>
+                        {index + 1}
+                      </div>
+                      <div>
+                        <div className="font-medium">{contributor.address}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {contributor.proposals} proposals created
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-sm font-medium">
+                      {contributor.score} points
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Recent Activity Feed */}
+            <div className="pt-4">
+              <h4 className="text-sm font-medium mb-2">Recent Activity</h4>
+              <div className="space-y-2">
+                {[
+                  {
+                    type: 'join',
+                    address: '0x3456...7890',
+                    timestamp: Date.now() - 1800000 // 30 minutes ago
+                  },
+                  {
+                    type: 'vote',
+                    address: '0x9012...3456',
+                    proposalId: '12',
+                    timestamp: Date.now() - 3600000 // 1 hour ago
+                  },
+                  {
+                    type: 'stake',
+                    address: '0x7890...1234',
+                    amount: '1000',
+                    timestamp: Date.now() - 7200000 // 2 hours ago
+                  }
+                ].map((activity, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-2 bg-muted/50 rounded-lg"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <div className={`
+                        w-2 h-2 rounded-full
+                        ${activity.type === 'join' ? 'bg-green-500' :
+                          activity.type === 'vote' ? 'bg-blue-500' :
+                          'bg-purple-500'}
+                      `} />
+                      <div>
+                        <div className="text-sm">
+                          {activity.type === 'join' ? 'New member joined' :
+                           activity.type === 'vote' ? `Vote cast on Proposal #${activity.proposalId}` :
+                           `${activity.amount} PITA staked`}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {activity.address}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(activity.timestamp).toLocaleTimeString()}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default MembershipStats;
+ 
+src/views/components/dashboard/DAOPage.tsx
+ 
+import React, { useState } from 'react';
+import { useContractEvents } from 'hooks/useContractEvents';
+
+import { 
+  Card,
+  CardHeader,
+  CardContent,
+  Typography,
+  Alert,
+  AlertTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Tabs,
+  Tab,
+  Box,
+  CircularProgress
+} from '@mui/material';
+
+import { 
+  LayoutDashboard,
+  Vote,
+  Wallet,
+  Users,
+  Settings,
+  AlertCircle
+} from 'lucide-react';
+import { ethers } from 'ethers';
+
+import DAODashboard from './DAODashboard';
+import ProposalCreation from './ProposalCreation';
+import VotingInterface from './VotingInterface';
+import TokenMetrics from './TokenMetrics';
+import MembershipStats from './MembershipStats';
+
+// Create a TabPanel component to handle content display
+function TabPanel(props: {
+  children?: React.ReactNode;
+  value: string;
+  index: string;
+}) {
+  const { children, value, index } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+    >
+      {value === index && (
+        <Box sx={{ py: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
+const DAOPage = () => {
+  const { isInitialized, error } = useContractEvents();
+  const [currentTab, setCurrentTab] = useState('dashboard');
+
+  // Handle tab change
+  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    setCurrentTab(newValue);
+  };
+
+  if (!isInitialized) {
+    return (
+      <Box 
+        display="flex" 
+        height="100vh" 
+        alignItems="center" 
+        justifyContent="center"
+      >
+        <Box textAlign="center">
+          <CircularProgress />
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Initializing DAO Interface...
+          </Typography>
+        </Box>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Alert severity="error">
+          <AlertTitle>Error</AlertTitle>
+          <Typography>
+            {error.message}
+            <Button 
+              variant="text"
+              onClick={() => window.location.reload()}
+              sx={{ mt: 2, display: 'block' }}
+            >
+              Try refreshing the page
+            </Button>
+          </Typography>
+        </Alert>
+      </Box>
+    );
+  }
+
+  return (
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {/* Navigation Header */}
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ 
+          maxWidth: 'lg', 
+          mx: 'auto', 
+          height: 64, 
+          display: 'flex', 
+          alignItems: 'center',
+          px: 3
+        }}>
+          <Typography variant="h6">DAO Dashboard</Typography>
+        </Box>
+      </Box>
+
+      {/* Main Content */}
+      <Box sx={{ flex: 1, p: 3 }}>
+        <Box sx={{ display: 'flex', gap: 3 }}>
+          {/* Sidebar Navigation */}
+          <Box sx={{ width: 240, flexShrink: 0 }}>
+            <Tabs
+              orientation="vertical"
+              value={currentTab}
+              onChange={handleTabChange}
+              sx={{
+                borderRight: 1,
+                borderColor: 'divider',
+                '& .MuiTab-root': {
+                  justifyContent: 'flex-start',
+                  textAlign: 'left',
+                  alignItems: 'center',
+                  gap: 1
+                }
+              }}
+            >
+              <Tab 
+                icon={<LayoutDashboard />} 
+                label="Overview" 
+                value="dashboard"
+                iconPosition="start"
+              />
+              <Tab 
+                icon={<Vote />} 
+                label="Proposals" 
+                value="proposals"
+                iconPosition="start"
+              />
+              <Tab 
+                icon={<Wallet />} 
+                label="Treasury" 
+                value="treasury"
+                iconPosition="start"
+              />
+              <Tab 
+                icon={<Users />} 
+                label="Members" 
+                value="members"
+                iconPosition="start"
+              />
+              <Tab 
+                icon={<Settings />} 
+                label="Settings" 
+                value="settings"
+                iconPosition="start"
+              />
+            </Tabs>
+
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ mt: 2 }}
+            >
+              Connect Wallet
+            </Button>
+          </Box>
+
+          {/* Main Content Area */}
+          <Box sx={{ flex: 1 }}>
+            <TabPanel value={currentTab} index="dashboard">
+              <DAODashboard />
+            </TabPanel>
+
+            <TabPanel value={currentTab} index="proposals">
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <ProposalCreation />
+                <VotingInterface proposal={{
+                  id: "1",
+                  title: "Example Proposal",
+                  description: "This is an example proposal",
+                  proposer: "0x1234...5678",
+                  startTime: Date.now() / 1000,
+                  endTime: (Date.now() / 1000) + 86400,
+                  forVotes: ethers.BigNumber.from("1000000"),
+                  againstVotes: ethers.BigNumber.from("500000"),
+                  executed: false,
+                  category: 1
+                }} />
+              </Box>
+            </TabPanel>
+
+            <TabPanel value={currentTab} index="treasury">
+              <TokenMetrics />
+            </TabPanel>
+
+            <TabPanel value={currentTab} index="members">
+              <MembershipStats />
+            </TabPanel>
+
+            <TabPanel value={currentTab} index="settings">
+              <Card>
+                <CardContent>
+                  <Typography variant="h6">DAO Settings</Typography>
+                  <Typography color="textSecondary" sx={{ mt: 1 }}>
+                    Configure your DAO preferences and parameters.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </TabPanel>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Footer */}
+      <Box sx={{ 
+        borderTop: 1, 
+        borderColor: 'divider',
+        p: 2,
+        mt: 'auto'
+      }}>
+        <Typography color="textSecondary" variant="body2">
+          Running on PulseChain Network • Block: #1234567
+        </Typography>
+      </Box>
+    </Box>
+  );
+};
+
+export default DAOPage;
+ 
+src/services/ProposalLifecycle.ts
+ 
+// src/services/ProposalLifecycle.ts
+
+import { ethers } from 'ethers';
+import { EventEmitter } from 'events';
+
+// Define comprehensive proposal states
+export enum ProposalState {
+  // Off-chain states
+  DRAFT = 'DRAFT',                 // Initial proposal creation in Nostr
+  DISCUSSION = 'DISCUSSION',       // Discussion period before on-chain submission
+  PENDING_SUBMISSION = 'PENDING_SUBMISSION', // Waiting for on-chain submission
+  
+  // On-chain states
+  SUBMITTED = 'SUBMITTED',         // Successfully submitted to blockchain
+  ACTIVE = 'ACTIVE',              // Active voting period
+  SUCCEEDED = 'SUCCEEDED',         // Passed but not yet executed
+  QUEUED = 'QUEUED',              // Queued for execution
+  EXECUTED = 'EXECUTED',           // Successfully executed
+  DEFEATED = 'DEFEATED',           // Failed to pass
+  EXPIRED = 'EXPIRED',            // Passed but expired before execution
+  CANCELED = 'CANCELED'           // Canceled by creator or admin
+}
+
+interface Vote {
+  voter: string;
+  weight: ethers.BigNumber;
+  support: boolean;
+}
+
+// Define the proposal structure that combines Nostr and on-chain data
+export interface Proposal {
+  // Identifiers
+  id: string;                    // On-chain proposal ID
+  nostrEventId?: string;         // Nostr event ID
+  creator: string;               // Creator's address
+  nostrPubkey?: string;         // Creator's Nostr pubkey
+
+  // Core proposal data
+  title: string;
+  description: string;
+  category: number;
+  
+  // Timing parameters
+  createdAt: number;
+  discussionEndTime: number;
+  votingStartTime: number;
+  votingEndTime: number;
+  executionDelay: number;
+  
+  // State tracking
+  currentState: ProposalState;
+  stateUpdates: Array<{
+    from: ProposalState;
+    to: ProposalState;
+    timestamp: number;
+    txHash?: string;
+  }>;
+  
+  // Voting data
+  forVotes: ethers.BigNumber;
+  againstVotes: ethers.BigNumber;
+  quorum: ethers.BigNumber;
+  votingPower: ethers.BigNumber;
+  forVotesList: Vote[];  // Add these new properties
+  againstVotesList: Vote[];  // Add these new properties
+  
+  // Transaction tracking
+  submissionTx?: string;
+  executionTx?: string;
+  cancelTx?: string;
+  
+  // Discussion and updates tracking
+  discussionMessages: Array<{
+    id: string;
+    author: string;
+    content: string;
+    timestamp: number;
+  }>;
+  updates: Array<{
+    id: string;
+    content: string;
+    timestamp: number;
+  }>;
+}
+
+export class ProposalLifecycleManager extends EventEmitter {
+  private readonly proposals: Map<string, Proposal>;
+  private readonly stateContract: ethers.Contract;
+  private readonly daoToken: ethers.Contract;
+  private readonly raven: any; // Nostr client type
+
+  constructor(
+    stateContract: ethers.Contract,
+    daoToken: ethers.Contract,
+    raven: any
+  ) {
+    super();
+    this.proposals = new Map();
+    this.stateContract = stateContract;
+    this.daoToken = daoToken;
+    this.raven = raven;
+
+    this.setupEventListeners();
+  }
+
+private async handleNostrUpdate(event: any): Promise<void> {
+  const proposal = this.proposals.get(event.proposalId);
+  if (!proposal) return;
+
+  proposal.updates.push({
+    id: event.id,
+    content: event.content,
+    timestamp: event.created_at
+  });
+
+  this.emit('proposalUpdated', proposal);
+}
+
+private async handleVoteCast(
+  proposalId: string,
+  voter: string,
+  support: boolean,
+  event: any
+): Promise<void> {
+  const proposal = this.proposals.get(proposalId);
+  if (!proposal) return;
+
+  // Update vote counts
+  if (support) {
+    proposal.forVotes = proposal.forVotes.add(1);
+  } else {
+    proposal.againstVotes = proposal.againstVotes.add(1);
+  }
+
+  this.emit('voteCast', {
+    proposalId,
+    voter,
+    support,
+    event
+  });
+}
+
+private async handleProposalExecuted(proposalId: string, event: any): Promise<void> {
+  await this.updateProposalState(
+    proposalId,
+    ProposalState.QUEUED,
+    ProposalState.EXECUTED,
+    event.transactionHash
+  );
+}
+
+private async handleProposalCanceled(proposalId: string, event: any): Promise<void> {
+  await this.updateProposalState(
+    proposalId,
+    this.proposals.get(proposalId)?.currentState || ProposalState.DRAFT,
+    ProposalState.CANCELED,
+    event.transactionHash
+  );
+}
+
+  private setupEventListeners(): void {
+    // Listen for Nostr events
+    this.raven.on('proposal.created', this.handleNostrProposalCreated.bind(this));
+    this.raven.on('proposal.discussion', this.handleNostrDiscussion.bind(this));
+    this.raven.on('proposal.update', this.handleNostrUpdate.bind(this));
+
+    // Listen for contract events
+    this.stateContract.on('ProposalCreated', this.handleOnChainProposalCreated.bind(this));
+    this.stateContract.on('VoteCast', this.handleVoteCast.bind(this));
+    this.stateContract.on('ProposalExecuted', this.handleProposalExecuted.bind(this));
+    this.stateContract.on('ProposalCanceled', this.handleProposalCanceled.bind(this));
+  }
+
+  // Proposal Creation Flow
+  public async createProposal(
+    title: string,
+    description: string,
+    category: number,
+    options: {
+      discussionPeriod?: number;
+      votingPeriod?: number;
+      executionDelay?: number;
+    } = {}
+  ): Promise<string> {
+    try {
+      // First, create the proposal in Nostr for discussion
+      const nostrEvent = await this.raven.publishProposalDraft({
+        title,
+        description,
+        category,
+        options
+      });
+
+      // Create local proposal object
+      const proposal: Proposal = {
+        id: ethers.utils.id(nostrEvent.id), // Temporary ID until on-chain submission
+        nostrEventId: nostrEvent.id,
+        creator: await this.stateContract.signer.getAddress(),
+        nostrPubkey: this.raven.publicKey,
+        title,
+        description,
+        category,
+        createdAt: Math.floor(Date.now() / 1000),
+        discussionEndTime: Math.floor(Date.now() / 1000) + (options.discussionPeriod || 172800), // 2 days default
+        votingStartTime: 0, // Set when submitted on-chain
+        votingEndTime: 0,   // Set when submitted on-chain
+        executionDelay: options.executionDelay || 86400, // 1 day default
+        currentState: ProposalState.DRAFT,
+        stateUpdates: [{
+          from: ProposalState.DRAFT,
+          to: ProposalState.DRAFT,
+          timestamp: Math.floor(Date.now() / 1000)
+        }],
+        forVotes: ethers.BigNumber.from(0),
+        againstVotes: ethers.BigNumber.from(0),
+        quorum: ethers.BigNumber.from(0),
+        votingPower: ethers.BigNumber.from(0),
+        forVotesList: [],
+        againstVotesList: [],
+        discussionMessages: [],
+        updates: []
+      };
+
+      this.proposals.set(proposal.id, proposal);
+      this.emit('proposalCreated', proposal);
+
+      return proposal.id;
+    } catch (error) {
+      console.error('Error creating proposal:', error);
+      throw new Error('Failed to create proposal');
+    }
+  }
+
+  // State Transition Handlers
+  private async handleNostrProposalCreated(event: any): Promise<void> {
+    const proposal = this.proposals.get(event.proposalId);
+    if (!proposal) return;
+
+    await this.updateProposalState(
+      proposal.id,
+      ProposalState.DRAFT,
+      ProposalState.DISCUSSION
+    );
+  }
+
+  private async handleNostrDiscussion(event: any): Promise<void> {
+    const proposal = this.proposals.get(event.proposalId);
+    if (!proposal) return;
+
+    proposal.discussionMessages.push({
+      id: event.id,
+      author: event.pubkey,
+      content: event.content,
+      timestamp: event.created_at
+    });
+
+    this.emit('proposalDiscussionUpdated', proposal);
+  }
+
+  private async handleOnChainProposalCreated(
+    proposalId: string,
+    creator: string,
+    startBlock: number,
+    endBlock: number,
+    event: any
+  ): Promise<void> {
+    const proposal = this.proposals.get(proposalId);
+    
+    if (proposal) {
+      proposal.votingStartTime = Math.floor(Date.now() / 1000);
+      proposal.votingEndTime = proposal.votingStartTime + 
+        ((endBlock - startBlock) * 15); // Assuming 15 second blocks
+
+      await this.updateProposalState(
+        proposalId,
+        proposal.currentState,
+        ProposalState.ACTIVE
+      );
+    }
+  }
+
+  // State Management Helpers
+  private async updateProposalState(
+    proposalId: string,
+    fromState: ProposalState,
+    toState: ProposalState,
+    txHash?: string
+  ): Promise<void> {
+    const proposal = this.proposals.get(proposalId);
+    if (!proposal) return;
+
+    // Validate state transition
+    if (!this.isValidStateTransition(fromState, toState)) {
+      throw new Error(`Invalid state transition: ${fromState} -> ${toState}`);
+    }
+
+    // Update proposal state
+    proposal.currentState = toState;
+    proposal.stateUpdates.push({
+      from: fromState,
+      to: toState,
+      timestamp: Math.floor(Date.now() / 1000),
+      txHash
+    });
+
+    // Emit state change event
+    this.emit('proposalStateChanged', {
+      proposalId,
+      fromState,
+      toState,
+      txHash
+    });
+
+    // Sync state to Nostr
+    await this.syncStateToNostr(proposal);
+  }
+
+private isValidStateTransition(
+  fromState: ProposalState,
+  toState: ProposalState
+): boolean {
+  // Define valid state transitions with proper typing
+  const validTransitions: Record<ProposalState, ProposalState[]> = {
+    [ProposalState.DRAFT]: [ProposalState.DISCUSSION],
+    [ProposalState.DISCUSSION]: [ProposalState.PENDING_SUBMISSION, ProposalState.CANCELED],
+    [ProposalState.PENDING_SUBMISSION]: [ProposalState.SUBMITTED, ProposalState.CANCELED],
+    [ProposalState.SUBMITTED]: [ProposalState.ACTIVE, ProposalState.CANCELED],
+    [ProposalState.ACTIVE]: [ProposalState.SUCCEEDED, ProposalState.DEFEATED],
+    [ProposalState.SUCCEEDED]: [ProposalState.QUEUED, ProposalState.EXPIRED],
+    [ProposalState.QUEUED]: [ProposalState.EXECUTED, ProposalState.EXPIRED],
+    [ProposalState.DEFEATED]: [],
+    [ProposalState.EXECUTED]: [],
+    [ProposalState.EXPIRED]: [],
+    [ProposalState.CANCELED]: []
+  };
+
+  return validTransitions[fromState]?.includes(toState) ?? false;
+}
+
+  // Synchronization Methods
+  private async syncStateToNostr(proposal: Proposal): Promise<void> {
+    try {
+      await this.raven.publishProposalUpdate({
+        proposalId: proposal.id,
+        nostrEventId: proposal.nostrEventId,
+        currentState: proposal.currentState,
+        stateUpdate: proposal.stateUpdates[proposal.stateUpdates.length - 1],
+        votingData: {
+          forVotes: proposal.forVotes.toString(),
+          againstVotes: proposal.againstVotes.toString(),
+          quorum: proposal.quorum.toString()
+        }
+      });
+    } catch (error) {
+      console.error('Error syncing state to Nostr:', error);
+      // Add to retry queue if needed
+    }
+  }
+
+  // Proposal Submission and Voting Methods
+  public async submitProposalOnChain(proposalId: string): Promise<void> {
+    const proposal = this.proposals.get(proposalId);
+    if (!proposal) throw new Error('Proposal not found');
+
+    try {
+      await this.updateProposalState(
+        proposalId,
+        proposal.currentState,
+        ProposalState.PENDING_SUBMISSION
+      );
+
+      const tx = await this.stateContract.createProposal(
+        proposal.title,
+        proposal.description,
+        proposal.category
+      );
+
+      proposal.submissionTx = tx.hash;
+      await this.updateProposalState(
+        proposalId,
+        ProposalState.PENDING_SUBMISSION,
+        ProposalState.SUBMITTED,
+        tx.hash
+      );
+
+      await tx.wait();
+    } catch (error) {
+      console.error('Error submitting proposal:', error);
+      // Revert state if transaction fails
+      await this.updateProposalState(
+        proposalId,
+        ProposalState.PENDING_SUBMISSION,
+        proposal.currentState
+      );
+      throw error;
+    }
+  }
+
+  public async castVote(
+    proposalId: string,
+    support: boolean,
+    reason?: string
+  ): Promise<void> {
+    const proposal = this.proposals.get(proposalId);
+    if (!proposal) throw new Error('Proposal not found');
+
+    try {
+      // Cast vote on-chain
+      const tx = await this.stateContract.castVote(proposalId, support);
+      await tx.wait();
+
+      // Publish vote to Nostr with optional reason
+      await this.raven.publishVote({
+        proposalId,
+        nostrEventId: proposal.nostrEventId,
+        support,
+        reason,
+        txHash: tx.hash
+      });
+
+      // Update local state
+      if (support) {
+        proposal.forVotes = proposal.forVotes.add(1);
+      } else {
+        proposal.againstVotes = proposal.againstVotes.add(1);
+      }
+
+      this.emit('voteCast', {
+        proposalId,
+        support,
+        reason,
+        txHash: tx.hash
+      });
+    } catch (error) {
+      console.error('Error casting vote:', error);
+      throw error;
+    }
+  }
+
+  // Query Methods
+  public getProposal(proposalId: string): Proposal | undefined {
+    return this.proposals.get(proposalId);
+  }
+
+  public getProposalsByState(state: ProposalState): Proposal[] {
+    return Array.from(this.proposals.values())
+      .filter(proposal => proposal.currentState === state);
+  }
+
+  public async getProposalTimeline(proposalId: string): Promise<Array<{
+    state: ProposalState;
+    timestamp: number;
+    txHash?: string;
+    metadata?: any;
+  }>> {
+    const proposal = this.proposals.get(proposalId);
+    if (!proposal) throw new Error('Proposal not found');
+
+    return proposal.stateUpdates.map(update => ({
+      state: update.to,
+      timestamp: update.timestamp,
+      txHash: update.txHash
+    }));
+  }
+}
+ 
+src/contexts/ProposalContext.tsx
+ 
+// src/contexts/ProposalContext.tsx
+
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { useAtom } from 'jotai';
+import { useContractEvents } from 'hooks/useContractEvents';
+import { ProposalLifecycleManager, Proposal, ProposalState } from '../services/ProposalLifecycle';
+import { ravenAtom } from 'atoms';
+import { ethers } from 'ethers';
+
+interface Vote {
+  voter: string;
+  weight: ethers.BigNumber;
+  support: boolean;
+}
+
+interface ProposalContextType {
+  // Core functionality
+  createProposal: (title: string, description: string, category: number, options?: any) => Promise<string>;
+  submitProposal: (proposalId: string) => Promise<void>;
+  castVote: (proposalId: string, support: boolean, reason?: string) => Promise<void>;
+  executeProposal: (proposalId: string) => Promise<void>;
+  cancelProposal: (proposalId: string) => Promise<void>;
+  
+  // Query methods
+  getProposal: (proposalId: string) => Proposal | undefined;
+  getProposalsByState: (state: ProposalState) => Proposal[];
+  getProposalTimeline: (proposalId: string) => Promise<Array<{
+    state: ProposalState;
+    timestamp: number;
+    txHash?: string;
+    metadata?: any;
+  }>> | undefined;
+  
+  // State
+  activeProposals: Proposal[];
+  pendingProposals: Proposal[];
+  completedProposals: Proposal[];
+  
+  // Status
+  loading: boolean;
+  error: Error | null;
+  
+  // Add the address tracking
+  voterAddresses: Set<string>;    // Using Set prevents duplicate addresses
+  coreTeamAddresses: Set<string>; // Core team members who can make special proposals
+  
+  // Optional: Add helper methods
+  isVoter: (address: string) => boolean;
+  isCoreTeam: (address: string) => boolean;
+  
+  // Add this new subscription method
+  subscribeToProposalEvents: (
+    proposalId: string, 
+    handlers: {
+      onVoteCast?: (event: { voter: string; support: boolean }) => void;
+      onStateChange?: (event: { fromState: ProposalState; toState: ProposalState }) => void;
+      onDiscussionUpdate?: () => void;
+    }
+  ) => () => void; // Returns an unsubscribe function
+} // getProposalTimeline: (proposalId: string) => Promise<any[]>;
+
+const ProposalContext = createContext<ProposalContextType | undefined>(undefined);
+
+export function ProposalProvider({ children }: { children: React.ReactNode }) {
+  const { stateConstituent, daoToken } = useContractEvents(); // raven
+  const [raven] = useAtom(ravenAtom);
+  const [lifecycleManager, setLifecycleManager] = useState<ProposalLifecycleManager | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  
+  // Add state for address tracking
+  const [voterAddresses, setVoterAddresses] = useState<Set<string>>(new Set());
+  const [coreTeamAddresses, setCoreTeamAddresses] = useState<Set<string>>(new Set());
+
+  // Proposal state
+  const [activeProposals, setActiveProposals] = useState<Proposal[]>([]);
+  const [pendingProposals, setPendingProposals] = useState<Proposal[]>([]);
+  const [completedProposals, setCompletedProposals] = useState<Proposal[]>([]);
+
+  /*useEffect(() => {
+    const newVoterAddresses = new Set<string>();
+    
+    // Add addresses from active proposals
+    activeProposals.forEach(proposal => {
+      // Add the proposal creator
+      newVoterAddresses.add(proposal.creator);
+      
+      // Get addresses from the voting data
+      proposal.forVotes.forEach(vote => newVoterAddresses.add(vote.voter));
+      proposal.againstVotes.forEach(vote => newVoterAddresses.add(vote.voter));
+    });
+    
+    // Add addresses from completed proposals too
+    completedProposals.forEach(proposal => {
+      newVoterAddresses.add(proposal.creator);
+      proposal.forVotes.forEach(vote => newVoterAddresses.add(vote.voter));
+      proposal.againstVotes.forEach(vote => newVoterAddresses.add(vote.voter));
+    });
+
+    setVoterAddresses(newVoterAddresses);
+  }, [activeProposals, completedProposals]);*/
+  
+useEffect(() => {
+  const newVoterAddresses = new Set<string>();
+  
+  // Add addresses from active proposals
+  activeProposals.forEach(proposal => {
+    // Add the proposal creator
+    newVoterAddresses.add(proposal.creator);
+    
+    // Get addresses from the voting data
+    proposal.forVotesList.forEach((vote: Vote) => newVoterAddresses.add(vote.voter));
+    proposal.againstVotesList.forEach((vote: Vote) => newVoterAddresses.add(vote.voter));
+  });
+  
+  // Add addresses from completed proposals too
+  completedProposals.forEach(proposal => {
+    newVoterAddresses.add(proposal.creator);
+    proposal.forVotesList.forEach((vote: Vote) => newVoterAddresses.add(vote.voter));
+    proposal.againstVotesList.forEach((vote: Vote) => newVoterAddresses.add(vote.voter));
+  });
+
+  setVoterAddresses(newVoterAddresses);
+}, [activeProposals, completedProposals]);
+  
+  // Core team addresses could be managed differently - here's one approach
+  useEffect(() => {
+    // This could fetch from a contract, config, or other source
+    const fetchCoreTeamAddresses = async () => {
+      if (!stateConstituent) return;
+      
+      try {
+        // Example: fetch from a contract getter
+        const coreMembers = await stateConstituent.getCoreTeamMembers();
+        setCoreTeamAddresses(new Set(coreMembers));
+      } catch (error) {
+        console.error('Failed to fetch core team addresses:', error);
+      }
+    };
+
+    fetchCoreTeamAddresses();
+  }, [stateConstituent]);
+  
+  const isVoter = useCallback((address: string) => {
+    return voterAddresses.has(address);
+  }, [voterAddresses]);
+
+  const isCoreTeam = useCallback((address: string) => {
+    return coreTeamAddresses.has(address);
+  }, [coreTeamAddresses]);
+
+  // Initialize lifecycle manager
+  useEffect(() => {
+    if (!stateConstituent || !daoToken || !raven) return;
+
+    const manager = new ProposalLifecycleManager(
+      stateConstituent,
+      daoToken,
+      raven
+    );
+
+    // Set up event listeners for the lifecycle manager
+    manager.on('proposalCreated', handleProposalCreated);
+    manager.on('proposalStateChanged', handleProposalStateChanged);
+    manager.on('voteCast', handleVoteCast);
+    manager.on('proposalExecuted', handleProposalExecuted);
+
+    setLifecycleManager(manager);
+    setLoading(false);
+  }, [stateConstituent, daoToken, raven]);
+
+  // Event handlers
+  const handleProposalCreated = (proposal: Proposal) => {
+    setPendingProposals(prev => [...prev, proposal]);
+  };
+
+  const handleProposalStateChanged = async (event: {
+    proposalId: string;
+    fromState: ProposalState;
+    toState: ProposalState;
+    txHash?: string;
+  }) => {
+    const proposal = lifecycleManager?.getProposal(event.proposalId);
+    if (!proposal) return;
+
+    // Update proposal lists based on new state
+    switch (event.toState) {
+      case ProposalState.ACTIVE:
+        setPendingProposals(prev => prev.filter(p => p.id !== event.proposalId));
+        setActiveProposals(prev => [...prev, proposal]);
+        break;
+      
+      case ProposalState.EXECUTED:
+      case ProposalState.DEFEATED:
+      case ProposalState.EXPIRED:
+      case ProposalState.CANCELED:
+        setActiveProposals(prev => prev.filter(p => p.id !== event.proposalId));
+        setCompletedProposals(prev => [...prev, proposal]);
+        break;
+    }
+  };
+
+  const handleVoteCast = async (event: {
+    proposalId: string;
+    support: boolean;
+    reason?: string;
+    txHash: string;
+  }) => {
+    setActiveProposals(prev =>
+      prev.map(p => {
+        if (p.id === event.proposalId) {
+          return {
+            ...p,
+            forVotes: event.support ? p.forVotes.add(1) : p.forVotes,
+            againstVotes: event.support ? p.againstVotes : p.againstVotes.add(1)
+          };
+        }
+        return p;
+      })
+    );
+  };
+
+  const handleProposalExecuted = (proposalId: string) => {
+    setActiveProposals(prev => prev.filter(p => p.id !== proposalId));
+    const proposal = lifecycleManager?.getProposal(proposalId);
+    if (proposal) {
+      setCompletedProposals(prev => [...prev, proposal]);
+    }
+  };
+
+  // API methods
+  const createProposal = async (
+    title: string,
+    description: string,
+    category: number,
+    options?: any
+  ) => {
+    try {
+      if (!lifecycleManager) throw new Error('Lifecycle manager not initialized');
+      return await lifecycleManager.createProposal(title, description, category, options);
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  };
+
+  const submitProposal = async (proposalId: string) => {
+    try {
+      if (!lifecycleManager) throw new Error('Lifecycle manager not initialized');
+      await lifecycleManager.submitProposalOnChain(proposalId);
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  };
+
+  const castVote = async (
+    proposalId: string,
+    support: boolean,
+    reason?: string
+  ) => {
+    try {
+      if (!lifecycleManager) throw new Error('Lifecycle manager not initialized');
+      await lifecycleManager.castVote(proposalId, support, reason);
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  };
+
+  const executeProposal = async (proposalId: string) => {
+    try {
+      if (!lifecycleManager) throw new Error('Lifecycle manager not initialized');
+      // Implementation of execute logic
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  };
+
+  const cancelProposal = async (proposalId: string) => {
+    try {
+      if (!lifecycleManager) throw new Error('Lifecycle manager not initialized');
+      // Implementation of cancel logic
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  };
+
+const subscribeToProposalEvents = useCallback((
+  proposalId: string,
+  handlers: {
+    onVoteCast?: (event: { voter: string; support: boolean }) => void;
+    onStateChange?: (event: { fromState: ProposalState; toState: ProposalState }) => void;
+    onDiscussionUpdate?: () => void;
+  }
+) => {
+  if (!lifecycleManager) {
+    console.warn('Lifecycle manager not initialized');
+    return () => {}; // Return no-op cleanup function
+  }
+
+  // Set up event listeners
+  const voteCastListener = (event: any) => {
+    if (event.proposalId === proposalId && handlers.onVoteCast) {
+      handlers.onVoteCast({
+        voter: event.voter,
+        support: event.support
+      });
+    }
+  };
+
+  const stateChangeListener = (event: any) => {
+    if (event.proposalId === proposalId && handlers.onStateChange) {
+      handlers.onStateChange({
+        fromState: event.fromState,
+        toState: event.toState
+      });
+    }
+  };
+
+  const discussionListener = (event: any) => {
+    if (event.proposalId === proposalId && handlers.onDiscussionUpdate) {
+      handlers.onDiscussionUpdate();
+    }
+  };
+
+  // Subscribe to events
+  lifecycleManager.on('voteCast', voteCastListener);
+  lifecycleManager.on('proposalStateChanged', stateChangeListener);
+  lifecycleManager.on('discussionUpdated', discussionListener);
+
+  // Return cleanup function
+  return () => {
+    lifecycleManager.off('voteCast', voteCastListener);
+    lifecycleManager.off('proposalStateChanged', stateChangeListener);
+    lifecycleManager.off('discussionUpdated', discussionListener);
+  };
+}, [lifecycleManager]);
+
+  /*const value = {
+    // Core functionality
+    createProposal,
+    submitProposal,
+    castVote,
+    executeProposal,
+    cancelProposal,
+
+    voterAddresses,
+    coreTeamAddresses,
+    isVoter,
+    isCoreTeam,
+
+    // Query methods
+    getProposal: (proposalId: string) => lifecycleManager?.getProposal(proposalId),
+    getProposalsByState: (state: ProposalState) => lifecycleManager?.getProposalsByState(state) ?? [],
+    getProposalTimeline: (proposalId: string) => lifecycleManager?.getProposalTimeline(proposalId),
+
+    // State
+    activeProposals,
+    pendingProposals,
+    completedProposals,
+
+    // Status
+    loading,
+    error,
+    subscribeToProposalEvents,
+    
+  };*/
+
+  const value: ProposalContextType = {
+    // Core functionality
+    createProposal,
+    submitProposal,
+    castVote,
+    executeProposal,
+    cancelProposal,
+
+    voterAddresses,
+    coreTeamAddresses,
+    isVoter,
+    isCoreTeam,
+
+    // Query methods
+    getProposal: (proposalId: string) => lifecycleManager?.getProposal(proposalId),
+    getProposalsByState: (state: ProposalState) => lifecycleManager?.getProposalsByState(state) ?? [],
+
+    // State
+    activeProposals,
+    pendingProposals,
+    completedProposals,
+
+    // Status
+    loading,
+    error,
+    subscribeToProposalEvents,
+    getProposalTimeline: (proposalId: string) => {
+      if (!lifecycleManager) return undefined;
+      return lifecycleManager.getProposalTimeline(proposalId);
+    }
+  };
+
+  return (
+    <ProposalContext.Provider value={value}>
+      {children}
+    </ProposalContext.Provider>
+  );
+}
+
+// Custom hook for using the proposal context
+export function useProposals() {
+  const context = useContext(ProposalContext);
+  if (context === undefined) {
+    throw new Error('useProposals must be used within a ProposalProvider');
+  }
+  return context;
+}
+ 
+src/hooks/useProposalCreation.ts
+ 
+// src/hooks/useProposalCreation.ts
+
+import { useState, useCallback } from 'react';
+import { useProposals } from '../contexts/ProposalContext';
+import { ProposalState } from '../services/ProposalLifecycle';
+import { ethers } from 'ethers';
+import { useContractEvents } from './useContractEvents';
+import { useAtom } from 'jotai';
+import { ravenAtom } from 'atoms';
+
+interface ProposalCreationOptions {
+  discussionPeriod?: number;
+  votingPeriod?: number;
+  executionDelay?: number;
+  quorumRequired?: number;
+}
+
+interface DiscussionEvent {
+  pubkey: string;
+  created_at: number;
+}
+
+interface UseProposalCreationReturn {
+  // State
+  isCreating: boolean;
+  isSubmitting: boolean;
+  error: Error | null;
+  currentProposal: {
+    id: string;
+    state: ProposalState;
+    discussionEndTime: number;
+    title?: string;  // Add these optional fields
+  } | null;
+
+  // Actions
+  startProposalCreation: (
+    title: string,
+    description: string,
+    category: number,
+    options?: ProposalCreationOptions
+  ) => Promise<string>;
+  
+  submitToChain: (proposalId: string) => Promise<void>;
+  cancelProposal: (proposalId: string) => Promise<void>;
+  
+  // Discussion management
+  addDiscussionComment: (
+    proposalId: string,
+    comment: string
+  ) => Promise<void>;
+  
+  updateProposal: (
+    proposalId: string,
+    updates: {
+      title?: string;
+      description?: string;
+      category?: number;
+    }
+  ) => Promise<void>;
+  
+  discussionStats: {
+    commentCount: number;
+    uniqueParticipants: Set<string>;
+  };
+  canSubmitToChain: (proposalId: string) => { canSubmit: boolean; reason?: string };
+  validateProposalParams: (title: string, description: string, category: number, options: any) => { isValid: boolean; errors: string[] };
+  getDiscussionTimeRemaining: () => string;
+}
+
+export function useProposalCreation(): UseProposalCreationReturn {
+  const { createProposal, submitProposal } = useProposals();
+  //const { raven } = useContractEvents();
+  const [raven] = useAtom(ravenAtom);
+  
+  const [isCreating, setIsCreating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [currentProposal, setCurrentProposal] = useState<{
+    id: string;
+    state: ProposalState;
+    discussionEndTime: number;
+  } | null>(null);
+
+  const startProposalCreation = useCallback(async (
+    title: string,
+    description: string,
+    category: number,
+    options?: ProposalCreationOptions
+  ) => {
+    setIsCreating(true);
+    setError(null);
+    
+    try {
+      // Validate inputs
+      if (!title.trim() || !description.trim()) {
+        throw new Error('Title and description are required');
+      }
+
+      if (!raven) {
+        throw new Error('Raven instance not initialized');
+      }
+
+      // Set default options
+      const finalOptions = {
+        discussionPeriod: 2 * 24 * 60 * 60, // 2 days
+        votingPeriod: 3 * 24 * 60 * 60,     // 3 days
+        executionDelay: 1 * 24 * 60 * 60,   // 1 day
+        quorumRequired: ethers.utils.parseUnits('0.04', 18), // 4%
+        ...options
+      };
+
+      // Create the proposal
+      const proposalId = await createProposal(
+        title,
+        description,
+        category,
+        finalOptions
+      );
+
+      // Start Nostr discussion thread
+      await raven.createDiscussionThread({
+        proposalId,
+        title,
+        description,
+        category,
+        discussionEndTime: Math.floor(Date.now() / 1000) + finalOptions.discussionPeriod
+      });
+
+      setCurrentProposal({
+        id: proposalId,
+        state: ProposalState.DISCUSSION,
+        discussionEndTime: Math.floor(Date.now() / 1000) + finalOptions.discussionPeriod
+      });
+
+      return proposalId;
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    } finally {
+      setIsCreating(false);
+    }
+  }, [createProposal, raven]);
+
+  const submitToChain = useCallback(async (proposalId: string) => {
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Validate discussion period has ended
+      if (currentProposal?.discussionEndTime && 
+          Date.now() < currentProposal.discussionEndTime * 1000) {
+        throw new Error('Discussion period has not ended yet');
+      }
+
+      if (!raven) {
+        throw new Error('Raven instance not initialized');
+      }
+
+      // Submit proposal to blockchain
+      await submitProposal(proposalId);
+
+      // Update Nostr thread with submission status
+      await raven.updateDiscussionThread({
+        proposalId,
+        state: ProposalState.SUBMITTED,
+        transactionHash: '', // Will be updated by lifecycle manager
+        timestamp: Math.floor(Date.now() / 1000)
+      });
+
+      setCurrentProposal(prev => 
+        prev?.id === proposalId ? 
+          { ...prev, state: ProposalState.SUBMITTED } : 
+          prev
+      );
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [submitProposal, raven, currentProposal]);
+
+  const addDiscussionComment = useCallback(async (
+    proposalId: string,
+    comment: string
+  ) => {
+    try {
+      
+      if (!raven) {
+        throw new Error('Raven instance not initialized');
+      }
+      
+      await raven.addDiscussionComment({
+        proposalId,
+        content: comment,
+        timestamp: Math.floor(Date.now() / 1000)
+      });
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  }, [raven]);
+
+  const updateProposal = useCallback(async (
+    proposalId: string,
+    updates: {
+      title?: string;
+      description?: string;
+      category?: number;
+    }
+  ) => {
+    try {
+      // Validate proposal is still in DISCUSSION state
+      if (currentProposal?.state !== ProposalState.DISCUSSION) {
+        throw new Error('Can only update proposals during discussion phase');
+      }
+
+      if (!raven) {
+        throw new Error('Raven instance not initialized');
+      }
+
+      // Update Nostr thread
+      await raven.updateProposalContent({
+        proposalId,
+        ...updates,
+        timestamp: Math.floor(Date.now() / 1000)
+      });
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  }, [raven, currentProposal]);
+
+  const cancelProposal = useCallback(async (proposalId: string) => {
+    try {
+      // Can only cancel during DISCUSSION or PENDING_SUBMISSION
+      if (currentProposal?.state !== ProposalState.DISCUSSION && 
+          currentProposal?.state !== ProposalState.PENDING_SUBMISSION) {
+        throw new Error('Cannot cancel proposal at current state');
+      }
+      
+      if (!raven) {
+        throw new Error('Raven instance not initialized');
+      }
+      
+      // Update Nostr thread
+      await raven.updateDiscussionThread({
+        proposalId,
+        state: ProposalState.CANCELED,
+        timestamp: Math.floor(Date.now() / 1000)
+      });
+
+      setCurrentProposal(prev =>
+        prev?.id === proposalId ?
+          { ...prev, state: ProposalState.CANCELED } :
+          prev
+      );
+
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  }, [raven, currentProposal]);
+
+  // Utility function to check if a proposal can be submitted to chain
+  const canSubmitToChain = useCallback((proposalId: string): { 
+    canSubmit: boolean; 
+    reason?: string 
+  } => {
+    const proposal = currentProposal;
+    if (!proposal || proposal.id !== proposalId) {
+      return { canSubmit: false, reason: 'Proposal not found' };
+    }
+
+    if (proposal.state !== ProposalState.DISCUSSION) {
+      return { canSubmit: false, reason: 'Proposal is not in discussion phase' };
+    }
+
+    if (Date.now() < proposal.discussionEndTime * 1000) {
+      return { 
+        canSubmit: false, 
+        reason: `Discussion period ends in ${Math.ceil((proposal.discussionEndTime * 1000 - Date.now()) / (1000 * 60 * 60))} hours` 
+      };
+    }
+
+    return { canSubmit: true };
+  }, [currentProposal]);
+
+  // Helper function to validate proposal parameters
+  const validateProposalParams = useCallback((
+    title: string,
+    description: string,
+    category: number,
+    options?: ProposalCreationOptions
+  ): { isValid: boolean; errors: string[] } => {
+    const errors: string[] = [];
+
+    // Title validations
+    if (title.trim().length < 5) {
+      errors.push('Title must be at least 5 characters long');
+    }
+    if (title.trim().length > 100) {
+      errors.push('Title must be less than 100 characters');
+    }
+
+    // Description validations
+    if (description.trim().length < 20) {
+      errors.push('Description must be at least 20 characters long');
+    }
+    if (description.trim().length > 4000) {
+      errors.push('Description must be less than 4000 characters');
+    }
+
+    // Category validation
+    if (category < 0 || category > 4) {
+      errors.push('Invalid category selected');
+    }
+
+    // Options validation
+    if (options) {
+      if (options.discussionPeriod && options.discussionPeriod < 24 * 60 * 60) {
+        errors.push('Discussion period must be at least 24 hours');
+      }
+      if (options.votingPeriod && options.votingPeriod < 24 * 60 * 60) {
+        errors.push('Voting period must be at least 24 hours');
+      }
+      if (options.executionDelay && options.executionDelay < 12 * 60 * 60) {
+        errors.push('Execution delay must be at least 12 hours');
+      }
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  }, []);
+
+  // Helper function to format remaining time in discussion phase
+  const getDiscussionTimeRemaining = useCallback((): string => {
+    if (!currentProposal || currentProposal.state !== ProposalState.DISCUSSION) {
+      return '';
+    }
+
+    const remainingMs = currentProposal.discussionEndTime * 1000 - Date.now();
+    if (remainingMs <= 0) {
+      return 'Discussion period has ended';
+    }
+
+    const days = Math.floor(remainingMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((remainingMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+
+    if (days > 0) {
+      return `${days}d ${hours}h remaining`;
+    }
+    if (hours > 0) {
+      return `${hours}h ${minutes}m remaining`;
+    }
+    return `${minutes}m remaining`;
+  }, [currentProposal]);
+
+  // Track proposal discussion activity
+  const [discussionStats, setDiscussionStats] = useState<{
+    commentCount: number;
+    uniqueParticipants: Set<string>;
+    lastActivityTimestamp: number;
+  }>({
+    commentCount: 0,
+    uniqueParticipants: new Set(),
+    lastActivityTimestamp: 0
+  });
+
+  // Update discussion stats when new comments are added
+  useCallback(async (proposalId: string) => {
+    if (!raven || !currentProposal || currentProposal.id !== proposalId) return;
+
+    try {
+      const discussionEvents = await raven.getDiscussionEvents(proposalId);
+      
+      /*setDiscussionStats({
+        commentCount: discussionEvents.length,
+        uniqueParticipants: new Set(discussionEvents.map(e => e.pubkey)),
+        lastActivityTimestamp: Math.max(...discussionEvents.map(e => e.created_at))
+      });*/
+      
+setDiscussionStats({
+  commentCount: discussionEvents.length,
+  uniqueParticipants: new Set(discussionEvents.map((e: DiscussionEvent) => e.pubkey)),
+  lastActivityTimestamp: Math.max(...discussionEvents.map((e: DiscussionEvent) => e.created_at))
+});
+    } catch (err) {
+      console.error('Error fetching discussion stats:', err);
+    }
+  }, [raven, currentProposal]);
+
+  return {
+    // Core state
+    isCreating,
+    isSubmitting,
+    error,
+    currentProposal,
+    discussionStats,
+
+    // Core actions
+    startProposalCreation,
+    submitToChain,
+    cancelProposal,
+    addDiscussionComment,
+    updateProposal,
+
+    // Utility functions
+    canSubmitToChain,
+    validateProposalParams,
+    getDiscussionTimeRemaining
+  };
+}
+ 
+src/components/ProposalManagement/index.tsx
+ 
+// src/components/ProposalManagement/index.tsx
+
+import React, { useEffect, useState } from 'react';
+import { useProposalCreation } from 'hooks/useProposalCreation';
+import { useProposals } from '../../contexts/ProposalContext';
+import { ProposalState } from 'services/ProposalLifecycle';
+import { useContractEvents } from 'hooks/useContractEvents';
+// import Proposal from 'views/components/dashboard/VotingInterface';
+import { Proposal } from 'services/ProposalLifecycle';
+
+/*
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+*/
+
+import { 
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Box,
+  Typography,
+  Alert,
+  AlertTitle,
+  Tabs,
+  Tab,
+  Button,
+  TextField,
+  Select,
+  SelectChangeEvent,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  LinearProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
+} from '@mui/material';
+
+import { Loader2, MessageSquare, Clock, Users, AlertTriangle } from 'lucide-react';
+
+import useToast from 'hooks/use-toast';
+
+import { ethers } from 'ethers';
+
+const PROPOSAL_CATEGORIES = [
+  { id: 1, name: 'Governance', description: 'Changes to DAO governance parameters' },
+  { id: 2, name: 'Treasury', description: 'Treasury fund allocation' },
+  { id: 3, name: 'Technical', description: 'Technical improvements or upgrades' },
+  { id: 4, name: 'Community', description: 'Community initiatives and programs' }
+];
+
+///// Keep outside
+
+// Format remaining time in a human-readable way
+const formatTimeRemaining = (timestamp: number): string => {
+  const diff = timestamp * 1000 - Date.now();
+  if (diff <= 0) return 'Ended';
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+  if (days > 0) {
+    return `${days}d ${hours}h`;
+  }
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+  return `${minutes}m`;
+};
+
+// Calculate percentage for vote display
+const calculatePercentage = (votes: ethers.BigNumber, total: ethers.BigNumber): number => {
+  if (total.isZero()) return 0;
+  // Convert to number with 2 decimal places
+  return parseFloat(votes.mul(10000).div(total).toString()) / 100;
+};
+
+// Add proposal discussion sorting and filtering capabilities
+interface DiscussionFilters {
+  sortBy: 'latest' | 'oldest' | 'mostReplies';
+  participantType: 'all' | 'voters' | 'core';
+  searchTerm: string;
+}
+
+// Add proposal history tracking
+/*interface ProposalHistoryEntry {
+  timestamp: number;
+  type: 'creation' | 'discussion' | 'submission' | 'vote' | 'execution' | 'cancellation';
+  data: any;
+  transactionHash?: string;
+}*/
+
+interface ProposalHistoryEntry {
+  state: ProposalState;
+  type: 'creation' | 'discussion' | 'submission' | 'vote' | 'execution' | 'cancellation';
+  timestamp: number;
+  txHash?: string;
+  metadata?: any;
+}
+
+///// Move inside
+
+// Add notification management for proposal events
+const useProposalNotifications = (proposalId: string) => {
+  const { subscribeToProposalEvents } = useProposals();
+  //const { toast } = useToast();
+  const [, showMessage] = useToast();
+
+  useEffect(() => {
+    const unsubscribe = subscribeToProposalEvents(proposalId, {
+      onVoteCast: ({ voter, support }) => {
+        showMessage(
+          "Address ${voter} voted ${support ? 'for' : 'against'} the proposal.",
+          "success"
+        ); // title: "New Vote Cast",
+      },
+      onStateChange: ({ fromState, toState }) => {
+        showMessage(
+          "State changed from ${fromState} to ${toState}",
+          "success"
+        ); // title: "Proposal State Changed",
+      },
+      onDiscussionUpdate: () => {
+        showMessage(
+          "The proposal discussion has been updated.",
+          "success"
+        ); // title: "New Discussion Comment",
+      },
+    });
+
+    return () => unsubscribe();
+  }, [proposalId]);
+};
+
+// Add helper component for displaying proposal metadata
+const ProposalMetadata = ({ 
+  proposal 
+}: { 
+  proposal: Proposal 
+}) => (
+  <div className="grid grid-cols-2 gap-4 text-sm">
+    <div>
+      <div className="text-muted-foreground">Category</div>
+      <div className="font-medium">
+        {PROPOSAL_CATEGORIES.find(c => c.id === proposal.category)?.name}
+      </div>
+    </div>
+    <div>
+      <div className="text-muted-foreground">Creator</div>
+      <div className="font-medium">{proposal.creator}</div>
+    </div>
+    <div>
+      <div className="text-muted-foreground">Created</div>
+      <div className="font-medium">
+        {new Date(proposal.createdAt * 1000).toLocaleDateString()}
+      </div>
+    </div>
+    <div>
+      <div className="text-muted-foreground">Status</div>
+      <div className="font-medium">{proposal.currentState}</div>
+    </div>
+  </div>
+);
+
+const ProposalManagement = () => {
+  const {
+    startProposalCreation,
+    submitToChain,
+    addDiscussionComment,
+    updateProposal,
+    isCreating,
+    isSubmitting,
+    error,
+    currentProposal,
+    discussionStats,
+    canSubmitToChain,
+    validateProposalParams,
+    getDiscussionTimeRemaining
+  } = useProposalCreation();
+  
+  const [, showMessage] = useToast();
+  
+  const { castVote } = useContractEvents();
+
+  const { activeProposals, pendingProposals, completedProposals } = useProposals();
+  
+  const { 
+    voterAddresses, 
+    coreTeamAddresses,
+    // ... other context values 
+  } = useProposals();
+  
+  const { getProposalTimeline } = useProposals();
+
+const filterAndSortDiscussion = (
+  comments: Array<{
+    id: string;
+    content: string;
+    author: string;
+    timestamp: number;
+    replies: number;
+  }>,
+  filters: DiscussionFilters
+) => {
+  let filtered = [...comments];
+
+  // Apply participant type filter
+  if (filters.participantType !== 'all') {
+    filtered = filtered.filter(comment => {
+      if (filters.participantType === 'voters') {
+        return voterAddresses.has(comment.author);
+      }
+      if (filters.participantType === 'core') {
+        return coreTeamAddresses.has(comment.author);
+      }
+      return true;
+    });
+  }
+
+  // Apply search filter
+  if (filters.searchTerm) {
+    const searchLower = filters.searchTerm.toLowerCase();
+    filtered = filtered.filter(comment =>
+      comment.content.toLowerCase().includes(searchLower)
+    );
+  }
+
+  // Apply sorting
+  filtered.sort((a, b) => {
+    switch (filters.sortBy) {
+      case 'oldest':
+        return a.timestamp - b.timestamp;
+      case 'mostReplies':
+        return b.replies - a.replies;
+      case 'latest':
+      default:
+        return b.timestamp - a.timestamp;
+    }
+  });
+
+  return filtered;
+};
+
+const ProposalHistory = ({ proposalId }: { proposalId: string }) => {
+  const [history, setHistory] = useState<ProposalHistoryEntry[]>([]);
+  const { getProposalTimeline } = useProposals();
+
+  /*useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const timeline = await getProposalTimeline(proposalId);
+        setHistory(timeline);
+      } catch (error) {
+        console.error('Error fetching proposal history:', error);
+      }
+    };
+
+    fetchHistory();
+  }, [proposalId]);*/
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const timeline = await getProposalTimeline(proposalId);
+        
+        if (timeline) {
+          // Transform timeline data to match ProposalHistoryEntry interface
+          const transformedTimeline: ProposalHistoryEntry[] = timeline.map(entry => ({
+            ...entry,
+            // Map state to appropriate type
+            type: mapStateToType(entry.state),
+          }));
+          setHistory(transformedTimeline);
+        } else {
+          setHistory([]); 
+        }
+      } catch (error) {
+        console.error('Error fetching proposal history:', error);
+        setHistory([]);
+      }
+    };
+
+    fetchHistory();
+  }, [proposalId]);
+
+  // Helper function to map ProposalState to history entry type
+  const mapStateToType = (state: ProposalState): ProposalHistoryEntry['type'] => {
+    switch (state) {
+      case ProposalState.DRAFT:
+        return 'creation';
+      case ProposalState.DISCUSSION:
+        return 'discussion';
+      case ProposalState.SUBMITTED:
+        return 'submission';
+      case ProposalState.EXECUTED:
+        return 'execution';
+      case ProposalState.CANCELED:
+        return 'cancellation';
+      default:
+        if (state === ProposalState.ACTIVE || 
+            state === ProposalState.SUCCEEDED || 
+            state === ProposalState.DEFEATED) {
+          return 'vote';
+        }
+        return 'submission'; // fallback for other states
+    }
+  };
+
+  return (
+    <Box sx={{ '& > *:not(:last-child)': { mb: 2 } }}>
+      {history.map((entry, index) => (
+        <div key={index} className="flex items-start space-x-4">
+          <div className="flex flex-col items-center">
+            <div className="w-2 h-2 rounded-full bg-primary" />
+            {index < history.length - 1 && (
+              <div className="w-0.5 h-full bg-primary/20" />
+            )}
+          </div>
+          <div>
+            <div className="font-medium">
+              {entry.type.charAt(0).toUpperCase() + entry.type.slice(1)}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {new Date(entry.timestamp * 1000).toLocaleString()}
+            </div>
+            {entry.txHash && (
+              <a
+                href={`https://scan.pls.com/tx/${entry.txHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-primary hover:underline"
+              >
+                View Transaction
+              </a>
+            )}
+            {entry.metadata && (
+              <div className="text-sm text-muted-foreground mt-1">
+                {JSON.stringify(entry.metadata)}
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </Box>
+  );
+};
+
+  // Form state
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    category: '',
+    discussionPeriod: '2', // Default 2 days
+    votingPeriod: '3',     // Default 3 days
+    comment: ''            // For discussion thread
+  });
+
+  // Validation state
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState('create');
+
+  const handleCreateProposal = async () => {
+    const { isValid, errors } = validateProposalParams(
+      formData.title,
+      formData.description,
+      parseInt(formData.category),
+      {
+        discussionPeriod: parseInt(formData.discussionPeriod) * 24 * 60 * 60,
+        votingPeriod: parseInt(formData.votingPeriod) * 24 * 60 * 60
+      }
+    );
+
+    if (!isValid) {
+      setValidationErrors(errors);
+      return;
+    }
+
+    try {
+      const proposalId = await startProposalCreation(
+        formData.title,
+        formData.description,
+        parseInt(formData.category),
+        {
+          discussionPeriod: parseInt(formData.discussionPeriod) * 24 * 60 * 60,
+          votingPeriod: parseInt(formData.votingPeriod) * 24 * 60 * 60
+        }
+      );
+
+      // Reset form and switch to discussion tab
+      setFormData({
+        title: '',
+        description: '',
+        category: '',
+        discussionPeriod: '2',
+        votingPeriod: '3',
+        comment: ''
+      });
+      setActiveTab('discussion');
+    } catch (err) {
+      console.error('Error creating proposal:', err);
+    }
+  };
+
+function TabPanel(props: {
+  children?: React.ReactNode;
+  value: string;
+  index: string;
+}) {
+  const { children, value, index } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
+  const handleSubmitComment = async () => {
+    if (!currentProposal || !formData.comment.trim()) return;
+
+    try {
+      await addDiscussionComment(currentProposal.id, formData.comment);
+      setFormData(prev => ({ ...prev, comment: '' }));
+    } catch (err) {
+      console.error('Error submitting comment:', err);
+    }
+  };
+
+  const handleSubmitToChain = async () => {
+    if (!currentProposal) return;
+
+    const { canSubmit, reason } = canSubmitToChain(currentProposal.id);
+    if (!canSubmit) {
+      setValidationErrors([reason!]);
+      return;
+    }
+
+    try {
+      await submitToChain(currentProposal.id);
+      setActiveTab('active');
+    } catch (err) {
+      console.error('Error submitting to chain:', err);
+    }
+  };
+
+// Handle vote button clicks with confirmation
+const handleVoteClick = async (proposalId: string, support: boolean) => {
+  const vote = async () => {
+    try {
+      await castVote(proposalId, support);
+      // Show success message and update UI
+      showMessage(
+        "You voted ${support ? 'for' : 'against'} the proposal.",
+        "success"
+      ); // title: "Vote Cast Successfully",
+    } catch (error) {
+      console.error('Error casting vote:', error);
+      showMessage(
+        (error instanceof Error ? error.message : "Failed to cast vote"),
+        "error"
+      ); // variant: "destructive",
+      // title: "Error Casting Vote",
+    }
+  };
+
+  /*// Show confirmation dialog before voting
+  const dialog = await Dialog.confirm({
+    title: `Confirm Vote ${support ? 'For' : 'Against'}`,
+    body: `Are you sure you want to vote ${support ? 'for' : 'against'} this proposal? This action cannot be undone.`,
+    confirmText: 'Confirm Vote',
+    cancelText: 'Cancel'
+  });
+
+  if (dialog.confirmed) {
+    await vote();
+  }*/
+  
+  await vote(); // will reinstate confirmation soon
+};
+
+/*
+            {currentProposal?.state === ProposalState.DISCUSSION && (
+              <span className="ml-2 text-xs bg-primary/20 px-2 py-1 rounded-full">
+                Active
+              </span>
+            )}
+*/
+
+  return (
+    <div className="container mx-auto p-6 space-y-6">
+<Tabs 
+  value={activeTab} 
+  onChange={(e, newValue) => setActiveTab(newValue)}
+  sx={{ borderBottom: 1, borderColor: 'divider' }}
+>
+  <Tab label="Create Proposal" value="create" />
+          <Tab label="Discussion" value="discussion" />
+          
+          <Tab label="Active Proposals" value="active"/>
+          <Tab label="Completed" value="completed"/>
+        </Tabs>
+
+        {/* Create Proposal Tab */}
+        <TabPanel value={activeTab} index="create">
+          <Card>
+            <CardHeader title="Create New Proposal" subheader="Start a new proposal for the DAO to consider. The proposal will go through a discussion period before being submitted on-chain for voting."/>
+            <CardContent sx={{ '& > *:not(:last-child)': { mb: 2 } }}>
+              {validationErrors.length > 0 && (
+                <Alert severity="error">
+                  <AlertTitle>Validation Errors</AlertTitle>
+                  <Typography variant="body2">
+                    <ul className="list-disc pl-4">
+                      {validationErrors.map((error, index) => (
+                        <li key={index}>{error}</li>
+                      ))}
+                    </ul>
+                  </Typography>
+                </Alert>
+              )}
+
+              <div className="space-y-2">
+                <label htmlFor="title" className="text-sm font-medium">
+                  Title
+                </label>
+<TextField
+  fullWidth
+  id="title"
+  label="Title"
+  variant="outlined"
+  value={formData.title}
+  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setFormData(prev => ({...prev, [e.target.name]: e.target.value}))}
+  placeholder="Enter proposal title"
+  disabled={isCreating}
+/>
+{/*onChange={(e: SelectChangeEvent<string>) => setFormData(prev => ({...prev, value: e.target.value}))}*/}
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="description" className="text-sm font-medium">
+                  Description
+                </label>
+                <TextField multiline
+                  id="description"
+                  value={formData.description}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setFormData(prev => ({...prev, [e.target.name]: e.target.value}))}
+                  placeholder="Describe your proposal in detail"
+                  disabled={isCreating}
+                  className="min-h-[200px]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="category" className="text-sm font-medium">
+                    Category
+                  </label>
+<FormControl fullWidth>
+  <InputLabel id="category-label">Category</InputLabel>
+  <Select
+    labelId="category-label"
+    value={formData.category}
+    onChange={(e: SelectChangeEvent<string>) => setFormData(prev => ({...prev, category: e.target.value}))}
+    disabled={isCreating}
+  >
+    {PROPOSAL_CATEGORIES.map(category => (
+      <MenuItem key={category.id} value={category.id.toString()}>
+        {category.name}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="discussionPeriod" className="text-sm font-medium">
+                    Discussion Period (days)
+                  </label>
+<TextField
+  id="discussionPeriod"
+  type="number"
+  InputProps={{
+    inputProps: {
+      min: 1,
+      max: 7
+    }
+  }}
+  value={formData.discussionPeriod}
+  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => 
+    setFormData(prev => ({...prev, [e.target.name]: e.target.value}))}
+  disabled={isCreating}
+/>
+                </div>
+              </div>
+            </CardContent>
+            <CardActions>
+              <Button 
+                onClick={handleCreateProposal}
+                disabled={isCreating || !formData.title || !formData.description || !formData.category}
+              >
+                {isCreating ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating Proposal...
+                  </>
+                ) : (
+                  'Create Proposal'
+                )}
+              </Button>
+            </CardActions>
+          </Card>
+        </TabPanel>
+
+        {/* Discussion Tab */}
+        <TabPanel value="discussion" index="discussion">
+          {currentProposal?.state === ProposalState.DISCUSSION ? (
+            <Card>
+              <CardHeader>
+                <Typography variant="h6">{currentProposal.title}</Typography>
+                <Typography variant="body2">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center">
+                      <Clock className="mr-1 h-4 w-4" />
+                      {getDiscussionTimeRemaining()}
+                    </div>
+                    <div className="flex items-center">
+                      <MessageSquare className="mr-1 h-4 w-4" />
+                      {discussionStats.commentCount} comments
+                    </div>
+                    <div className="flex items-center">
+                      <Users className="mr-1 h-4 w-4" />
+                      {discussionStats.uniqueParticipants.size} participants
+                    </div>
+                  </div>
+                </Typography>
+              </CardHeader>
+              <CardContent sx={{ '& > *:not(:last-child)': { mb: 2 } }}>
+                {/* Discussion Thread */}
+                <Box sx={{ '& > *:not(:last-child)': { mb: 2 } }}>
+                  {/* Comment input */}
+                  <div className="space-y-2">
+<TextField
+  multiline
+  rows={4}  // Instead of className="min-h-[100px]"
+  fullWidth
+  value={formData.comment}
+  onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setFormData(prev => ({...prev, [e.target.name]: e.target.value}))}
+  placeholder="Add to the discussion..."
+/>
+                    <Button 
+                      onClick={handleSubmitComment}
+                      disabled={!formData.comment.trim()}
+                    >
+                      Add Comment
+                    </Button>
+                  </div>
+
+                  {/* Submit to Chain button */}
+                  {canSubmitToChain(currentProposal.id).canSubmit && (
+                    <div className="mt-6">
+                      <Button
+                        onClick={handleSubmitToChain}
+                        disabled={isSubmitting}
+                        className="w-full"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Submitting to Chain...
+                          </>
+                        ) : (
+                          'Submit Proposal to Chain'
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                </Box>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="py-8">
+                <div className="text-center text-muted-foreground">
+                  No active discussion
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabPanel>
+
+        {/* Active Proposals Tab */}
+        <TabPanel value="active" index="active">
+          <Box sx={{ '& > *:not(:last-child)': { mb: 2 } }}>
+            {activeProposals.map(proposal => (
+              <Card key={proposal.id}>
+                <CardHeader>
+                  <Typography variant="h6">{proposal.title}</Typography>
+                  <Typography variant="body2">
+                    Voting ends in {formatTimeRemaining(proposal.votingEndTime)}
+                  </Typography>
+                </CardHeader>
+                <CardContent>
+                  {/* Voting progress */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>For</span>
+                      <span>{calculatePercentage(proposal.forVotes, proposal.votingPower)}%</span>
+                    </div>
+<LinearProgress 
+  variant="determinate" 
+  value={calculatePercentage(proposal.forVotes, proposal.votingPower)}
+  sx={{ height: 8, borderRadius: 1 }}
+/>
+                    
+                    <div className="flex justify-between text-sm">
+                      <span>Against</span>
+                      <span>{calculatePercentage(proposal.againstVotes, proposal.votingPower)}%</span>
+                    </div>
+<LinearProgress 
+  variant="determinate" 
+  value={calculatePercentage(proposal.againstVotes, proposal.votingPower)}
+  sx={{ height: 8, borderRadius: 1 }}
+/>
+                  </div>
+                </CardContent>
+                <CardActions>
+                  <Button 
+                    variant="outlined"
+                    onClick={() => handleVoteClick(proposal.id, true)}
+                  >
+                    Vote For
+                  </Button>
+                  <Button 
+                    variant="outlined"
+                    onClick={() => handleVoteClick(proposal.id, false)}
+                    className="ml-2"
+                  >
+                    Vote Against
+                  </Button>
+                </CardActions>
+              </Card>
+            ))}
+          </Box>
+        </TabPanel>
+
+        {/* Completed Proposals Tab */}
+        <TabPanel value="completed" index="completed">
+          <Box sx={{ '& > *:not(:last-child)': { mb: 2 } }}>
+            {completedProposals.map(proposal => (
+              <Card key={proposal.id}>
+                <CardHeader>
+<Typography 
+  variant="h6" 
+  sx={{ 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'space-between' 
+  }}
+>
+  {proposal.title}
+                    <span className={`text-sm ${
+                      proposal.currentState === ProposalState.EXECUTED ? 'text-green-500' :
+                      proposal.currentState === ProposalState.DEFEATED ? 'text-red-500' :
+                      'text-orange-500'
+                    }`}>
+                      {proposal.currentState}
+                    </span>
+                  </Typography>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-sm text-muted-foreground">
+                    Final Results:
+                    <div className="mt-2 space-y-1">
+                      <div>For: {calculatePercentage(proposal.forVotes, proposal.votingPower)}%</div>
+                      <div>Against: {calculatePercentage(proposal.againstVotes, proposal.votingPower)}%</div>
+                      <div>Total Votes: {ethers.utils.formatEther(proposal.votingPower)}</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
+        </TabPanel>
+    </div>
+  );
+};
+
+// Main export
+export default ProposalManagement;
+ 
+src/components/DAODashboard/index.tsx
+ 
+// src/components/DAODashboard/index.tsx
+
+import React from 'react';
+import { useContractEvents } from 'hooks/useContractEvents';
+import { useProposals } from '../../contexts/ProposalContext';
+import { DashboardMetrics } from './DashboardMetrics';
+import { GovernanceOverview } from './GovernanceOverview';
+import { VotingActivity } from './VotingActivity';
+import { TokenAnalytics } from './TokenAnalytics';
+import ProposalManagement from '../ProposalManagement';
+import { WalletConnection } from 'components/shared/WalletConnection';
+
+// Let me explain how we'll structure this dashboard to provide a complete governance interface
+const DAODashboard = () => {
+  // We use our established contexts to maintain consistent state
+  const { isInitialized, error } = useContractEvents();
+  const { activeProposals, pendingProposals } = useProposals();
+
+  // First, let's create the layout that will tie all our components together
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Fixed header with key metrics */}
+      <DashboardHeader />
+
+      {/* Main dashboard grid */}
+      <div className="container mx-auto p-6">
+        <div className="grid grid-cols-12 gap-6">
+          {/* Left column - Governance overview and metrics */}
+          <div className="col-span-12 lg:col-span-8 space-y-6">
+            <DashboardMetrics />
+            <GovernanceOverview />
+            <ProposalManagement />
+          </div>
+
+          {/* Right column - Activity and analytics */}
+          <div className="col-span-12 lg:col-span-4 space-y-6">
+            <VotingActivity />
+            <TokenAnalytics />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Let's create each component individually, starting with the header
+const DashboardHeader = () => {
+  return (
+    <header className="bg-background border-b sticky top-0 z-50">
+      <div className="container mx-auto h-16 flex items-center justify-between">
+        <h1 className="text-xl font-semibold">DAO Governance Dashboard</h1>
+        <WalletConnection />
+      </div>
+    </header>
+  );
+};
+
+export default DAODashboard;
+ 
+src/components/DAODashboard/DashboardMetrics.tsx
+ 
+// src/components/DAODashboard/DashboardMetrics.tsx
+
+import { 
+  Card, 
+  CardContent, 
+  Typography, 
+  Grid,
+  Box
+} from '@mui/material';
+import { ethers } from 'ethers';
+import { useDAOMetrics } from 'hooks/useDAOMetrics';
+
+// Create a MetricCard component
+const MetricCard = ({ 
+  title, 
+  value, 
+  subtitle, 
+  trend 
+}: { 
+  title: string;
+  value: string;
+  subtitle: string;
+  trend?: { value: number; timeframe: string; }
+}) => (
+  <Card>
+    <CardContent>
+      <Typography variant="h6" gutterBottom>
+        {title}
+      </Typography>
+      <Typography variant="h4">
+        {value}
+      </Typography>
+      <Typography color="textSecondary" variant="body2">
+        {subtitle}
+      </Typography>
+      {trend && (
+        <Box sx={{ mt: 1, display: 'flex', alignItems: 'center' }}>
+          <Typography 
+            variant="body2" 
+            color={trend.value >= 0 ? 'success.main' : 'error.main'}
+          >
+            {trend.value >= 0 ? '+' : ''}{trend.value}%
+          </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ ml: 1 }}>
+            {trend.timeframe}
+          </Typography>
+        </Box>
+      )}
+    </CardContent>
+  </Card>
+);
+
+export const DashboardMetrics: React.FC = () => {
+  const {
+    totalSupply,
+    treasuryBalance,
+    activeMembers,
+    votingPower,
+    proposalCount,
+    avgParticipation
+  } = useDAOMetrics();
+
+  return (
+    <Grid container spacing={3}>
+      <Grid item xs={12} md={4}>
+        <MetricCard
+          title="Treasury Balance"
+          value={ethers.utils.formatEther(treasuryBalance)}
+          subtitle="PITA Tokens"
+          trend={{
+            value: 12.5,
+            timeframe: '24h'
+          }}
+        />
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <MetricCard
+          title="Active Members"
+          value={activeMembers.toString()}
+          subtitle="Participants"
+          trend={{
+            value: 5.2,
+            timeframe: '7d'
+          }}
+        />
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <MetricCard
+          title="Governance Participation"
+          value={`${avgParticipation}%`}
+          subtitle="30-day average"
+          trend={{
+            value: -2.1,
+            timeframe: '30d'
+          }}
+        />
+      </Grid>
+    </Grid>
+  );
+};
+ 
+src/components/DAODashboard/GovernanceOverview.tsx
+ 
+// src/components/DAODashboard/GovernanceOverview.tsx
+
+import { 
+  Card, 
+  CardContent, 
+  Typography, 
+  Grid, 
+  Box,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Chip,
+  Avatar 
+} from '@mui/material';
+import { useProposals } from '../../contexts/ProposalContext';
+import {
+  HowToVote as VoteIcon,
+  Create as CreateIcon,
+  CheckCircle as ExecuteIcon,
+  Cancel as CancelIcon
+} from '@mui/icons-material';
+import { formatDistanceToNow } from 'date-fns';
+import { ethers } from 'ethers';
+
+// First, let's define types for our activity feed
+interface ActivityItem {
+  id: string;
+  type: 'vote' | 'create' | 'execute' | 'cancel';
+  address: string;
+  details: string;
+  timestamp: number;
+  proposalId?: string;
+}
+
+// We'll create a helper to get the right icon for each activity type
+const getActivityIcon = (type: ActivityItem['type']) => {
+  switch (type) {
+    case 'vote':
+      return <VoteIcon color="primary" />;
+    case 'create':
+      return <CreateIcon color="secondary" />;
+    case 'execute':
+      return <ExecuteIcon color="success" />;
+    case 'cancel':
+      return <CancelIcon color="error" />;
+  }
+};
+
+// Create a helper to format the activity message
+const formatActivityMessage = (activity: ActivityItem): string => {
+  switch (activity.type) {
+    case 'vote':
+      return `Voted on proposal #${activity.proposalId}`;
+    case 'create':
+      return 'Created new proposal';
+    case 'execute':
+      return `Executed proposal #${activity.proposalId}`;
+    case 'cancel':
+      return `Canceled proposal #${activity.proposalId}`;
+  }
+};
+
+// Now let's implement the ActivityFeed component within GovernanceOverview
+const ActivityFeed = () => {
+  // In a real implementation, we would get this data from our hooks
+  const recentActivity: ActivityItem[] = [
+    {
+      id: '1',
+      type: 'create',
+      address: '0x1234...5678',
+      details: 'Created proposal for treasury allocation',
+      timestamp: Date.now() - 1000 * 60 * 30, // 30 minutes ago
+      proposalId: '45'
+    },
+    {
+      id: '2',
+      type: 'vote',
+      address: '0x8765...4321',
+      details: 'Voted in favor of proposal #44',
+      timestamp: Date.now() - 1000 * 60 * 45, // 45 minutes ago
+      proposalId: '44'
+    },
+    {
+      id: '3',
+      type: 'execute',
+      address: '0x9876...5432',
+      details: 'Executed proposal #43',
+      timestamp: Date.now() - 1000 * 60 * 60, // 1 hour ago
+      proposalId: '43'
+    }
+  ];
+
+  return (
+    <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+      {recentActivity.map((activity) => (
+        <ListItem
+          key={activity.id}
+          alignItems="flex-start"
+          sx={{ 
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            '&:last-child': {
+              borderBottom: 'none'
+            }
+          }}
+        >
+          <ListItemIcon>
+            {getActivityIcon(activity.type)}
+          </ListItemIcon>
+          <ListItemText
+            primary={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {formatActivityMessage(activity)}
+                <Chip
+                  size="small"
+                  label={activity.type.toUpperCase()}
+                  color={
+                    activity.type === 'vote' ? 'primary' :
+                    activity.type === 'create' ? 'secondary' :
+                    activity.type === 'execute' ? 'success' : 'error'
+                  }
+                />
+              </Box>
+            }
+            secondary={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                <Avatar
+                  sx={{ width: 24, height: 24, fontSize: '0.75rem' }}
+                  alt={activity.address}
+                >
+                  {activity.address.substring(0, 2)}
+                </Avatar>
+                <Typography
+                  component="span"
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  {activity.address}
+                </Typography>
+                <Typography
+                  component="span"
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  • {formatDistanceToNow(activity.timestamp, { addSuffix: true })}
+                </Typography>
+              </Box>
+            }
+          />
+        </ListItem>
+      ))}
+    </List>
+  );
+};
+
+// Create a ProposalCard component
+const ProposalCard = ({ proposal, showVoting }: { 
+  proposal: any; // We'll type this properly when we have the proposal interface
+  showVoting: boolean;
+}) => (
+  <Card sx={{ mb: 2 }}>
+    <CardContent>
+      <Typography variant="h6">
+        {proposal.title}
+      </Typography>
+      <Typography color="textSecondary" variant="body2">
+        {proposal.description}
+      </Typography>
+    </CardContent>
+  </Card>
+);
+
+export const GovernanceOverview: React.FC = () => {
+  const { activeProposals } = useProposals();
+  
+  return (
+    <Card>
+      <CardContent>
+        <Typography variant="h5">Governance Overview</Typography>
+      </CardContent>
+      <CardContent>
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Active Proposals */}
+            <div>
+              <h3 className="text-lg font-medium mb-4">Active Proposals</h3>
+              {activeProposals.map(proposal => (
+                <ProposalCard
+                  key={proposal.id}
+                  proposal={proposal}
+                  showVoting
+                />
+              ))}
+            </div>
+            
+            {/* Recent Activity */}
+            <div>
+              <h3 className="text-lg font-medium mb-4">Recent Activity</h3>
+              <ActivityFeed />
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+ 
+src/components/DAODashboard/VotingActivity.tsx
+ 
+// src/components/DAODashboard/VotingActivity.tsx
+
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  Card, 
+  CardContent, 
+  Typography, 
+  Grid, 
+  Box,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Chip,
+  Avatar 
+} from '@mui/material';
+import { ethers } from 'ethers';
+import { useVotingActivity } from 'hooks/useVotingActivity';
+import { ParticipationChart } from 'components/shared/charts/ParticipationChart';
+import { VoteCard } from 'components/shared/VoteCard';
+
+// Let's create the VotingActivity component to show real-time voting information
+export const VotingActivity: React.FC = () => {
+  const { recentVotes, participationStats } = useVotingActivity(); // We'll create this hook next
+
+  return (
+    <Card>
+      <CardContent>
+        <Typography variant="h5">Voting Activity</Typography>
+      </CardContent>
+      <CardContent>
+        <div className="space-y-4">
+          {/* Participation Chart */}
+          <ParticipationChart data={participationStats} />
+          
+          {/* Recent Votes */}
+          <div className="space-y-2">
+            {recentVotes.map(vote => (
+              <VoteCard
+                key={vote.id}
+                vote={vote}
+              />
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+ 
+src/components/DAODashboard/TokenAnalytics.tsx
+ 
+// src/components/DAODashboard/TokenAnalytics.tsx
+
+import { 
+  Card, 
+  CardContent, 
+  Typography, 
+  Grid, 
+  Box,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Chip,
+  Avatar 
+} from '@mui/material';
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ethers, BigNumber } from 'ethers';
+import { useTokenAnalytics } from 'hooks/useTokenAnalytics';
+import { PriceChart } from 'components/shared/charts/PriceChart';
+import { DistributionChart } from 'components/shared/charts/DistributionChart';
+import { MetricItem } from 'components/shared/MetricItem';
+
+// Finally, let's create the TokenAnalytics component to show token metrics and distribution
+export const TokenAnalytics: React.FC = () => {
+  const { 
+    tokenMetrics, 
+    distribution, 
+    priceHistory 
+  } = useTokenAnalytics(); // We'll create this hook next
+
+  const formatUSD = (value: number | string | BigNumber) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(Number(value));
+  };
+
+const formatNumber = (value: number | string | BigNumber): string => {
+  return new Intl.NumberFormat('en-US').format(Number(value));
+};
+
+  return (
+    <Card>
+      <CardContent>
+        <Typography variant="h5">Token Analytics</Typography>
+      </CardContent>
+      <CardContent>
+        <div className="space-y-6">
+          {/* Price Chart */}
+          <PriceChart data={priceHistory} />
+          
+          {/* Distribution Overview */}
+          <DistributionChart data={distribution} />
+          
+          {/* Key Metrics */}
+          <div className="grid grid-cols-2 gap-4">
+            <MetricItem
+              label="Market Cap"
+              value={formatUSD(tokenMetrics.marketCap)}
+            />
+            <MetricItem
+              label="Circulating Supply"
+              value={formatNumber(tokenMetrics.circulatingSupply)}
+            />
+            <MetricItem
+              label="Total Staked"
+              value={`${tokenMetrics.stakedPercentage}%`}
+            />
+            <MetricItem
+              label="Holder Count"
+              value={formatNumber(tokenMetrics.holderCount)}
+            />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+ 
+src/hooks/useDAOMetrics.ts
+ 
+// src/hooks/useDAOMetrics.ts
+
+import React, { useEffect, useState } from 'react';
+import { useContractEvents } from 'hooks/useContractEvents';
+import { ethers, BigNumber } from 'ethers';
+
+export function useDAOMetrics() {
+  const { daoToken, stateConstituent } = useContractEvents();
+  const [metrics, setMetrics] = useState({
+    totalSupply: ethers.BigNumber.from(0),
+    treasuryBalance: ethers.BigNumber.from(0),
+    activeMembers: 0,
+    votingPower: ethers.BigNumber.from(0),
+    proposalCount: 0,
+    avgParticipation: 0
+  });
+
+interface Proposal {
+  totalVotes: BigNumber;
+  uniqueVoters: number;
+}
+
+  const calculateAverageParticipation = (proposals: Proposal[]): number => {
+    if (proposals.length === 0) return 0;
+    
+    const totalParticipation = proposals.reduce((sum, proposal) => {
+      return sum + proposal.uniqueVoters;
+    }, 0);
+    
+    return (totalParticipation / proposals.length) * 100;
+  };
+
+  useEffect(() => {
+    // First, check if the contracts are available
+    if (!daoToken || !stateConstituent) {
+      console.warn('Contracts not yet initialized');
+      return;
+    }
+
+    const fetchMetrics = async () => {
+      try {
+        // Since we've checked for null contracts above, TypeScript knows they're safe to use here
+        const [
+          totalSupply,
+          treasuryBalance,
+          activeMembers,
+          votingPower,
+          proposalCount
+        ] = await Promise.all([
+          daoToken.totalSupply(),
+          daoToken.treasuryBalance(),
+          stateConstituent.getActiveMemberCount(),
+          daoToken.getCurrentVotes(),
+          stateConstituent.proposalCount()
+        ]);
+
+        // Get recent proposals safely
+        const recentProposals = await stateConstituent.getRecentProposals(10);
+        const avgParticipation = calculateAverageParticipation(recentProposals);
+
+        setMetrics({
+          totalSupply,
+          treasuryBalance,
+          activeMembers,
+          votingPower,
+          proposalCount,
+          avgParticipation
+        });
+      } catch (error) {
+        // Handle any errors that occur during fetching
+        console.error('Error fetching metrics:', error);
+        // You might want to set some error state here or handle the error differently
+      }
+    };
+
+    // Start the initial fetch and polling
+    fetchMetrics();
+    const interval = setInterval(fetchMetrics, 30000);
+
+    // Clean up the interval on unmount
+    return () => clearInterval(interval);
+  }, [daoToken, stateConstituent]); // Dependencies are properly tracked
+
+  return metrics;
+}
+ 
+src/hooks/useVotingActivity.ts
+ 
+// src/hooks/useVotingActivity.ts
+import React, { useEffect, useState } from 'react';
+import { useContractEvents } from 'hooks/useContractEvents';
+import { ethers, BigNumber } from 'ethers';
+
+// This interface represents the raw vote data from the blockchain
+interface BlockchainVoteEvent {
+  id: string;
+  voter: string;
+  support: boolean;
+  votes: BigNumber;
+  timestamp: number;
+}
+
+// This interface represents how we'll show the vote in the UI
+interface VoteEvent {
+  id: string;
+  voter: string;
+  support: boolean;
+  votes: string;  // String format for display
+  timestamp: number;
+}
+
+interface VotingData {
+  recentVotes: VoteEvent[];
+  participationStats: Array<{
+    date: string;
+    averageVotes: string;
+    totalVotes: string;
+    participationCount: number;
+  }>;
+}
+
+interface VotingHistoryItem {
+  votes: BigNumber;
+  timestamp: number;
+}
+
+export function useVotingActivity() {
+  const { stateConstituent } = useContractEvents();
+  // Define initial state with proper typing
+  const [votingData, setVotingData] = useState<VotingData>({
+    recentVotes: [],
+    participationStats: []
+  });
+
+  const calculateParticipationStats = (history: VotingHistoryItem[]) => {
+    if (history.length === 0) return [];
+    
+    const dailyStats = history.reduce((acc, item) => {
+      const date = new Date(item.timestamp * 1000).toISOString().split('T')[0];
+      if (!acc[date]) {
+        acc[date] = { total: BigNumber.from(0), count: 0 };
+      }
+      acc[date].total = acc[date].total.add(item.votes);
+      acc[date].count++;
+      return acc;
+    }, {} as Record<string, { total: BigNumber; count: number }>);
+
+    return Object.entries(dailyStats).map(([date, stats]) => ({
+      date,
+      averageVotes: stats.total.div(stats.count).toString(),
+      totalVotes: stats.total.toString(),
+      participationCount: stats.count
+    }));
+  };
+
+  useEffect(() => {
+    const fetchVotingActivity = async () => {
+      // Add null check for stateConstituent
+      if (!stateConstituent) {
+        console.warn('State constituent not initialized');
+        return;
+      }
+
+      try {
+        const filter = stateConstituent.filters.VoteCast();
+        const events = await stateConstituent.queryFilter(filter, -1000);
+
+        // First, create the blockchain format votes
+        const blockchainHistory = await Promise.all(
+          events.map(async (event) => {
+            const block = await event.getBlock();
+            
+            if (!event.args) {
+              console.warn('Event args undefined for event:', event);
+              return null;
+            }
+
+            return {
+              id: event.transactionHash,
+              voter: event.args.voter,
+              support: event.args.support,
+              votes: event.args.votes,  // Keep as BigNumber
+              timestamp: block.timestamp
+            };
+          })
+        );
+
+        // Filter out nulls and cast to correct type
+        const validBlockchainHistory = blockchainHistory.filter(
+          (item): item is BlockchainVoteEvent => item !== null
+        );
+
+        // Create the UI version with string votes
+        const uiHistory = validBlockchainHistory.map(vote => ({
+          ...vote,
+          votes: vote.votes.toString()  // Convert to string for UI
+        }));
+
+        // Use blockchain format for calculations, UI format for display
+        setVotingData({
+          recentVotes: uiHistory.slice(-10),
+          participationStats: calculateParticipationStats(validBlockchainHistory)
+        });
+      } catch (error) {
+        console.error('Error fetching voting activity:', error);
+      }
+    };
+
+    fetchVotingActivity();
+    const interval = setInterval(fetchVotingActivity, 15000);
+    return () => clearInterval(interval);
+  }, [stateConstituent]);
+
+  return votingData;
+}

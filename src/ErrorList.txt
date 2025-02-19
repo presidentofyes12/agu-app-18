@@ -1,0 +1,2630 @@
+Compiled with problems:
+ERROR
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: /home/impromise/agu-app (1)/agu-app/src/views/components/dashboard/ProposalCreation.tsx: Unexpected token (211:6)
+
+  209 |       </FormControl>
+  210 |
+> 211 |       <FormControl fullWidth>
+      |       ^
+  212 |         <FormLabel>Description</FormLabel>
+  213 |         <TextField
+  214 |           placeholder="Provide a detailed description of your proposal"
+    at instantiate (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:653:32)
+    at constructor (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:946:12)
+    at TypeScriptParserMixin.raise (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:3270:19)
+    at TypeScriptParserMixin.unexpected (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:3300:16)
+    at TypeScriptParserMixin.checkExpressionErrors (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:3724:12)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10644:12)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:9701:20)
+    at TypeScriptParserMixin.parseExpressionBase (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10566:23)
+    at /home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10562:39
+    at TypeScriptParserMixin.allowInAnd (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:12257:12)
+    at TypeScriptParserMixin.parseExpression (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10562:17)
+    at TypeScriptParserMixin.jsxParseExpressionContainer (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:6867:31)
+    at TypeScriptParserMixin.jsxParseElementAt (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:6946:36)
+    at TypeScriptParserMixin.jsxParseElement (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:6990:17)
+    at TypeScriptParserMixin.parseExprAtom (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:7002:19)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10872:23)
+    at TypeScriptParserMixin.parseUpdate (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10855:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10831:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:9754:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10669:61)
+    at TypeScriptParserMixin.parseExprOps (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10674:23)
+    at TypeScriptParserMixin.parseMaybeConditional (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10651:23)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10612:21)
+    at /home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:9690:39
+    at TypeScriptParserMixin.tryParse (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:3649:20)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:9690:18)
+    at /home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10582:39
+    at TypeScriptParserMixin.allowInAnd (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:12257:12)
+    at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10582:17)
+    at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:11490:28)
+    at TypeScriptParserMixin.parseExprAtom (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:11141:23)
+    at TypeScriptParserMixin.parseExprAtom (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:7007:20)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10872:23)
+    at TypeScriptParserMixin.parseUpdate (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10855:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10831:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:9754:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10669:61)
+    at TypeScriptParserMixin.parseExprOps (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10674:23)
+    at TypeScriptParserMixin.parseMaybeConditional (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10651:23)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10612:21)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:9701:20)
+    at TypeScriptParserMixin.parseExpressionBase (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10566:23)
+    at /home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10562:39
+    at TypeScriptParserMixin.allowInAnd (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:12252:16)
+    at TypeScriptParserMixin.parseExpression (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10562:17)
+    at TypeScriptParserMixin.parseReturnStatement (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:12935:28)
+    at TypeScriptParserMixin.parseStatementContent (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:12582:21)
+    at TypeScriptParserMixin.parseStatementContent (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:9398:18)
+    at TypeScriptParserMixin.parseStatementLike (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:12549:17)
+    at TypeScriptParserMixin.parseStatementListItem (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:12529:17)
+./src/views/components/dashboard/ProposalCreation.tsx@http://localhost:3000/static/js/bundle.js:28007:7
+options.factory@http://localhost:3000/static/js/bundle.js:440817:31
+__webpack_require__@http://localhost:3000/static/js/bundle.js:440206:33
+fn@http://localhost:3000/static/js/bundle.js:440474:21
+./src/views/components/dashboard/DAOPage.tsx@http://localhost:3000/static/js/bundle.js:26412:94
+options.factory@http://localhost:3000/static/js/bundle.js:440817:31
+__webpack_require__@http://localhost:3000/static/js/bundle.js:440206:33
+fn@http://localhost:3000/static/js/bundle.js:440474:21
+./src/App.tsx@http://localhost:3000/static/js/bundle.js:52:112
+options.factory@http://localhost:3000/static/js/bundle.js:440817:31
+__webpack_require__@http://localhost:3000/static/js/bundle.js:440206:33
+fn@http://localhost:3000/static/js/bundle.js:440474:21
+./src/index.tsx@http://localhost:3000/static/js/bundle.js:6406:80
+options.factory@http://localhost:3000/static/js/bundle.js:440817:31
+__webpack_require__@http://localhost:3000/static/js/bundle.js:440206:33
+@http://localhost:3000/static/js/bundle.js:441463:56
+@http://localhost:3000/static/js/bundle.js:441465:12
+ERROR in ./src/views/components/dashboard/ProposalCreation.tsx
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: /home/impromise/agu-app (1)/agu-app/src/views/components/dashboard/ProposalCreation.tsx: Unexpected token (211:6)
+
+  209 |       </FormControl>
+  210 |
+> 211 |       <FormControl fullWidth>
+      |       ^
+  212 |         <FormLabel>Description</FormLabel>
+  213 |         <TextField
+  214 |           placeholder="Provide a detailed description of your proposal"
+    at instantiate (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:653:32)
+    at constructor (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:946:12)
+    at TypeScriptParserMixin.raise (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:3270:19)
+    at TypeScriptParserMixin.unexpected (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:3300:16)
+    at TypeScriptParserMixin.checkExpressionErrors (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:3724:12)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10644:12)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:9701:20)
+    at TypeScriptParserMixin.parseExpressionBase (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10566:23)
+    at /home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10562:39
+    at TypeScriptParserMixin.allowInAnd (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:12257:12)
+    at TypeScriptParserMixin.parseExpression (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10562:17)
+    at TypeScriptParserMixin.jsxParseExpressionContainer (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:6867:31)
+    at TypeScriptParserMixin.jsxParseElementAt (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:6946:36)
+    at TypeScriptParserMixin.jsxParseElement (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:6990:17)
+    at TypeScriptParserMixin.parseExprAtom (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:7002:19)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10872:23)
+    at TypeScriptParserMixin.parseUpdate (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10855:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10831:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:9754:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10669:61)
+    at TypeScriptParserMixin.parseExprOps (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10674:23)
+    at TypeScriptParserMixin.parseMaybeConditional (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10651:23)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10612:21)
+    at /home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:9690:39
+    at TypeScriptParserMixin.tryParse (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:3649:20)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:9690:18)
+    at /home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10582:39
+    at TypeScriptParserMixin.allowInAnd (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:12257:12)
+    at TypeScriptParserMixin.parseMaybeAssignAllowIn (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10582:17)
+    at TypeScriptParserMixin.parseParenAndDistinguishExpression (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:11490:28)
+    at TypeScriptParserMixin.parseExprAtom (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:11141:23)
+    at TypeScriptParserMixin.parseExprAtom (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:7007:20)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10872:23)
+    at TypeScriptParserMixin.parseUpdate (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10855:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10831:23)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:9754:18)
+    at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10669:61)
+    at TypeScriptParserMixin.parseExprOps (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10674:23)
+    at TypeScriptParserMixin.parseMaybeConditional (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10651:23)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10612:21)
+    at TypeScriptParserMixin.parseMaybeAssign (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:9701:20)
+    at TypeScriptParserMixin.parseExpressionBase (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10566:23)
+    at /home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10562:39
+    at TypeScriptParserMixin.allowInAnd (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:12252:16)
+    at TypeScriptParserMixin.parseExpression (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:10562:17)
+    at TypeScriptParserMixin.parseReturnStatement (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:12935:28)
+    at TypeScriptParserMixin.parseStatementContent (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:12582:21)
+    at TypeScriptParserMixin.parseStatementContent (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:9398:18)
+    at TypeScriptParserMixin.parseStatementLike (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:12549:17)
+    at TypeScriptParserMixin.parseStatementListItem (/home/impromise/agu-app (1)/agu-app/node_modules/@babel/parser/lib/index.js:12529:17)
+ERROR in src/contexts/ProposalContext.tsx:388:9
+TS2741: Property 'getProposalTimeline' is missing in type '{ createProposal: (title: string, description: string, category: number, options?: any) => Promise<string>; submitProposal: (proposalId: string) => Promise<void>; ... 12 more ...; subscribeToProposalEvents: (proposalId: string, handlers: { onVoteCast?: (event: { voter: string; support: boolean; }) => void; onStateCh...' but required in type 'ProposalContextType'.
+    386 |   };*/
+    387 |
+  > 388 |   const value: ProposalContextType = {
+        |         ^^^^^
+    389 |     // Core functionality
+    390 |     createProposal,
+    391 |     submitProposal,
+ERROR in src/hooks/useCapabilityUnlocks.ts:8:11
+TS2339: Property 'provider' does not exist on type 'Web3ManagerReturn'.
+     6 | export const useCapabilityUnlocks = (address: string) => {
+     7 |   const [unlocks, setUnlocks] = useState<CapabilityUnlockEvent[]>([]);
+  >  8 |   const { provider } = useWeb3Manager();
+       |           ^^^^^^^^
+     9 |   
+    10 |   useEffect(() => {
+    11 |     const eventListener = UnifiedEventListener.getInstance(
+ERROR in src/hooks/useDomainMetrics.ts:37:11
+TS2322: Type 'string' is not assignable to type 'bigint'.
+    35 |           currentStage: stateData.stage,
+    36 |           reputationScores: {}, // Fetch for relevant addresses
+  > 37 |           treasuryBalance: tokenMetrics.treasuryBalance,
+       |           ^^^^^^^^^^^^^^^
+    38 |           lastEpochUpdate: stateData.lastUpdate,
+    39 |           governanceWeight: Math.floor((currentLevel - 16.67) * 10) / 10 + 1
+    40 |         });
+ERROR in src/hooks/useStateTransition.ts:4:10
+TS2305: Module '"types/state"' has no exported member 'SystemState'.
+    2 | import { useState, useEffect, useCallback, useMemo } from 'react';
+    3 | import { useWeb3Manager } from './useWeb3Manager';
+  > 4 | import { SystemState } from 'types/state';
+      |          ^^^^^^^^^^^
+    5 | import { StateTransitionService } from '../services/StateTransitionService';
+    6 |
+    7 | export const useStateTransition = (address: string) => {
+ERROR in src/hooks/useStateTransition.ts:10:11
+TS2339: Property 'provider' does not exist on type 'Web3ManagerReturn'.
+     8 |   const [currentState, setCurrentState] = useState<SystemState>();
+     9 |   const [loading, setLoading] = useState(true);
+  > 10 |   const { provider, contractService } = useWeb3Manager();
+       |           ^^^^^^^^
+    11 |   
+    12 |   const transitionService = useMemo(() => 
+    13 |     StateTransitionService.getInstance(provider, contractService),
+ERROR in src/hooks/useStateTransition.ts:13:50
+TS2345: Argument of type 'ContractService | null' is not assignable to parameter of type 'ContractService'.
+  Type 'null' is not assignable to type 'ContractService'.
+    11 |   
+    12 |   const transitionService = useMemo(() => 
+  > 13 |     StateTransitionService.getInstance(provider, contractService),
+       |                                                  ^^^^^^^^^^^^^^^
+    14 |     [provider, contractService]
+    15 |   );
+    16 |
+ERROR in src/hooks/useStateTransitions.ts:4:10
+TS2459: Module '"../services/UnifiedEventListener"' declares 'StateTransitionEvent' locally, but it is not exported.
+    2 | import { useState, useEffect, useCallback } from 'react';
+    3 | import { useWeb3Manager } from './useWeb3Manager';
+  > 4 | import { StateTransitionEvent, UnifiedEventListener} from '../services/UnifiedEventListener';
+      |          ^^^^^^^^^^^^^^^^^^^^
+    5 |
+    6 | export const useStateTransitions = (address: string) => {
+    7 |   const [transitions, setTransitions] = useState<StateTransitionEvent[]>([]);
+ERROR in src/hooks/useStateTransitions.ts:8:11
+TS2339: Property 'provider' does not exist on type 'Web3ManagerReturn'.
+     6 | export const useStateTransitions = (address: string) => {
+     7 |   const [transitions, setTransitions] = useState<StateTransitionEvent[]>([]);
+  >  8 |   const { provider } = useWeb3Manager();
+       |           ^^^^^^^^
+     9 |   
+    10 |   useEffect(() => {
+    11 |     const eventListener = UnifiedEventListener.getInstance(
+ERROR in src/hooks/useWeb3Manager.ts:222:7
+TS2322: Type 'string | undefined' is not assignable to type 'string | null'.
+  Type 'undefined' is not assignable to type 'string | null'.
+    220 |     connectionStatus,
+    221 |     web3State: {
+  > 222 |       account,
+        |       ^^^^^^^
+    223 |       provider,
+    224 |       isActive,
+    225 |       chainId
+ERROR in src/hooks/useWeb3ReactProvider.ts:47:11
+TS2722: Cannot invoke an object which is possibly 'undefined'.
+    45 |       if (context.connector) {
+    46 |         try {
+  > 47 |           context.connector.deactivate();
+       |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    48 |         } catch (error) {
+    49 |           console.error('Failed to deactivate:', error);
+    50 |         }
+ERROR in src/services/AuthorityService.ts:56:30
+TS2339: Property 'getCurrentState' does not exist on type 'AuthorityService'.
+    54 |     baseAmount: bigint
+    55 |   ): Promise<bigint> {
+  > 56 |     const state = await this.getCurrentState(address);
+       |                              ^^^^^^^^^^^^^^^
+    57 |     
+    58 |     // Calculate multiplier based on authority level
+    59 |     let multiplier = 1.0;
+ERROR in src/services/AuthorityService.ts:71:30
+TS2339: Property 'getCurrentState' does not exist on type 'AuthorityService'.
+    69 |     capability: VotingCapabilityType
+    70 |   ): Promise<boolean> {
+  > 71 |     const state = await this.getCurrentState(address);
+       |                              ^^^^^^^^^^^^^^^
+    72 |     const requiredState = this.getRequiredState(capability);
+    73 |     return state >= requiredState;
+    74 |   }
+ERROR in src/services/ContractEventManager.ts:275:22
+TS2531: Object is possibly 'null'.
+    273 |     }
+    274 |
+  > 275 |     const tx = await this.contracts.stateConstituent.castVote(
+        |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    276 |       proposalId,
+    277 |       support
+    278 |     );
+ERROR in src/services/DataSynchronizationService.ts:132:16
+TS2339: Property 'syncAuthorityLayer' does not exist on type 'DataSynchronizationService'.
+    130 |     // Sync each layer in order
+    131 |     await this.syncFoundationLayer(address, state.foundation);
+  > 132 |     await this.syncAuthorityLayer(address, state.authority);
+        |                ^^^^^^^^^^^^^^^^^^
+    133 |     await this.syncDomainLayer(address, state.domain);
+    134 |     await this.syncIntegrationLayer(address, state.integration);
+    135 |     await this.syncUnifiedLayer(address, state.unified);
+ERROR in src/services/DataSynchronizationService.ts:133:16
+TS2339: Property 'syncDomainLayer' does not exist on type 'DataSynchronizationService'.
+    131 |     await this.syncFoundationLayer(address, state.foundation);
+    132 |     await this.syncAuthorityLayer(address, state.authority);
+  > 133 |     await this.syncDomainLayer(address, state.domain);
+        |                ^^^^^^^^^^^^^^^
+    134 |     await this.syncIntegrationLayer(address, state.integration);
+    135 |     await this.syncUnifiedLayer(address, state.unified);
+    136 |
+ERROR in src/services/DataSynchronizationService.ts:134:16
+TS2339: Property 'syncIntegrationLayer' does not exist on type 'DataSynchronizationService'.
+    132 |     await this.syncAuthorityLayer(address, state.authority);
+    133 |     await this.syncDomainLayer(address, state.domain);
+  > 134 |     await this.syncIntegrationLayer(address, state.integration);
+        |                ^^^^^^^^^^^^^^^^^^^^
+    135 |     await this.syncUnifiedLayer(address, state.unified);
+    136 |
+    137 |     // Update metadata
+ERROR in src/services/DataSynchronizationService.ts:135:16
+TS2339: Property 'syncUnifiedLayer' does not exist on type 'DataSynchronizationService'.
+    133 |     await this.syncDomainLayer(address, state.domain);
+    134 |     await this.syncIntegrationLayer(address, state.integration);
+  > 135 |     await this.syncUnifiedLayer(address, state.unified);
+        |                ^^^^^^^^^^^^^^^^
+    136 |
+    137 |     // Update metadata
+    138 |     const metadata = this.metadata.get(address);
+ERROR in src/services/DataSynchronizationService.ts:150:38
+TS2339: Property 'getFoundationState' does not exist on type 'DataSynchronizationService'.
+    148 |   private async syncFoundationLayer(address: string, state: SyncState['foundation']) {
+    149 |     // Get latest foundation state from contracts
+  > 150 |     const contractState = await this.getFoundationState(address);
+        |                                      ^^^^^^^^^^^^^^^^^^
+    151 |     
+    152 |     // Check for changes
+    153 |     if (this.hasStateChanged(state, contractState)) {
+ERROR in src/services/DataSynchronizationService.ts:153:14
+TS2339: Property 'hasStateChanged' does not exist on type 'DataSynchronizationService'.
+    151 |     
+    152 |     // Check for changes
+  > 153 |     if (this.hasStateChanged(state, contractState)) {
+        |              ^^^^^^^^^^^^^^^
+    154 |       // Update local state
+    155 |       state.level = contractState.level;
+    156 |       state.capabilities = contractState.capabilities;
+ERROR in src/services/DataSynchronizationService.ts:161:12
+TS2339: Property 'emitSyncEvent' does not exist on type 'DataSynchronizationService'.
+    159 |
+    160 |       // Emit sync event
+  > 161 |       this.emitSyncEvent('foundation', address, state);
+        |            ^^^^^^^^^^^^^
+    162 |     }
+    163 |   }
+    164 |
+ERROR in src/services/DataSynchronizationService.ts:191:27
+TS2339: Property 'getIndexedDB' does not exist on type 'DataSynchronizationService'.
+    189 |
+    190 |   private async storeInIndexedDB(address: string, data: any) {
+  > 191 |     const db = await this.getIndexedDB();
+        |                           ^^^^^^^^^^^^
+    192 |     const tx = db.transaction('states', 'readwrite');
+    193 |     const store = tx.objectStore('states');
+    194 |     await store.put(data, address);
+ERROR in src/services/DataSynchronizationService.ts:203:29
+TS2339: Property 'getIndexedDB' does not exist on type 'DataSynchronizationService'.
+    201 |     try {
+    202 |       // Try IndexedDB first
+  > 203 |       const db = await this.getIndexedDB();
+        |                             ^^^^^^^^^^^^
+    204 |       const tx = db.transaction('states', 'readonly');
+    205 |       const store = tx.objectStore('states');
+    206 |       const data = await store.get(address);
+ERROR in src/services/DataSynchronizationService.ts:227:31
+TS2339: Property 'getRelevantEvents' does not exist on type 'DataSynchronizationService'.
+    225 |   private async handleNewBlock(blockNumber: number) {
+    226 |     // Check for relevant contract events
+  > 227 |     const events = await this.getRelevantEvents(blockNumber);
+        |                               ^^^^^^^^^^^^^^^^^
+    228 |     
+    229 |     for (const event of events) {
+    230 |       // Add sync task to queue
+ERROR in src/services/DataSynchronizationService.ts:232:20
+TS2339: Property 'handleContractEvent' does not exist on type 'DataSynchronizationService'.
+    230 |       // Add sync task to queue
+    231 |       this.syncQueue.push(async () => {
+  > 232 |         await this.handleContractEvent(event);
+        |                    ^^^^^^^^^^^^^^^^^^^
+    233 |       });
+    234 |     }
+    235 |
+ERROR in src/services/DataSynchronizationService.ts:253:20
+TS2339: Property 'updateStateFromNostr' does not exist on type 'DataSynchronizationService'.
+    251 |       if (state) {
+    252 |         // Update state based on Nostr event
+  > 253 |         await this.updateStateFromNostr(state, event);
+        |                    ^^^^^^^^^^^^^^^^^^^^
+    254 |         // Trigger persist
+    255 |         await this.persistState(address);
+    256 |       }
+ERROR in src/services/DataSynchronizationService.ts:343:11
+TS2339: Property 'provider' does not exist on type 'Web3ManagerReturn'.
+    341 | export const useSynchronizedState = (address: string) => {
+    342 |   const [state, setState] = useState<SyncState | null>(null);
+  > 343 |   const { provider } = useWeb3Manager();
+        |           ^^^^^^^^
+    344 |   const eventListener = UnifiedEventListener.getInstance(
+    345 |     provider,
+    346 |     'wss://nostr-relay.example.com'
+ERROR in src/services/EmergencyResponseService.ts:103:18
+TS2339: Property 'handleEmergencyEvent' does not exist on type 'EmergencyResponseService'.
+    101 |     // Listen for emergency-related events
+    102 |     this.eventListener.subscribe('emergency-action', async (event) => {
+  > 103 |       await this.handleEmergencyEvent(event);
+        |                  ^^^^^^^^^^^^^^^^^^^^
+    104 |     });
+    105 |   }
+    106 |
+ERROR in src/services/EmergencyResponseService.ts:134:31
+TS2339: Property 'signEmergencyAction' does not exist on type 'EmergencyResponseService'.
+    132 |         authorityLevel: authority,
+    133 |         timestamp: Date.now(),
+  > 134 |         signature: await this.signEmergencyAction(proposer, type)
+        |                               ^^^^^^^^^^^^^^^^^^^
+    135 |       }]
+    136 |     };
+    137 |
+ERROR in src/services/EmergencyResponseService.ts:147:16
+TS2339: Property 'notifyEmergencyAction' does not exist on type 'EmergencyResponseService'.
+    145 |
+    146 |     this.activeEmergencies.set(action.id, action);
+  > 147 |     await this.notifyEmergencyAction(action);
+        |                ^^^^^^^^^^^^^^^^^^^^^
+    148 |     return action;
+    149 |   }
+    150 |
+ERROR in src/services/EmergencyResponseService.ts:170:29
+TS2339: Property 'signEmergencyAction' does not exist on type 'EmergencyResponseService'.
+    168 |       authorityLevel: authority,
+    169 |       timestamp: Date.now(),
+  > 170 |       signature: await this.signEmergencyAction(approver, action.type)
+        |                             ^^^^^^^^^^^^^^^^^^^
+    171 |     };
+    172 |
+    173 |     action.approvals.push(approval);
+ERROR in src/services/EmergencyResponseService.ts:180:16
+TS2339: Property 'notifyEmergencyAction' does not exist on type 'EmergencyResponseService'.
+    178 |     }
+    179 |
+  > 180 |     await this.notifyEmergencyAction(action);
+        |                ^^^^^^^^^^^^^^^^^^^^^
+    181 |   }
+    182 |
+    183 |   // Execute an approved emergency action
+ERROR in src/services/EmergencyResponseService.ts:196:18
+TS2339: Property 'notifyEmergencyAction' does not exist on type 'EmergencyResponseService'.
+    194 |     try {
+    195 |       action.status = EmergencyStatus.IN_PROGRESS;
+  > 196 |       await this.notifyEmergencyAction(action);
+        |                  ^^^^^^^^^^^^^^^^^^^^^
+    197 |
+    198 |       // Execute the emergency action
+    199 |       const result = await this.executeAction(action, executor);
+ERROR in src/services/EmergencyResponseService.ts:209:18
+TS2339: Property 'notifyEmergencyAction' does not exist on type 'EmergencyResponseService'.
+    207 |       };
+    208 |
+  > 209 |       await this.notifyEmergencyAction(action);
+        |                  ^^^^^^^^^^^^^^^^^^^^^
+    210 |     } catch (error) {
+    211 |       action.status = EmergencyStatus.FAILED;
+    212 |       await this.notifyEmergencyAction(action);
+ERROR in src/services/EmergencyResponseService.ts:212:18
+TS2339: Property 'notifyEmergencyAction' does not exist on type 'EmergencyResponseService'.
+    210 |     } catch (error) {
+    211 |       action.status = EmergencyStatus.FAILED;
+  > 212 |       await this.notifyEmergencyAction(action);
+        |                  ^^^^^^^^^^^^^^^^^^^^^
+    213 |       throw error;
+    214 |     }
+    215 |   }
+ERROR in src/services/EmergencyResponseService.ts:223:21
+TS2339: Property 'executePauseOperations' does not exist on type 'EmergencyResponseService'.
+    221 |     switch (action.type) {
+    222 |       case EmergencyActionType.PAUSE_OPERATIONS:
+  > 223 |         return this.executePauseOperations(action);
+        |                     ^^^^^^^^^^^^^^^^^^^^^^
+    224 |       case EmergencyActionType.FREEZE_ASSETS:
+    225 |         return this.executeFreezeAssets(action);
+    226 |       case EmergencyActionType.PARAMETER_OVERRIDE:
+ERROR in src/services/EmergencyResponseService.ts:225:21
+TS2339: Property 'executeFreezeAssets' does not exist on type 'EmergencyResponseService'.
+    223 |         return this.executePauseOperations(action);
+    224 |       case EmergencyActionType.FREEZE_ASSETS:
+  > 225 |         return this.executeFreezeAssets(action);
+        |                     ^^^^^^^^^^^^^^^^^^^
+    226 |       case EmergencyActionType.PARAMETER_OVERRIDE:
+    227 |         return this.executeParameterOverride(action);
+    228 |       case EmergencyActionType.EMERGENCY_UPGRADE:
+ERROR in src/services/EmergencyResponseService.ts:227:21
+TS2339: Property 'executeParameterOverride' does not exist on type 'EmergencyResponseService'.
+    225 |         return this.executeFreezeAssets(action);
+    226 |       case EmergencyActionType.PARAMETER_OVERRIDE:
+  > 227 |         return this.executeParameterOverride(action);
+        |                     ^^^^^^^^^^^^^^^^^^^^^^^^
+    228 |       case EmergencyActionType.EMERGENCY_UPGRADE:
+    229 |         return this.executeEmergencyUpgrade(action);
+    230 |       case EmergencyActionType.CROSS_DAO_INTERVENTION:
+ERROR in src/services/EmergencyResponseService.ts:229:21
+TS2339: Property 'executeEmergencyUpgrade' does not exist on type 'EmergencyResponseService'.
+    227 |         return this.executeParameterOverride(action);
+    228 |       case EmergencyActionType.EMERGENCY_UPGRADE:
+  > 229 |         return this.executeEmergencyUpgrade(action);
+        |                     ^^^^^^^^^^^^^^^^^^^^^^^
+    230 |       case EmergencyActionType.CROSS_DAO_INTERVENTION:
+    231 |         return this.executeCrossDAOIntervention(action);
+    232 |       case EmergencyActionType.SYSTEM_RESET:
+ERROR in src/services/EmergencyResponseService.ts:231:21
+TS2339: Property 'executeCrossDAOIntervention' does not exist on type 'EmergencyResponseService'.
+    229 |         return this.executeEmergencyUpgrade(action);
+    230 |       case EmergencyActionType.CROSS_DAO_INTERVENTION:
+  > 231 |         return this.executeCrossDAOIntervention(action);
+        |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    232 |       case EmergencyActionType.SYSTEM_RESET:
+    233 |         return this.executeSystemReset(action);
+    234 |       default:
+ERROR in src/services/EmergencyResponseService.ts:233:21
+TS2339: Property 'executeSystemReset' does not exist on type 'EmergencyResponseService'.
+    231 |         return this.executeCrossDAOIntervention(action);
+    232 |       case EmergencyActionType.SYSTEM_RESET:
+  > 233 |         return this.executeSystemReset(action);
+        |                     ^^^^^^^^^^^^^^^^^^
+    234 |       default:
+    235 |         throw new Error('Unsupported emergency action type');
+    236 |     }
+ERROR in src/services/EmergencyResponseService.ts:298:11
+TS2339: Property 'provider' does not exist on type 'Web3ManagerReturn'.
+    296 | export const useEmergencyResponse = () => {
+    297 |   const [activeEmergencies, setActiveEmergencies] = useState<EmergencyAction[]>([]);
+  > 298 |   const { provider } = useWeb3Manager();
+        |           ^^^^^^^^
+    299 |   const eventListener = UnifiedEventListener.getInstance(provider);
+    300 |   const syncService = DataSynchronizationService.getInstance(provider, eventListener);
+    301 |   
+ERROR in src/services/EmergencyResponseService.ts:299:46
+TS2554: Expected 2 arguments, but got 1.
+    297 |   const [activeEmergencies, setActiveEmergencies] = useState<EmergencyAction[]>([]);
+    298 |   const { provider } = useWeb3Manager();
+  > 299 |   const eventListener = UnifiedEventListener.getInstance(provider);
+        |                                              ^^^^^^^^^^^
+    300 |   const syncService = DataSynchronizationService.getInstance(provider, eventListener);
+    301 |   
+    302 |   useEffect(() => {
+ERROR in src/services/FoundationService.ts:56:46
+TS2339: Property 'getMetrics' does not exist on type 'ContractService'.
+    54 | public async evaluateState(address: string): Promise<FoundationState> {
+    55 |   // Get metrics first
+  > 56 |   const metrics = await this.contractService.getMetrics(address);
+       |                                              ^^^^^^^^^^
+    57 |   
+    58 |   // Calculate state based on metrics
+    59 |   const state = this.calculateState(metrics);
+ERROR in src/services/FoundationService.ts:59:22
+TS2554: Expected 3 arguments, but got 1.
+    57 |   
+    58 |   // Calculate state based on metrics
+  > 59 |   const state = this.calculateState(metrics);
+       |                      ^^^^^^^^^^^^^^
+    60 |   
+    61 |     const balance = await this.contractService.getBalance(address);
+    62 |     const activity = await this.contractService.getActivityScore(address);
+ERROR in src/services/FoundationService.ts:61:48
+TS2339: Property 'getBalance' does not exist on type 'ContractService'.
+    59 |   const state = this.calculateState(metrics);
+    60 |   
+  > 61 |     const balance = await this.contractService.getBalance(address);
+       |                                                ^^^^^^^^^^
+    62 |     const activity = await this.contractService.getActivityScore(address);
+    63 |
+    64 |     // Calculate current state based on metrics
+ERROR in src/services/FoundationService.ts:62:49
+TS2339: Property 'getActivityScore' does not exist on type 'ContractService'.
+    60 |   
+    61 |     const balance = await this.contractService.getBalance(address);
+  > 62 |     const activity = await this.contractService.getActivityScore(address);
+       |                                                 ^^^^^^^^^^^^^^^^
+    63 |
+    64 |     // Calculate current state based on metrics
+    65 |     const capabilities = this.getCapabilities(state);
+ERROR in src/services/FoundationService.ts:70:5
+TS2353: Object literal may only specify known properties, and 'address' does not exist in type 'FoundationState'.
+    68 |   return {
+    69 |     level: Number(state),
+  > 70 |     address,
+       |     ^^^^^^^
+    71 |     timestamp: Date.now(),
+    72 |     type: 'FOUNDATION',
+    73 |     capabilities: this.getCapabilities(state),
+ERROR in src/services/FoundationService.ts:131:35
+TS2339: Property 'balance' does not exist on type 'TokenMetrics'.
+    129 |           type: 'TOKEN_BALANCE',
+    130 |           threshold: 1,
+  > 131 |           current: Number(metrics.balance)
+        |                                   ^^^^^^^
+    132 |         });
+    133 |         break;
+    134 |       // Add other state requirements...
+ERROR in src/services/FoundationService.ts:143:5
+TS2322: Type 'string | FoundationStateType' is not assignable to type 'FoundationStateType | undefined'.
+  Type 'string' is not assignable to type 'FoundationStateType | undefined'.
+    141 |     const states = Object.values(FoundationStateType);
+    142 |     const currentIndex = states.indexOf(state);
+  > 143 |     return states[currentIndex + 1];
+        |     ^^^^^^
+    144 |   }
+    145 | }
+    146 |
+ERROR in src/services/StateTransitionService.ts:212:5
+TS2739: Type 'FoundationState' is missing the following properties from type 'FoundationState': type, address, timestamp
+    210 |     const service = FoundationService.getInstance(this.contractService);
+    211 |     const metrics = await this.getMetrics(address);
+  > 212 |     return service.evaluateState(address);
+        |     ^^^^^^
+    213 |   }
+    214 |
+    215 |   // Similar methods for other layers...
+ERROR in src/services/UnifiedEventListener.ts:130:26
+TS2769: No overload matches this call.
+  Overload 1 of 4, '(iterable?: Iterable<readonly [unknown, unknown]> | null | undefined): Map<unknown, unknown>', gave the following error.
+    Argument of type 'string[][]' is not assignable to parameter of type 'Iterable<readonly [unknown, unknown]>'.
+      The types returned by '[Symbol.iterator]().next(...)' are incompatible between these types.
+        Type 'IteratorResult<string[], any>' is not assignable to type 'IteratorResult<readonly [unknown, unknown], any>'.
+          Type 'IteratorYieldResult<string[]>' is not assignable to type 'IteratorResult<readonly [unknown, unknown], any>'.
+            Type 'IteratorYieldResult<string[]>' is not assignable to type 'IteratorYieldResult<readonly [unknown, unknown]>'.
+              Type 'string[]' is not assignable to type 'readonly [unknown, unknown]'.
+                Target requires 2 element(s) but source may have fewer.
+  Overload 2 of 4, '(entries?: readonly (readonly [unknown, unknown])[] | null | undefined): Map<unknown, unknown>', gave the following error.
+    Argument of type 'string[][]' is not assignable to parameter of type 'readonly (readonly [unknown, unknown])[]'.
+      Type 'string[]' is not assignable to type 'readonly [unknown, unknown]'.
+    128 |
+    129 |   private handleNostrEvent(event: NostrEvent) {
+  > 130 |     const tags = new Map(event.tags);
+        |                          ^^^^^^^^^^
+    131 |     
+    132 |     if (tags.get('type') === 'state-transition') {
+    133 |       this.handleStateTransition({
+ERROR in src/services/UnifiedEventListener.ts:138:34
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(text: string | Buffer, reviver?: ((key: any, value: any) => any) | undefined): any', gave the following error.
+    Argument of type '{}' is not assignable to parameter of type 'string | Buffer'.
+  Overload 2 of 2, '(text: string, reviver?: ((this: any, key: string, value: any) => any) | undefined): any', gave the following error.
+    Argument of type '{}' is not assignable to parameter of type 'string'.
+    136 |         toState: Number(tags.get('to-state')),
+    137 |         timestamp: event.created_at * 1000,
+  > 138 |         capabilities: JSON.parse(tags.get('capabilities') || '[]'),
+        |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    139 |         proofs: {
+    140 |           nostr: event.id
+    141 |         }
+ERROR in src/services/UnifiedEventListener.ts:146:9
+TS2322: Type 'unknown' is not assignable to type 'string'.
+    144 |       this.handleCapabilityUnlock({
+    145 |         id: event.id,
+  > 146 |         capability: tags.get('capability'),
+        |         ^^^^^^^^^^
+    147 |         level: Number(tags.get('level')),
+    148 |         requirements: JSON.parse(tags.get('requirements') || '[]'),
+    149 |         timestamp: event.created_at * 1000
+ERROR in src/services/UnifiedEventListener.ts:148:34
+TS2769: No overload matches this call.
+  Overload 1 of 2, '(text: string | Buffer, reviver?: ((key: any, value: any) => any) | undefined): any', gave the following error.
+    Argument of type '{}' is not assignable to parameter of type 'string | Buffer'.
+  Overload 2 of 2, '(text: string, reviver?: ((this: any, key: string, value: any) => any) | undefined): any', gave the following error.
+    Argument of type '{}' is not assignable to parameter of type 'string'.
+    146 |         capability: tags.get('capability'),
+    147 |         level: Number(tags.get('level')),
+  > 148 |         requirements: JSON.parse(tags.get('requirements') || '[]'),
+        |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    149 |         timestamp: event.created_at * 1000
+    150 |       });
+    151 |     }
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:2:24
+TS7016: Could not find a declaration file for module 'chai'. '/home/impromise/agu-app (1)/agu-app/node_modules/chai/chai.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/chai` if it exists or add a new declaration (.d.ts) file containing `declare module 'chai';`
+    1 | // src/tests/integration/LegalFrameworkProgression.test.ts
+  > 2 | import { expect } from 'chai';
+      |                        ^^^^^^
+    3 | import { setupLegalTestContext, progressToLevel } from '../utils/legalTestUtils';
+    4 | import { LegalTestContext } from '../utils/legalTestUtils';
+    5 | import { LEGAL_CONCEPTS } from '../../constants/legalConcepts';
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:25:20
+TS2339: Property 'capabilities' does not exist on type '{ level: number; }'.
+    23 |       let state = await context.contractService.getState(context.accounts[0].address);
+    24 |       expect(state.level).to.be.closeTo(0.925925926, 0.000000001);
+  > 25 |       expect(state.capabilities).to.include('BASIC_RIGHTS');
+       |                    ^^^^^^^^^^^^
+    26 |
+    27 |       // Progress to Secondary Right
+    28 |       await progressToLevel(context, 1.851851852);
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:31:20
+TS2339: Property 'capabilities' does not exist on type '{ level: number; }'.
+    29 |       state = await context.contractService.getState(context.accounts[0].address);
+    30 |       expect(state.level).to.be.closeTo(1.851851852, 0.000000001);
+  > 31 |       expect(state.capabilities).to.include('INTERMEDIATE_RIGHTS');
+       |                    ^^^^^^^^^^^^
+    32 |     });
+    33 |
+    34 |     it('should enforce requirements for Power States', async () => {
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:40:44
+TS2339: Property 'validateStateRequirements' does not exist on type 'ContractService'.
+    38 |       
+    39 |       // Verify requirements are met
+  > 40 |       expect(await context.contractService.validateStateRequirements(
+       |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+    41 |         context.accounts[0].address,
+    42 |         state.level
+    43 |       )).to.be.true;
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:58:20
+TS2339: Property 'capabilities' does not exist on type '{ level: number; }'.
+    56 |       
+    57 |       // Verify Authority capabilities
+  > 58 |       expect(state.capabilities).to.include('FORMATION_COMPLETE');
+       |                    ^^^^^^^^^^^^
+    59 |     });
+    60 |
+    61 |     it('should progress through Authority states with proper governance weight', async () => {
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:67:20
+TS2339: Property 'governanceWeight' does not exist on type '{ level: number; }'.
+    65 |       
+    66 |       // Verify governance weight increases
+  > 67 |       expect(state.governanceWeight).to.be.gt(1);
+       |                    ^^^^^^^^^^^^^^^^
+    68 |     });
+    69 |   });
+    70 |
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:74:62
+TS2769: No overload matches this call.
+  Overload 1 of 4, '(object: ContractService, method: FunctionPropertyNames<Required<ContractService>>): SpyInstance<Promise<ContractReceipt> | ... 11 more ... | Promise<...>, [] | ... 14 more ... | [daoAddress: ...]>', gave the following error.
+    Argument of type '"publishToNostr"' is not assignable to parameter of type 'FunctionPropertyNames<Required<ContractService>>'.
+  Overload 2 of 4, '(object: ContractService, method: never): SpyInstance<never, never>', gave the following error.
+    Argument of type 'string' is not assignable to parameter of type 'never'.
+    72 |     it('should publish state changes to Nostr', async () => {
+    73 |       // Mock Nostr event publication
+  > 74 |       const publishSpy = jest.spyOn(context.contractService, 'publishToNostr');
+       |                                                              ^^^^^^^^^^^^^^^^
+    75 |       
+    76 |       // Progress through a state
+    77 |       await progressToLevel(context, 0.925925926);
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:98:44
+TS2339: Property 'validateNostrEvent' does not exist on type 'ContractService'.
+     96 |       };
+     97 |
+  >  98 |       expect(await context.contractService.validateNostrEvent(event)).to.be.true;
+        |                                            ^^^^^^^^^^^^^^^^^^
+     99 |     });
+    100 |   });
+    101 |
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:105:31
+TS2304: Cannot find name 'render'.
+    103 |     it('should update UI components on state changes', async () => {
+    104 |       // Create test renderer
+  > 105 |       const { getByTestId } = render(
+        |                               ^^^^^^
+    106 |         <LegalProgressionSystem
+    107 |           address={context.accounts[0].address}
+    108 |         />
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:106:10
+TS2304: Cannot find name 'LegalProgressionSystem'.
+    104 |       // Create test renderer
+    105 |       const { getByTestId } = render(
+  > 106 |         <LegalProgressionSystem
+        |          ^^^^^^^^^^^^^^^^^^^^^^
+    107 |           address={context.accounts[0].address}
+    108 |         />
+    109 |       );
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:107:11
+TS1005: '>' expected.
+    105 |       const { getByTestId } = render(
+    106 |         <LegalProgressionSystem
+  > 107 |           address={context.accounts[0].address}
+        |           ^^^^^^^
+    108 |         />
+    109 |       );
+    110 |
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:107:11
+TS2304: Cannot find name 'address'.
+    105 |       const { getByTestId } = render(
+    106 |         <LegalProgressionSystem
+  > 107 |           address={context.accounts[0].address}
+        |           ^^^^^^^
+    108 |         />
+    109 |       );
+    110 |
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:107:18
+TS1005: ',' expected.
+    105 |       const { getByTestId } = render(
+    106 |         <LegalProgressionSystem
+  > 107 |           address={context.accounts[0].address}
+        |                  ^
+    108 |         />
+    109 |       );
+    110 |
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:107:19
+TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+    105 |       const { getByTestId } = render(
+    106 |         <LegalProgressionSystem
+  > 107 |           address={context.accounts[0].address}
+        |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    108 |         />
+    109 |       );
+    110 |
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:107:27
+TS1005: ',' expected.
+    105 |       const { getByTestId } = render(
+    106 |         <LegalProgressionSystem
+  > 107 |           address={context.accounts[0].address}
+        |                           ^
+    108 |         />
+    109 |       );
+    110 |
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:108:10
+TS1109: Expression expected.
+    106 |         <LegalProgressionSystem
+    107 |           address={context.accounts[0].address}
+  > 108 |         />
+        |          ^
+    109 |       );
+    110 |
+    111 |       // Progress state
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:109:7
+TS1109: Expression expected.
+    107 |           address={context.accounts[0].address}
+    108 |         />
+  > 109 |       );
+        |       ^
+    110 |
+    111 |       // Progress state
+    112 |       await progressToLevel(context, 0.925925926);
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:120:31
+TS2304: Cannot find name 'render'.
+    118 |
+    119 |     it('should properly integrate with TokenMetrics', async () => {
+  > 120 |       const { getByTestId } = render(
+        |                               ^^^^^^
+    121 |         <Grid container>
+    122 |           <TokenMetrics />
+    123 |           <LegalProgressionSystem
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:121:10
+TS2304: Cannot find name 'Grid'.
+    119 |     it('should properly integrate with TokenMetrics', async () => {
+    120 |       const { getByTestId } = render(
+  > 121 |         <Grid container>
+        |          ^^^^
+    122 |           <TokenMetrics />
+    123 |           <LegalProgressionSystem
+    124 |             address={context.accounts[0].address}
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:121:15
+TS1005: '>' expected.
+    119 |     it('should properly integrate with TokenMetrics', async () => {
+    120 |       const { getByTestId } = render(
+  > 121 |         <Grid container>
+        |               ^^^^^^^^^
+    122 |           <TokenMetrics />
+    123 |           <LegalProgressionSystem
+    124 |             address={context.accounts[0].address}
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:121:15
+TS2304: Cannot find name 'container'.
+    119 |     it('should properly integrate with TokenMetrics', async () => {
+    120 |       const { getByTestId } = render(
+  > 121 |         <Grid container>
+        |               ^^^^^^^^^
+    122 |           <TokenMetrics />
+    123 |           <LegalProgressionSystem
+    124 |             address={context.accounts[0].address}
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:122:12
+TS2304: Cannot find name 'TokenMetrics'.
+    120 |       const { getByTestId } = render(
+    121 |         <Grid container>
+  > 122 |           <TokenMetrics />
+        |            ^^^^^^^^^^^^
+    123 |           <LegalProgressionSystem
+    124 |             address={context.accounts[0].address}
+    125 |           />
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:122:25
+TS1005: '>' expected.
+    120 |       const { getByTestId } = render(
+    121 |         <Grid container>
+  > 122 |           <TokenMetrics />
+        |                         ^
+    123 |           <LegalProgressionSystem
+    124 |             address={context.accounts[0].address}
+    125 |           />
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:123:12
+TS2304: Cannot find name 'LegalProgressionSystem'.
+    121 |         <Grid container>
+    122 |           <TokenMetrics />
+  > 123 |           <LegalProgressionSystem
+        |            ^^^^^^^^^^^^^^^^^^^^^^
+    124 |             address={context.accounts[0].address}
+    125 |           />
+    126 |         </Grid>
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:124:13
+TS1005: ',' expected.
+    122 |           <TokenMetrics />
+    123 |           <LegalProgressionSystem
+  > 124 |             address={context.accounts[0].address}
+        |             ^^^^^^^
+    125 |           />
+    126 |         </Grid>
+    127 |       );
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:124:13
+TS2304: Cannot find name 'address'.
+    122 |           <TokenMetrics />
+    123 |           <LegalProgressionSystem
+  > 124 |             address={context.accounts[0].address}
+        |             ^^^^^^^
+    125 |           />
+    126 |         </Grid>
+    127 |       );
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:124:21
+TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+    122 |           <TokenMetrics />
+    123 |           <LegalProgressionSystem
+  > 124 |             address={context.accounts[0].address}
+        |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    125 |           />
+    126 |         </Grid>
+    127 |       );
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:124:29
+TS1005: ',' expected.
+    122 |           <TokenMetrics />
+    123 |           <LegalProgressionSystem
+  > 124 |             address={context.accounts[0].address}
+        |                             ^
+    125 |           />
+    126 |         </Grid>
+    127 |       );
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:125:12
+TS1109: Expression expected.
+    123 |           <LegalProgressionSystem
+    124 |             address={context.accounts[0].address}
+  > 125 |           />
+        |            ^
+    126 |         </Grid>
+    127 |       );
+    128 |
+ERROR in src/tests/integration/LegalFrameworkProgression.test.ts:126:10
+TS1110: Type expected.
+    124 |             address={context.accounts[0].address}
+    125 |           />
+  > 126 |         </Grid>
+        |          ^
+    127 |       );
+    128 |
+    129 |       // Progress through state
+ERROR in src/tests/utils/legalTestUtils.ts:19:57
+TS2345: Argument of type 'Wallet' is not assignable to parameter of type 'string'.
+    17 |   
+    18 |   // Initialize contract service with test provider
+  > 19 |   const contractService = new ContractService(provider, owner); // will need to turn "owner" into actual address as a string
+       |                                                         ^^^^^
+    20 |   //await contractService.initialize();
+    21 |   
+    22 |   // Start at Legal Ground Zero
+ERROR in src/tests/utils/legalTestUtils.ts:44:7
+TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+    42 |     await context.contractService.updateState(
+    43 |       context.accounts[0].address,
+  > 44 |       (i + 1) * 1.85185185
+       |       ^^^^^^^^^^^^^^^^^^^^
+    45 |     );
+    46 |   }
+    47 | }
+ERROR in src/tests/utils/stateValidation.ts:2:24
+TS7016: Could not find a declaration file for module 'chai'. '/home/impromise/agu-app (1)/agu-app/node_modules/chai/chai.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/chai` if it exists or add a new declaration (.d.ts) file containing `declare module 'chai';`
+    1 | // src/tests/utils/stateValidation.ts
+  > 2 | import { expect } from 'chai';
+      |                        ^^^^^^
+    3 | import { LEGAL_CONCEPTS } from '../../constants/legalConcepts';
+    4 |
+    5 | export interface StateValidationParams {
+ERROR in src/types/web3.ts:3:33
+TS2307: Cannot find module '../services/FoundationState' or its corresponding type declarations.
+    1 | // types/web3.ts
+    2 | import { ContractService } from '../views/components/dashboard/contractService';
+  > 3 | import { FoundationState } from '../services/FoundationState';
+      |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    4 |
+    5 | export interface Web3ManagerState {
+    6 |   isInitialized: boolean;
+ERROR in src/types/web3.ts:7:20
+TS2304: Cannot find name 'ContractEventManager'.
+     5 | export interface Web3ManagerState {
+     6 |   isInitialized: boolean;
+  >  7 |   contractManager: ContractEventManager | null;
+       |                    ^^^^^^^^^^^^^^^^^^^^
+     8 |   contractService: ContractService | null;  // Add this line
+     9 |   error: Error | null;
+    10 |   contracts: null;
+ERROR in src/util/legalFramework.ts:28:58
+TS2304: Cannot find name 'Requirement'.
+    26 | };
+    27 |
+  > 28 | export const getNextStateRequirements = (level: number): Requirement[] => {
+       |                                                          ^^^^^^^^^^^
+    29 |   // Return requirements based on current level
+    30 |   return [
+    31 |     {
+ERROR in src/views/components/dashboard/AnonymousTransactions.tsx:129:15
+TS2304: Cannot find name 'routeCrossDAOTransaction'.
+    127 |       
+    128 |       if (crossDAOMode) {
+  > 129 |         await routeCrossDAOTransaction(newTx);
+        |               ^^^^^^^^^^^^^^^^^^^^^^^^
+    130 |       }
+    131 |
+    132 |     } catch (error) {
+ERROR in src/views/components/dashboard/AnonymousTransactions.tsx:135:18
+TS18046: 'error' is of type 'unknown'.
+    133 |       setSnackbar({
+    134 |         open: true,
+  > 135 |         message: error.message,
+        |                  ^^^^^
+    136 |         severity: 'error'
+    137 |       });
+    138 |     } finally {
+ERROR in src/views/components/dashboard/AnonymousTransactions.tsx:143:41
+TS7006: Parameter 'tx' implicitly has an 'any' type.
+    141 |   };
+    142 |
+  > 143 |   const handleClaimTransaction = async (tx) => {
+        |                                         ^^
+    144 |     setLoading(true);
+    145 |     try {
+    146 |       // Placeholder for contract interaction
+ERROR in src/views/components/dashboard/AnonymousTransactions.tsx:220:45
+TS2345: Argument of type '{ txHash: string; recipient: string; amount: string; creationTime: number; claimed: boolean; condition: string; }' is not assignable to parameter of type 'SetStateAction<null>'.
+  Type '{ txHash: string; recipient: string; amount: string; creationTime: number; claimed: boolean; condition: string; }' provides no match for the signature '(prevState: null): null'.
+    218 |                             variant="outlined"
+    219 |                             onClick={() => {
+  > 220 |                               setSelectedTx(tx);
+        |                                             ^^
+    221 |                               setClaimDialogOpen(true);
+    222 |                             }}
+    223 |                           >
+ERROR in src/views/components/dashboard/AnonymousTransactions.tsx:362:14
+TS2304: Cannot find name 'FormControlLabel'.
+    360 |         {integrationContext?.powerDomain && (
+    361 |           <Box sx={{ mt: 2 }}>
+  > 362 |             <FormControlLabel
+        |              ^^^^^^^^^^^^^^^^
+    363 |               control={
+    364 |                 <Switch
+    365 |                   checked={crossDAOMode}
+ERROR in src/views/components/dashboard/AnonymousTransactions.tsx:364:18
+TS2304: Cannot find name 'Switch'.
+    362 |             <FormControlLabel
+    363 |               control={
+  > 364 |                 <Switch
+        |                  ^^^^^^
+    365 |                   checked={crossDAOMode}
+    366 |                   onChange={(e) => setCrossDAOMode(e.target.checked)}
+    367 |                   disabled={!integrationContext.crossDAOEnabled}
+ERROR in src/views/components/dashboard/AnonymousTransactions.tsx:366:30
+TS7006: Parameter 'e' implicitly has an 'any' type.
+    364 |                 <Switch
+    365 |                   checked={crossDAOMode}
+  > 366 |                   onChange={(e) => setCrossDAOMode(e.target.checked)}
+        |                              ^
+    367 |                   disabled={!integrationContext.crossDAOEnabled}
+    368 |                 />
+    369 |               }
+ERROR in src/views/components/dashboard/DAODashboard.tsx:3:46
+TS2306: File '/home/impromise/agu-app (1)/agu-app/src/types/domain.ts' is not a module.
+    1 | import React, { useEffect, useState } from 'react';
+    2 | import { useWeb3Manager } from 'hooks/useWeb3Manager';
+  > 3 | import { DomainState, DomainStateType } from 'types/domain';
+      |                                              ^^^^^^^^^^^^^^
+    4 | import { ContractService } from './contractService';
+    5 | import { ethers } from 'ethers';
+    6 |
+ERROR in src/views/components/dashboard/DAODashboard.tsx:93:45
+TS2304: Cannot find name 'DepartmentManager'.
+    91 |           </Tabs>
+    92 |       
+  > 93 |           {currentTab === "departments" && <DepartmentManager state={state} />}
+       |                                             ^^^^^^^^^^^^^^^^^
+    94 |           {currentTab === "policies" && <PolicyManager state={state} />}
+    95 |           {currentTab === "roles" && <RoleManager state={state} />}
+    96 |         </Tabs>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:94:42
+TS2304: Cannot find name 'PolicyManager'.
+    92 |       
+    93 |           {currentTab === "departments" && <DepartmentManager state={state} />}
+  > 94 |           {currentTab === "policies" && <PolicyManager state={state} />}
+       |                                          ^^^^^^^^^^^^^
+    95 |           {currentTab === "roles" && <RoleManager state={state} />}
+    96 |         </Tabs>
+    97 |       </CardContent>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:95:39
+TS2304: Cannot find name 'RoleManager'.
+    93 |           {currentTab === "departments" && <DepartmentManager state={state} />}
+    94 |           {currentTab === "policies" && <PolicyManager state={state} />}
+  > 95 |           {currentTab === "roles" && <RoleManager state={state} />}
+       |                                       ^^^^^^^^^^^
+    96 |         </Tabs>
+    97 |       </CardContent>
+    98 |     </Card>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:123:44
+TS2304: Cannot find name 'ParameterManager'.
+    121 |           </Tabs>
+    122 |
+  > 123 |           {currentTab === "parameters" && <ParameterManager state={state} />}
+        |                                            ^^^^^^^^^^^^^^^^
+    124 |           {currentTab === "treasury" && <TreasuryManager state={state} />}
+    125 |           {currentTab === "veto" && <VetoManager state={state} />}
+    126 |         </Box>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:124:42
+TS2304: Cannot find name 'TreasuryManager'.
+    122 |
+    123 |           {currentTab === "parameters" && <ParameterManager state={state} />}
+  > 124 |           {currentTab === "treasury" && <TreasuryManager state={state} />}
+        |                                          ^^^^^^^^^^^^^^^
+    125 |           {currentTab === "veto" && <VetoManager state={state} />}
+    126 |         </Box>
+    127 |       </CardContent>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:125:38
+TS2304: Cannot find name 'VetoManager'.
+    123 |           {currentTab === "parameters" && <ParameterManager state={state} />}
+    124 |           {currentTab === "treasury" && <TreasuryManager state={state} />}
+  > 125 |           {currentTab === "veto" && <VetoManager state={state} />}
+        |                                      ^^^^^^^^^^^
+    126 |         </Box>
+    127 |       </CardContent>
+    128 |     </Card>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:153:42
+TS2304: Cannot find name 'StrategyManager'.
+    151 |           </Tabs>
+    152 |
+  > 153 |           {currentTab === "strategy" && <StrategyManager state={state} />}
+        |                                          ^^^^^^^^^^^^^^^
+    154 |           {currentTab === "emergency" && <EmergencyControls state={state} />}
+    155 |           {currentTab === "protocol" && <ProtocolManager state={state} />}
+    156 |         </Box>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:154:43
+TS2304: Cannot find name 'EmergencyControls'.
+    152 |
+    153 |           {currentTab === "strategy" && <StrategyManager state={state} />}
+  > 154 |           {currentTab === "emergency" && <EmergencyControls state={state} />}
+        |                                           ^^^^^^^^^^^^^^^^^
+    155 |           {currentTab === "protocol" && <ProtocolManager state={state} />}
+    156 |         </Box>
+    157 |       </CardContent>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:155:42
+TS2304: Cannot find name 'ProtocolManager'.
+    153 |           {currentTab === "strategy" && <StrategyManager state={state} />}
+    154 |           {currentTab === "emergency" && <EmergencyControls state={state} />}
+  > 155 |           {currentTab === "protocol" && <ProtocolManager state={state} />}
+        |                                          ^^^^^^^^^^^^^^^
+    156 |         </Box>
+    157 |       </CardContent>
+    158 |     </Card>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:172:38
+TS7006: Parameter 'service' implicitly has an 'any' type.
+    170 |   const [integrationState, setIntegrationState] = useState<IntegrationState>();
+    171 |
+  > 172 | const fetchIntegrationState = async (service) => {
+        |                                      ^^^^^^^
+    173 |   try {
+    174 |     const state = await service.getProposalState(0);
+    175 |     const stage = state.stage;
+ERROR in src/views/components/dashboard/DAODashboard.tsx:191:29
+TS2304: Cannot find name 'getCrossDAOCapabilities'.
+    189 |         integrationField: integrationLevel >= 33.33
+    190 |       },
+  > 191 |       crossDAOCapabilities: getCrossDAOCapabilities(integrationLevel),
+        |                             ^^^^^^^^^^^^^^^^^^^^^^^
+    192 |       anonymousTransactions: integrationLevel >= 28.70 // Available in Power Domain
+    193 |     });
+    194 |   } catch (error) {
+ERROR in src/views/components/dashboard/DAODashboard.tsx:204:60
+TS2345: Argument of type 'EthereumProvider | undefined' is not assignable to parameter of type 'ExternalProvider | JsonRpcFetchFunc'.
+    202 |     const initializeContract = async () => {
+    203 |       try {
+  > 204 |         const provider = new ethers.providers.Web3Provider(window.ethereum);
+        |                                                            ^^^^^^^^^^^^^^^
+    205 |         const service = new ContractService(
+    206 |           provider,
+    207 |           '0x23767A0C9A072C6A081C27A1C03Cc95B9F9cc6E0'
+ERROR in src/views/components/dashboard/DAODashboard.tsx:209:28
+TS2345: Argument of type 'ContractService' is not assignable to parameter of type 'SetStateAction<null>'.
+    207 |           '0x23767A0C9A072C6A081C27A1C03Cc95B9F9cc6E0'
+    208 |         );
+  > 209 |         setContractService(service);
+        |                            ^^^^^^^
+    210 |
+    211 |         // Add domain state initialization
+    212 |         await fetchDomainState(service);
+ERROR in src/views/components/dashboard/DAODashboard.tsx:216:18
+TS2345: Argument of type '"Failed to initialize DAO dashboard"' is not assignable to parameter of type 'SetStateAction<null>'.
+    214 |       } catch (error) {
+    215 |         console.error('Error initializing dashboard:', error);
+  > 216 |         setError('Failed to initialize DAO dashboard');
+        |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    217 |         setLoading(false);
+    218 |       }
+    219 |     };
+ERROR in src/views/components/dashboard/DAODashboard.tsx:225:35
+TS7006: Parameter 'service' implicitly has an 'any' type.
+    223 |
+    224 |   // Add domain state fetching
+  > 225 |   const fetchDomainState = async (service) => {
+        |                                   ^^^^^^^
+    226 |     try {
+    227 |       const state = await service.getProposalState(0); // Get latest proposal state
+    228 |       const stage = state.stage;
+ERROR in src/views/components/dashboard/DAODashboard.tsx:267:33
+TS7006: Parameter 'service' implicitly has an 'any' type.
+    265 |
+    266 |   // Function to fetch DAO status data
+  > 267 |   const fetchDAOStatus = async (service) => {
+        |                                 ^^^^^^^
+    268 |     try {
+    269 |       const status = await service.getDAOStatus();
+    270 |       
+ERROR in src/views/components/dashboard/DAODashboard.tsx:291:16
+TS2345: Argument of type '"Failed to fetch latest DAO status"' is not assignable to parameter of type 'SetStateAction<null>'.
+    289 |     } catch (error) {
+    290 |       console.error('Error fetching DAO status:', error);
+  > 291 |       setError('Failed to fetch latest DAO status');
+        |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    292 |       setLoading(false);
+    293 |     }
+    294 |   };
+ERROR in src/views/components/dashboard/DAODashboard.tsx:302:22
+TS2339: Property 'on' does not exist on type 'EthereumProvider'.
+    300 |     };
+    301 |
+  > 302 |     window.ethereum?.on('accountsChanged', handleAccountsChanged);
+        |                      ^^
+    303 |     window.ethereum?.on('chainChanged', handleAccountsChanged);
+    304 |
+    305 |     return () => {
+ERROR in src/views/components/dashboard/DAODashboard.tsx:303:22
+TS2339: Property 'on' does not exist on type 'EthereumProvider'.
+    301 |
+    302 |     window.ethereum?.on('accountsChanged', handleAccountsChanged);
+  > 303 |     window.ethereum?.on('chainChanged', handleAccountsChanged);
+        |                      ^^
+    304 |
+    305 |     return () => {
+    306 |       window.ethereum?.removeListener('accountsChanged', handleAccountsChanged);
+ERROR in src/views/components/dashboard/DAODashboard.tsx:306:24
+TS2339: Property 'removeListener' does not exist on type 'EthereumProvider'.
+    304 |
+    305 |     return () => {
+  > 306 |       window.ethereum?.removeListener('accountsChanged', handleAccountsChanged);
+        |                        ^^^^^^^^^^^^^^
+    307 |       window.ethereum?.removeListener('chainChanged', handleAccountsChanged);
+    308 |     };
+    309 |   }, []);
+ERROR in src/views/components/dashboard/DAODashboard.tsx:307:24
+TS2339: Property 'removeListener' does not exist on type 'EthereumProvider'.
+    305 |     return () => {
+    306 |       window.ethereum?.removeListener('accountsChanged', handleAccountsChanged);
+  > 307 |       window.ethereum?.removeListener('chainChanged', handleAccountsChanged);
+        |                        ^^^^^^^^^^^^^^
+    308 |     };
+    309 |   }, []);
+    310 |
+ERROR in src/views/components/dashboard/DAODashboard.tsx:316:43
+TS2339: Property 'getDomainState' does not exist on type 'never'.
+    314 |
+    315 |       // Get current domain state from contract
+  > 316 |       const state = await contractService.getDomainState();
+        |                                           ^^^^^^^^^^^^^^
+    317 |       setDomainState(state);
+    318 |     };
+    319 |
+ERROR in src/views/components/dashboard/DAODashboard.tsx:355:29
+TS2339: Property 'proposalCount' does not exist on type 'never'.
+    353 |               </Box>
+    354 |               <Typography variant="h5" component="div">
+  > 355 |                 {daoStatus?.proposalCount}
+        |                             ^^^^^^^^^^^^^
+    356 |               </Typography>
+    357 |               <Typography color="text.secondary">
+    358 |                 Total Proposals
+ERROR in src/views/components/dashboard/DAODashboard.tsx:379:18
+TS2304: Cannot find name 'Progress'.
+    377 |               </Typography>
+    378 |               <Box sx={{ mt: 2 }}>
+  > 379 |                 <Progress 
+        |                  ^^^^^^^^
+    380 |                   value={(domainState?.level || 16.67) - 16.67} 
+    381 |                   max={8.33} // 25.00 - 16.67
+    382 |                   className="h-1"
+ERROR in src/views/components/dashboard/DAODashboard.tsx:407:57
+TS7006: Parameter 'cap' implicitly has an 'any' type.
+    405 |
+    406 |                 <Grid container spacing={2}>
+  > 407 |                   {domainState.currentCapabilities.map((cap) => (
+        |                                                         ^^^
+    408 |                     <Grid item xs={12} md={4} key={cap}>
+    409 |                       <Card variant="outlined">
+    410 |                         <CardContent>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:412:30
+TS2304: Cannot find name 'formatCapability'.
+    410 |                         <CardContent>
+    411 |                           <Typography variant="h6">
+  > 412 |                             {formatCapability(cap)}
+        |                              ^^^^^^^^^^^^^^^^
+    413 |                           </Typography>
+    414 |                           <Typography variant="body2" color="text.secondary">
+    415 |                             {getCapabilityDescription(cap)}
+ERROR in src/views/components/dashboard/DAODashboard.tsx:415:30
+TS2304: Cannot find name 'getCapabilityDescription'.
+    413 |                           </Typography>
+    414 |                           <Typography variant="body2" color="text.secondary">
+  > 415 |                             {getCapabilityDescription(cap)}
+        |                              ^^^^^^^^^^^^^^^^^^^^^^^^
+    416 |                           </Typography>
+    417 |                         </CardContent>
+    418 |                       </Card>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:429:15
+TS2322: Type '{ key: string; domainState: any; }' is not assignable to type 'IntrinsicAttributes'.
+  Property 'domainState' does not exist on type 'IntrinsicAttributes'.
+    427 |             <TokenMetrics 
+    428 |               key={`token-${refreshKey}`}
+  > 429 |               domainState={domainState}
+        |               ^^^^^^^^^^^
+    430 |             />
+    431 |           </Grid>
+    432 |         </Grid>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:443:17
+TS2322: Type '{ key: string; domainWeight: any; }' is not assignable to type 'IntrinsicAttributes & ProposalListProps'.
+  Property 'domainWeight' does not exist on type 'IntrinsicAttributes & ProposalListProps'.
+    441 |               <ProposalList 
+    442 |                 key={`proposals-${refreshKey}`}
+  > 443 |                 domainWeight={domainState?.governanceWeight}
+        |                 ^^^^^^^^^^^^
+    444 |               />
+    445 |             </CardContent>
+    446 |           </Card>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:453:12
+TS2304: Cannot find name 'DomainMonitor'.
+    451 |       <Grid container spacing={3}>
+    452 |         <Grid item xs={12} lg={4}>
+  > 453 |           <DomainMonitor />
+        |            ^^^^^^^^^^^^^
+    454 |           <Box sx={{ mt: 3 }}>
+    455 |             <TokenMetrics key={`token-${refreshKey}`} />
+    456 |           </Box>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:460:12
+TS2304: Cannot find name 'DAOGovernance'.
+    458 |         
+    459 |         <Grid item xs={12} lg={8}>
+  > 460 |           <DAOGovernance />
+        |            ^^^^^^^^^^^^^
+    461 |         </Grid>
+    462 |   {/* Integration Status */}
+    463 |   {integrationState && integrationState.level >= 25.00 && (
+ERROR in src/views/components/dashboard/DAODashboard.tsx:481:4
+TS2304: Cannot find name 'Chip'.
+    479 |                   </Box>
+    480 | {integrationState?.crossDAOCapabilities?.map((cap) => (
+  > 481 |   <Chip 
+        |    ^^^^
+    482 |     key={cap}
+    483 |     label={cap}
+    484 |     color="primary"
+ERROR in src/views/components/dashboard/DAODashboard.tsx:505:40
+TS2304: Cannot find name 'handleAnonymousTransaction'.
+    503 |                         variant="contained"
+    504 |                         fullWidth
+  > 505 |                         onClick={() => handleAnonymousTransaction()}
+        |                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    506 |                       >
+    507 |                         New Private Transaction
+    508 |                       </Button>
+ERROR in src/views/components/dashboard/DAODashboard.tsx:526:24
+TS2304: Cannot find name 'calculatePowerWeight'.
+    524 |                     <Alert severity="info">
+    525 |                       Cross-DAO governance weight: 
+  > 526 |                       {calculatePowerWeight(integrationState.level)}x
+        |                        ^^^^^^^^^^^^^^^^^^^^
+    527 |                     </Alert>
+    528 |                   </CardContent>
+    529 |                 </Card>
+ERROR in src/views/components/dashboard/DAOGovernance.tsx:42:46
+TS2448: Block-scoped variable 'canAccess' used before its declaration.
+    40 |
+    41 |   // Modify button disabled states to account for service availability
+  > 42 |   const buttonDisabled = !isServiceReady || !canAccess.basicStructure;
+       |                                              ^^^^^^^^^
+    43 |
+    44 |   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    45 |     setCurrentTab(newValue);
+ERROR in src/views/components/dashboard/DAOGovernance.tsx:42:46
+TS2454: Variable 'canAccess' is used before being assigned.
+    40 |
+    41 |   // Modify button disabled states to account for service availability
+  > 42 |   const buttonDisabled = !isServiceReady || !canAccess.basicStructure;
+       |                                              ^^^^^^^^^
+    43 |
+    44 |   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    45 |     setCurrentTab(newValue);
+ERROR in src/views/components/dashboard/DomainMonitor.tsx:40:11
+TS2554: Expected 1 arguments, but got 2.
+    38 |         const stateData = await contractService.getProposalState(
+    39 |           contractService.stateContract.address,
+  > 40 |           0
+       |           ^
+    41 |         );
+    42 |
+    43 |         const currentLevel = stateData.stage >= 3 ? 
+ERROR in src/views/components/dashboard/LegalProgressionSystem.tsx:27:26
+TS2304: Cannot find name 'Requirement'.
+    25 |   currentState: string;
+    26 |   capabilities: string[];
+  > 27 |   nextStateRequirements: Requirement[];
+       |                          ^^^^^^^^^^^
+    28 | }
+    29 |
+    30 | const LegalProgressionSystem: React.FC = () => {
+ERROR in src/views/components/dashboard/LegalProgressionSystem.tsx:44:27
+TS18047: 'contractService' is possibly 'null'.
+    42 |     try {
+    43 |       setLoading(true);
+  > 44 |       const state = await contractService.getProposalState(0); // Using existing contract call
+       |                           ^^^^^^^^^^^^^^^
+    45 |       
+    46 |       // Map contract state to legal framework levels
+    47 |       const level = state.stage >= 3 ? 
+ERROR in src/views/components/dashboard/LegalProgressionSystem.tsx:53:23
+TS2304: Cannot find name 'getLegalStateName'.
+    51 |       setLegalState({
+    52 |         level,
+  > 53 |         currentState: getLegalStateName(level),
+       |                       ^^^^^^^^^^^^^^^^^
+    54 |         capabilities: mapCapabilities(level),
+    55 |         nextStateRequirements: getNextStateRequirements(level)
+    56 |       });
+ERROR in src/views/components/dashboard/LegalProgressionSystem.tsx:54:23
+TS2304: Cannot find name 'mapCapabilities'.
+    52 |         level,
+    53 |         currentState: getLegalStateName(level),
+  > 54 |         capabilities: mapCapabilities(level),
+       |                       ^^^^^^^^^^^^^^^
+    55 |         nextStateRequirements: getNextStateRequirements(level)
+    56 |       });
+    57 |     } catch (error) {
+ERROR in src/views/components/dashboard/LegalProgressionSystem.tsx:55:32
+TS2304: Cannot find name 'getNextStateRequirements'.
+    53 |         currentState: getLegalStateName(level),
+    54 |         capabilities: mapCapabilities(level),
+  > 55 |         nextStateRequirements: getNextStateRequirements(level)
+       |                                ^^^^^^^^^^^^^^^^^^^^^^^^
+    56 |       });
+    57 |     } catch (error) {
+    58 |       console.error('Failed to load legal state:', error);
+ERROR in src/views/components/dashboard/LegalProgressionSystem.tsx:139:28
+TS2304: Cannot find name 'canProgress'.
+    137 |                 variant="contained"
+    138 |                 fullWidth
+  > 139 |                 disabled={!canProgress(legalState)}
+        |                            ^^^^^^^^^^^
+    140 |                 sx={{ mt: 2 }}
+    141 |               >
+    142 |                 Progress to Next State
+ERROR in src/views/components/dashboard/MembershipStats.tsx:48:60
+TS2345: Argument of type 'EthereumProvider | undefined' is not assignable to parameter of type 'ExternalProvider | JsonRpcFetchFunc'.
+    46 |         
+    47 |         // Initialize provider and contract service
+  > 48 |         const provider = new ethers.providers.Web3Provider(window.ethereum);
+       |                                                            ^^^^^^^^^^^^^^^
+    49 |         const contractService = new ContractService(
+    50 |           provider,
+    51 |           '0x23767A0C9A072C6A081C27A1C03Cc95B9F9cc6E0' // Your contract address
+ERROR in src/views/components/dashboard/MembershipStats.tsx:62:55
+TS2341: Property 'contract' is private and only accessible within class 'ContractService'.
+    60 |
+    61 |         // Fetch active user count from contract
+  > 62 |         const activeUserCount = await contractService.contract.activeUserCount();
+       |                                                       ^^^^^^^^
+    63 |
+    64 |         // Iterate through active users to get their details
+    65 |         for(let i = 0; i < activeUserCount; i++) {
+ERROR in src/views/components/dashboard/MembershipStats.tsx:66:49
+TS2341: Property 'contract' is private and only accessible within class 'ContractService'.
+    64 |         // Iterate through active users to get their details
+    65 |         for(let i = 0; i < activeUserCount; i++) {
+  > 66 |           const address = await contractService.contract.activeUserIndex(i);
+       |                                                 ^^^^^^^^
+    67 |           const memberStatus = await contractService.getMembershipStatus(address);
+    68 |           
+    69 |           if(memberStatus.lastActivity > thirtyDaysAgo) {
+ERROR in src/views/components/dashboard/MembershipStats.tsx:91:11
+TS2322: Type '{ address: any; joinDate: any; biddingShares: any; }[]' is not assignable to type 'never[]'.
+  Type '{ address: any; joinDate: any; biddingShares: any; }' is not assignable to type 'never'.
+    89 |           activeMembersLast30Days: activeCount,
+    90 |           averageParticipation: participationRate,
+  > 91 |           recentMembers,
+       |           ^^^^^^^^^^^^^
+    92 |           memberCategories: [
+    93 |             { 
+    94 |               name: 'Regular Members', 
+ERROR in src/views/components/dashboard/MembershipStats.tsx:93:13
+TS2322: Type '{ name: string; value: number; color: string; }' is not assignable to type 'never'.
+     91 |           recentMembers,
+     92 |           memberCategories: [
+  >  93 |             { 
+        |             ^^
+  >  94 |               name: 'Regular Members', 
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  >  95 |               value: activeUserCount.toNumber() - activeCount,
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  >  96 |               color: '#0088FE'
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  >  97 |             },
+        | ^^^^^^^^^^^^^^
+     98 |             { 
+     99 |               name: 'Active Members', 
+    100 |               value: activeCount,
+ERROR in src/views/components/dashboard/MembershipStats.tsx:98:13
+TS2322: Type '{ name: string; value: number; color: string; }' is not assignable to type 'never'.
+     96 |               color: '#0088FE'
+     97 |             },
+  >  98 |             { 
+        |             ^^
+  >  99 |               name: 'Active Members', 
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 100 |               value: activeCount,
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 101 |               color: '#00C49F' 
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 102 |             }
+        | ^^^^^^^^^^^^^^
+    103 |           ]
+    104 |         });
+    105 |
+ERROR in src/views/components/dashboard/MembershipStats.tsx:109:18
+TS18046: 'error' is of type 'unknown'.
+    107 |       } catch (error) {
+    108 |         console.error('Error fetching membership data:', error);
+  > 109 |         setError(error.message);
+        |                  ^^^^^
+    110 |         setLoading(false);
+    111 |       }
+    112 |     };
+ERROR in src/views/components/dashboard/MembershipStats.tsx:211:59
+TS2339: Property 'color' does not exist on type 'never'.
+    209 |               >
+    210 |                 {membershipData.memberCategories.map((entry, index) => (
+  > 211 |                   <Cell key={`cell-${index}`} fill={entry.color} />
+        |                                                           ^^^^^
+    212 |                 ))}
+    213 |               </Pie>
+    214 |               <Tooltip />
+ERROR in src/views/components/dashboard/MembershipStats.tsx:233:41
+TS2339: Property 'address' does not exist on type 'never'.
+    231 |               <TableBody>
+    232 |                 {membershipData.recentMembers.map((member) => (
+  > 233 |                   <TableRow key={member.address}>
+        |                                         ^^^^^^^
+    234 |                     <TableCell>{member.address}</TableCell>
+    235 |                     <TableCell>
+    236 |                       {new Date(member.joinDate * 1000).toLocaleDateString()}
+ERROR in src/views/components/dashboard/MembershipStats.tsx:234:40
+TS2339: Property 'address' does not exist on type 'never'.
+    232 |                 {membershipData.recentMembers.map((member) => (
+    233 |                   <TableRow key={member.address}>
+  > 234 |                     <TableCell>{member.address}</TableCell>
+        |                                        ^^^^^^^
+    235 |                     <TableCell>
+    236 |                       {new Date(member.joinDate * 1000).toLocaleDateString()}
+    237 |                     </TableCell>
+ERROR in src/views/components/dashboard/MembershipStats.tsx:236:40
+TS2339: Property 'joinDate' does not exist on type 'never'.
+    234 |                     <TableCell>{member.address}</TableCell>
+    235 |                     <TableCell>
+  > 236 |                       {new Date(member.joinDate * 1000).toLocaleDateString()}
+        |                                        ^^^^^^^^
+    237 |                     </TableCell>
+    238 |                     <TableCell>{member.biddingShares}%</TableCell>
+    239 |                   </TableRow>
+ERROR in src/views/components/dashboard/MembershipStats.tsx:238:40
+TS2339: Property 'biddingShares' does not exist on type 'never'.
+    236 |                       {new Date(member.joinDate * 1000).toLocaleDateString()}
+    237 |                     </TableCell>
+  > 238 |                     <TableCell>{member.biddingShares}%</TableCell>
+        |                                        ^^^^^^^^^^^^^
+    239 |                   </TableRow>
+    240 |                 ))}
+    241 |               </TableBody>
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:57:60
+TS2345: Argument of type 'EthereumProvider | undefined' is not assignable to parameter of type 'ExternalProvider | JsonRpcFetchFunc'.
+    55 |     const initializeContract = async () => {
+    56 |       try {
+  > 57 |         const provider = new ethers.providers.Web3Provider(window.ethereum);
+       |                                                            ^^^^^^^^^^^^^^^
+    58 |         const service = new ContractService(
+    59 |           provider,
+    60 |           '0x23767A0C9A072C6A081C27A1C03Cc95B9F9cc6E0' // Contract address
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:62:28
+TS2345: Argument of type 'ContractService' is not assignable to parameter of type 'SetStateAction<null>'.
+  Type 'ContractService' provides no match for the signature '(prevState: null): null'.
+    60 |           '0x23767A0C9A072C6A081C27A1C03Cc95B9F9cc6E0' // Contract address
+    61 |         );
+  > 62 |         setContractService(service);
+       |                            ^^^^^^^
+    63 |
+    64 |         // Get current epoch for timing calculations
+    65 |         const epoch = await service.getCurrentEpoch();
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:85:34
+TS2304: Cannot find name 'AuthorityService'.
+    83 |       
+    84 |       try {
+  > 85 |         const authorityService = AuthorityService.getInstance(contractService);
+       |                                  ^^^^^^^^^^^^^^^^
+    86 |         const state = await authorityService.getCurrentState(web3State.account);
+    87 |         setAuthorityState(state);
+    88 |       } catch (error) {
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:100:30
+TS2552: Cannot find name 'AuthorityService'. Did you mean 'authorityService'?
+     98 |     if (!authorityState || !web3State.account) return false;
+     99 |
+  > 100 |     const authorityService = AuthorityService.getInstance(contractService);
+        |                              ^^^^^^^^^^^^^^^^
+    101 |     return await authorityService.hasCapability(
+    102 |       web3State.account,
+    103 |       VotingCapabilityType.CREATE_PROPOSAL
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:103:7
+TS2304: Cannot find name 'VotingCapabilityType'.
+    101 |     return await authorityService.hasCapability(
+    102 |       web3State.account,
+  > 103 |       VotingCapabilityType.CREATE_PROPOSAL
+        |       ^^^^^^^^^^^^^^^^^^^^
+    104 |     );
+    105 |   };
+    106 |
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:107:31
+TS7006: Parameter 'e' implicitly has an 'any' type.
+    105 |   };
+    106 |
+  > 107 |   const handleSubmit = async (e) => {
+        |                               ^
+    108 |     e.preventDefault();
+    109 |     if (!contractService || !await canCreateProposal()) return;
+    110 |
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:127:39
+TS2304: Cannot find name 'authorityService'.
+    125 |       );*/
+    126 |
+  > 127 |       const hasEmergencyPower = await authorityService.hasCapability(
+        |                                       ^^^^^^^^^^^^^^^^
+    128 |         web3State.account,
+    129 |         VotingCapabilityType.EMERGENCY_VOTE
+    130 |       );
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:129:9
+TS2304: Cannot find name 'VotingCapabilityType'.
+    127 |       const hasEmergencyPower = await authorityService.hasCapability(
+    128 |         web3State.account,
+  > 129 |         VotingCapabilityType.EMERGENCY_VOTE
+        |         ^^^^^^^^^^^^^^^^^^^^
+    130 |       );
+    131 |
+    132 |       if (hasEmergencyPower) {
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:133:22
+TS2339: Property 'isEmergency' does not exist on type '{ title: string; description: string; category: number; votingPeriod: number; }'.
+    131 |
+    132 |       if (hasEmergencyPower) {
+  > 133 |         proposalData.isEmergency = formData.category === 'emergency';
+        |                      ^^^^^^^^^^^
+    134 |       }
+    135 |
+    136 |       // Create proposal with authority context
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:137:48
+TS2339: Property 'createProposal' does not exist on type 'never'.
+    135 |
+    136 |       // Create proposal with authority context
+  > 137 |       const proposalId = await contractService.createProposal(
+        |                                                ^^^^^^^^^^^^^^
+    138 |         proposalData.category,
+    139 |         proposalData.votingPeriod,
+    140 |         proposalData.isEmergency
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:140:22
+TS2339: Property 'isEmergency' does not exist on type '{ title: string; description: string; category: number; votingPeriod: number; }'.
+    138 |         proposalData.category,
+    139 |         proposalData.votingPeriod,
+  > 140 |         proposalData.isEmergency
+        |                      ^^^^^^^^^^^
+    141 |       );
+    142 |
+    143 |       setSnackbar({
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:160:50
+TS18046: 'error' is of type 'unknown'.
+    158 |       setSnackbar({
+    159 |         open: true,
+  > 160 |         message: 'Failed to create proposal: ' + error.message,
+        |                                                  ^^^^^
+    161 |         severity: 'error'
+    162 |       });
+    163 |     } finally {
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:193:43
+TS2339: Property 'toFixed' does not exist on type 'never'.
+    191 |           <AlertTitle>Authority Required</AlertTitle>
+    192 |           You need to reach First Authority level (13.89) to create proposals.
+  > 193 |           Current level: {authorityState?.toFixed(8)}
+        |                                           ^^^^^^^
+    194 |         </Alert>
+    195 |       ) : (
+    196 |       <FormControl fullWidth>
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:196:7
+TS2657: JSX expressions must have one parent element.
+    194 |         </Alert>
+    195 |       ) : (
+  > 196 |       <FormControl fullWidth>
+        |       ^^^^^^^^^^^^^^^^^^^^^^^
+  > 197 |         <FormLabel>Proposal Title</FormLabel>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 198 |         <TextField
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 199 |           placeholder="Enter a clear, descriptive title"
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 200 |           value={formData.title}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 201 |           onChange={(e) => setFormData(prev => ({
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 202 |             ...prev,
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 203 |             title: e.target.value
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 204 |           }))}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 205 |           disabled={loading}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 206 |           required
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 207 |           variant="outlined"
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 208 |         />
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 209 |       </FormControl>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 210 |
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 211 |       <FormControl fullWidth>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 212 |         <FormLabel>Description</FormLabel>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 213 |         <TextField
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 214 |           placeholder="Provide a detailed description of your proposal"
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 215 |           value={formData.description}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 216 |           onChange={(e) => setFormData(prev => ({
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 217 |             ...prev,
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 218 |             description: e.target.value
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 219 |           }))}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 220 |           disabled={loading}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 221 |           required
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 222 |           multiline
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 223 |           rows={4}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 224 |           variant="outlined"
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 225 |           helperText="Include background, rationale, and expected outcomes"
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 226 |         />
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 227 |       </FormControl>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 228 |
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 229 |       <Grid container spacing={2}>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 230 |         <Grid item xs={12} md={6}>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 231 |           <FormControl fullWidth>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 232 |             <FormLabel>Category</FormLabel>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 233 |             <Select
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 234 |               value={formData.category}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 235 |               onChange={(e) => setFormData(prev => ({
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 236 |                 ...prev,
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 237 |                 category: e.target.value
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 238 |               }))}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 239 |               disabled={loading}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 240 |               displayEmpty
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 241 |             >
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 242 |               <MenuItem value="" disabled>Select category</MenuItem>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 243 |               {PROPOSAL_CATEGORIES.map((category) => (
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 244 |                 <MenuItem 
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 245 |                   key={category.id} 
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 246 |                   value={category.id.toString()}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 247 |                 >
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 248 |                   <Box>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 249 |                     <Typography variant="body1">{category.name}</Typography>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 250 |                     <Typography variant="caption" color="text.secondary">
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 251 |                       {category.description}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 252 |                     </Typography>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 253 |                   </Box>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 254 |                 </MenuItem>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 255 |               ))}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 256 |             </Select>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 257 |           </FormControl>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 258 |         </Grid>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 259 |
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 260 |         <Grid item xs={12} md={6}>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 261 |           <FormControl fullWidth>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 262 |             <FormLabel>Voting Period (days)</FormLabel>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 263 |             <TextField
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 264 |               type="number"
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 265 |               InputProps={{ 
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 266 |                 inputProps: { min: 1, max: 30 },
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 267 |                 endAdornment: <Typography variant="caption">days</Typography>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 268 |               }}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 269 |               value={formData.votingPeriod}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 270 |               onChange={(e) => setFormData(prev => ({
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 271 |                 ...prev,
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 272 |                 votingPeriod: e.target.value
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 273 |               }))}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 274 |               disabled={loading}
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 275 |               required
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 276 |               variant="outlined"
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 277 |               helperText="Recommended: 7 days for standard proposals"
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 278 |             />
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 279 |           </FormControl>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 280 |         </Grid>
+        | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  > 281 |       </Grid>
+        | ^^^^^^^^^^^^^^
+    282 |
+    283 |       {/* Timing Information */}
+    284 |       {timingInfo && (
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:283:7
+TS1005: ')' expected.
+    281 |       </Grid>
+    282 |
+  > 283 |       {/* Timing Information */}
+        |       ^
+    284 |       {timingInfo && (
+    285 |         <Paper sx={{ p: 2, mb: 3, bgcolor: 'background.default' }}>
+    286 |           <Typography variant="subtitle1" sx={{ mb: 1 }}>
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:363:11
+TS2322: Type 'string' is not assignable to type 'OverridableStringUnion<AlertColor, AlertPropsColorOverrides> | undefined'.
+    361 |         <Alert 
+    362 |           onClose={() => setSnackbar(prev => ({ ...prev, open: false }))} 
+  > 363 |           severity={snackbar.severity}
+        |           ^^^^^^^^
+    364 |           variant="filled"
+    365 |           sx={{ width: '100%' }}
+    366 |         >
+ERROR in src/views/components/dashboard/ProposalCreation.tsx:373:8
+TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+    371 |         </Alert>
+    372 |       </Snackbar>
+  > 373 |       )}
+        |        ^
+    374 |     </Box>
+    375 |   );
+    376 | };
+ERROR in src/views/components/dashboard/StateProgression.tsx:18:10
+TS2305: Module '"types/state"' has no exported member 'SystemState'.
+    16 |
+    17 | // For proper typing of state and requirements
+  > 18 | import { SystemState } from 'types/state';
+       |          ^^^^^^^^^^^
+    19 | import { TransitionRequirement } from 'types/transition';
+    20 |
+    21 | // Custom hooks that manage state and transitions
+ERROR in src/views/components/dashboard/StateProgression.tsx:19:39
+TS2307: Cannot find module 'types/transition' or its corresponding type declarations.
+    17 | // For proper typing of state and requirements
+    18 | import { SystemState } from 'types/state';
+  > 19 | import { TransitionRequirement } from 'types/transition';
+       |                                       ^^^^^^^^^^^^^^^^^^
+    20 |
+    21 | // Custom hooks that manage state and transitions
+    22 | import { useStateTransition } from 'hooks/useStateTransition';
+ERROR in src/views/components/dashboard/StateProgression.tsx:23:43
+TS2307: Cannot find module 'hooks/useTransitionRequirements' or its corresponding type declarations.
+    21 | // Custom hooks that manage state and transitions
+    22 | import { useStateTransition } from 'hooks/useStateTransition';
+  > 23 | import { useTransitionRequirements } from 'hooks/useTransitionRequirements';
+       |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    24 |
+    25 | // Utility functions for formatting and calculations
+    26 | import { getLayerName, formatCapability, calculateProgress } from 'utils/stateUtils';
+ERROR in src/views/components/dashboard/StateProgression.tsx:26:67
+TS2307: Cannot find module 'utils/stateUtils' or its corresponding type declarations.
+    24 |
+    25 | // Utility functions for formatting and calculations
+  > 26 | import { getLayerName, formatCapability, calculateProgress } from 'utils/stateUtils';
+       |                                                                   ^^^^^^^^^^^^^^^^^^
+    27 |
+    28 | // RequirementDisplay subcomponent
+    29 | import { RequirementDisplay } from './RequirementDisplay';
+ERROR in src/views/components/dashboard/StateProgression.tsx:29:36
+TS2307: Cannot find module './RequirementDisplay' or its corresponding type declarations.
+    27 |
+    28 | // RequirementDisplay subcomponent
+  > 29 | import { RequirementDisplay } from './RequirementDisplay';
+       |                                    ^^^^^^^^^^^^^^^^^^^^^^
+    30 |
+    31 | // views/components/dashboard/StateProgression.tsx
+    32 | export const StateProgression: React.FC<{
+ERROR in src/views/components/dashboard/StateProgression.tsx:94:44
+TS7006: Parameter 'cap' implicitly has an 'any' type.
+    92 |           <FormLabel>Active Capabilities</FormLabel>
+    93 |           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+  > 94 |             {currentState.capabilities.map(cap => (
+       |                                            ^^^
+    95 |               <Chip 
+    96 |                 key={cap.type}
+    97 |                 label={formatCapability(cap)}
+ERROR in src/views/components/dashboard/StateProgression.tsx:109:43
+TS7006: Parameter 'req' implicitly has an 'any' type.
+    107 |             <FormLabel>Next State Requirements</FormLabel>
+    108 |             <Box sx={{ mt: 1 }}>
+  > 109 |               {transitionRequirements.map(req => (
+        |                                           ^^^
+    110 |                 <RequirementDisplay
+    111 |                   key={req.type}
+    112 |                   requirement={req}
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:30:24
+TS7031: Binding element 'value' implicitly has an 'any' type.
+    28 |
+    29 | // Add progress bar component for foundation level display
+  > 30 | const ProgressBar = ({ value, max }) => {
+       |                        ^^^^^
+    31 |   const percentage = (value / max) * 100;
+    32 |   
+    33 |   return (
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:30:31
+TS7031: Binding element 'max' implicitly has an 'any' type.
+    28 |
+    29 | // Add progress bar component for foundation level display
+  > 30 | const ProgressBar = ({ value, max }) => {
+       |                               ^^^
+    31 |   const percentage = (value / max) * 100;
+    32 |   
+    33 |   return (
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:51:32
+TS7031: Binding element 'requirements' implicitly has an 'any' type.
+    49 |
+    50 | // Add requirements display component
+  > 51 | const RequirementsDisplay = ({ requirements, onUpdate }) => {
+       |                                ^^^^^^^^^^^^
+    52 |   return (
+    53 |     <Box sx={{ p: 2 }}>
+    54 |       <Typography variant="subtitle1" gutterBottom>
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:51:46
+TS7031: Binding element 'onUpdate' implicitly has an 'any' type.
+    49 |
+    50 | // Add requirements display component
+  > 51 | const RequirementsDisplay = ({ requirements, onUpdate }) => {
+       |                                              ^^^^^^^^
+    52 |   return (
+    53 |     <Box sx={{ p: 2 }}>
+    54 |       <Typography variant="subtitle1" gutterBottom>
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:57:27
+TS7006: Parameter 'req' implicitly has an 'any' type.
+    55 |         Requirements for Next Level
+    56 |       </Typography>
+  > 57 |       {requirements?.map((req, index) => (
+       |                           ^^^
+    58 |         <Box key={index} sx={{ mb: 2 }}>
+    59 |           <Typography variant="body2" color="text.secondary">
+    60 |             {req.type}
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:57:32
+TS7006: Parameter 'index' implicitly has an 'any' type.
+    55 |         Requirements for Next Level
+    56 |       </Typography>
+  > 57 |       {requirements?.map((req, index) => (
+       |                                ^^^^^
+    58 |         <Box key={index} sx={{ mb: 2 }}>
+    59 |           <Typography variant="body2" color="text.secondary">
+    60 |             {req.type}
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:78:25
+TS7031: Binding element 'metrics' implicitly has an 'any' type.
+    76 |
+    77 | // Split metrics display into capability-based components
+  > 78 | const BasicMetrics = ({ metrics }) => {
+       |                         ^^^^^^^
+    79 |   return (
+    80 |     <Box>
+    81 |       {/* Price and basic supply information - available at PRIMARY_RIGHT */}
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:84:35
+TS2304: Cannot find name 'formatUSD'.
+    82 |       <Box sx={{ mb: 2 }}>
+    83 |         <Typography variant="body2" color="text.secondary">Current Price</Typography>
+  > 84 |         <Typography variant="h4">{formatUSD(metrics.price)}</Typography>
+       |                                   ^^^^^^^^^
+    85 |       </Box>
+    86 |       <Box>
+    87 |         <Typography variant="body2" color="text.secondary">Supply</Typography>
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:96:26
+TS7031: Binding element 'metrics' implicitly has an 'any' type.
+    94 | };
+    95 |
+  > 96 | const MarketMetrics = ({ metrics }) => {
+       |                          ^^^^^^^
+    97 |   return (
+    98 |     <Box>
+    99 |       {/* Market statistics - available at THIRD_POWER_STATE */}
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:102:38
+TS2304: Cannot find name 'formatUSD'.
+    100 |       <Box sx={{ mb: 2 }}>
+    101 |         <Typography variant="body2" color="text.secondary">Market Cap</Typography>
+  > 102 |         <Typography variant="body1">{formatUSD(metrics.marketCap)}</Typography>
+        |                                      ^^^^^^^^^
+    103 |       </Box>
+    104 |       <Box sx={{ mb: 2 }}>
+    105 |         <Typography variant="body2" color="text.secondary">24h Volume</Typography>
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:106:38
+TS2304: Cannot find name 'formatUSD'.
+    104 |       <Box sx={{ mb: 2 }}>
+    105 |         <Typography variant="body2" color="text.secondary">24h Volume</Typography>
+  > 106 |         <Typography variant="body1">{formatUSD(metrics.volume24h)}</Typography>
+        |                                      ^^^^^^^^^
+    107 |       </Box>
+    108 |       <PriceChart data={metrics.priceHistory} />
+    109 |     </Box>
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:113:29
+TS7031: Binding element 'metrics' implicitly has an 'any' type.
+    111 | };
+    112 |
+  > 113 | const FormationMetrics = ({ metrics }) => {
+        |                             ^^^^^^^
+    114 |   return (
+    115 |     <Box>
+    116 |       {/* Advanced metrics - available at FIRST_FORMATION_STATE */}
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:120:12
+TS2304: Cannot find name 'formatUSD'.
+    118 |         <Typography variant="body2" color="text.secondary">Treasury Balance</Typography>
+    119 |         <Typography variant="h5" fontWeight="bold">
+  > 120 |           {formatUSD(parseFloat(metrics.treasuryBalance) * metrics.price)}
+        |            ^^^^^^^^^
+    121 |         </Typography>
+    122 |         <Typography variant="body2" color="text.secondary">
+    123 |           {Number(metrics.treasuryBalance).toLocaleString()} PITA
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:129:40
+TS2304: Cannot find name 'formatUSD'.
+    127 |         <Box>
+    128 |           <Typography variant="body2" color="text.secondary">Daily Allocation</Typography>
+  > 129 |           <Typography variant="body1">{formatUSD(metrics.dailyAllocation)}</Typography>
+        |                                        ^^^^^^^^^
+    130 |         </Box>
+    131 |         <Box>
+    132 |           <Typography variant="body2" color="text.secondary">Supply Growth</Typography>
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:133:40
+TS2304: Cannot find name 'formatPercent'.
+    131 |         <Box>
+    132 |           <Typography variant="body2" color="text.secondary">Supply Growth</Typography>
+  > 133 |           <Typography variant="body1">{formatPercent(2.1)}</Typography>
+        |                                        ^^^^^^^^^^^^^
+    134 |         </Box>
+    135 |       </Box>
+    136 |     </Box>
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:141:23
+TS7031: Binding element 'data' implicitly has an 'any' type.
+    139 |
+    140 | // Price chart component
+  > 141 | const PriceChart = ({ data }) => {
+        |                       ^^^^
+    142 |   return (
+    143 |     <Box sx={{ height: '120px', width: '100%' }}>
+    144 |       <ResponsiveContainer width="100%" height="100%">
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:158:39
+TS2304: Cannot find name 'formatUSD'.
+    156 |           <YAxis 
+    157 |             domain={['auto', 'auto']}
+  > 158 |             tickFormatter={(value) => formatUSD(value)}
+        |                                       ^^^^^^^^^
+    159 |           />
+    160 |           <Tooltip
+    161 |             formatter={(value) => [formatUSD(value), 'Price']}
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:161:36
+TS2304: Cannot find name 'formatUSD'.
+    159 |           />
+    160 |           <Tooltip
+  > 161 |             formatter={(value) => [formatUSD(value), 'Price']}
+        |                                    ^^^^^^^^^
+    162 |             labelFormatter={(label) => new Date(label).toLocaleString()}
+    163 |           />
+    164 |           <Line 
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:199:60
+TS2345: Argument of type 'EthereumProvider | undefined' is not assignable to parameter of type 'ExternalProvider | JsonRpcFetchFunc'.
+  Type 'undefined' is not assignable to type 'ExternalProvider | JsonRpcFetchFunc'.
+    197 |         
+    198 |         // Initialize provider and contract service
+  > 199 |         const provider = new ethers.providers.Web3Provider(window.ethereum);
+        |                                                            ^^^^^^^^^^^^^^^
+    200 |         const contractService = new ContractService(
+    201 |           provider,
+    202 |           '0x23767A0C9A072C6A081C27A1C03Cc95B9F9cc6E0' // Your contract address
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:216:20
+TS2345: Argument of type '(prev: { price: number; supply: string; marketCap: string; volume24h: string; priceChange24h: number; totalStaked: string; treasuryBalance: string; priceHistory: never[]; }) => { price: number; supply: string; ... 8 more ...; totalStaked: string; }' is not assignable to parameter of type 'SetStateAction<{ price: number; supply: string; marketCap: string; volume24h: string; priceChange24h: number; totalStaked: string; treasuryBalance: string; priceHistory: never[]; }>'.
+  Type '(prev: { price: number; supply: string; marketCap: string; volume24h: string; priceChange24h: number; totalStaked: string; treasuryBalance: string; priceHistory: never[]; }) => { price: number; supply: string; ... 8 more ...; totalStaked: string; }' is not assignable to type '(prevState: { price: number; supply: string; marketCap: string; volume24h: string; priceChange24h: number; totalStaked: string; treasuryBalance: string; priceHistory: never[]; }) => { price: number; ... 6 more ...; priceHistory: never[]; }'.
+    Call signature return types '{ price: number; supply: string; marketCap: string; treasuryBalance: string; priceHistory: { timestamp: number; price: number; }[]; fieldStrength: any; fieldSynchronization: any; unityProgress: any; volume24h: string; priceChange24h: number; totalStaked: string; }' and '{ price: number; supply: string; marketCap: string; volume24h: string; priceChange24h: number; totalStaked: string; treasuryBalance: string; priceHistory: never[]; }' are incompatible.
+      The types of 'priceHistory' are incompatible between these types.
+        Type '{ timestamp: number; price: number; }[]' is not assignable to type 'never[]'.
+          Type '{ timestamp: number; price: number; }' is not assignable to type 'never'.
+    214 |         const fieldMetrics = await contractService.getTokenMetrics();
+    215 |
+  > 216 |         setMetrics(prev => ({
+        |                    ^^^^^^^^^^
+  > 217 |           ...prev,
+        | ^^^^^^^^^^^^^^^^^^
+  > 218 |           price: parseFloat(contractMetrics.price),
+        | ^^^^^^^^^^^^^^^^^^
+  > 219 |           supply: contractMetrics.supply,
+        | ^^^^^^^^^^^^^^^^^^
+  > 220 |           marketCap,
+        | ^^^^^^^^^^^^^^^^^^
+  > 221 |           treasuryBalance: contractMetrics.treasuryBalance,
+        | ^^^^^^^^^^^^^^^^^^
+  > 222 |           priceHistory: [
+        | ^^^^^^^^^^^^^^^^^^
+  > 223 |             ...prev.priceHistory,
+        | ^^^^^^^^^^^^^^^^^^
+  > 224 |             {
+        | ^^^^^^^^^^^^^^^^^^
+  > 225 |               timestamp: Date.now(),
+        | ^^^^^^^^^^^^^^^^^^
+  > 226 |               price: parseFloat(contractMetrics.price)
+        | ^^^^^^^^^^^^^^^^^^
+  > 227 |             }
+        | ^^^^^^^^^^^^^^^^^^
+  > 228 |           ].slice(-24),
+        | ^^^^^^^^^^^^^^^^^^
+  > 229 |           fieldStrength: fieldMetrics.fieldStrength,
+        | ^^^^^^^^^^^^^^^^^^
+  > 230 |           fieldSynchronization: fieldMetrics.fieldSynchronization,
+        | ^^^^^^^^^^^^^^^^^^
+  > 231 |           unityProgress: fieldMetrics.unityProgress
+        | ^^^^^^^^^^^^^^^^^^
+  > 232 |         }));
+        | ^^^^^^^^^^^
+    233 |
+    234 |         setLoading(false);
+    235 |       } catch (error) {
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:229:39
+TS2339: Property 'fieldStrength' does not exist on type 'TokenMetrics'.
+    227 |             }
+    228 |           ].slice(-24),
+  > 229 |           fieldStrength: fieldMetrics.fieldStrength,
+        |                                       ^^^^^^^^^^^^^
+    230 |           fieldSynchronization: fieldMetrics.fieldSynchronization,
+    231 |           unityProgress: fieldMetrics.unityProgress
+    232 |         }));
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:230:46
+TS2339: Property 'fieldSynchronization' does not exist on type 'TokenMetrics'.
+    228 |           ].slice(-24),
+    229 |           fieldStrength: fieldMetrics.fieldStrength,
+  > 230 |           fieldSynchronization: fieldMetrics.fieldSynchronization,
+        |                                              ^^^^^^^^^^^^^^^^^^^^
+    231 |           unityProgress: fieldMetrics.unityProgress
+    232 |         }));
+    233 |
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:231:39
+TS2339: Property 'unityProgress' does not exist on type 'TokenMetrics'.
+    229 |           fieldStrength: fieldMetrics.fieldStrength,
+    230 |           fieldSynchronization: fieldMetrics.fieldSynchronization,
+  > 231 |           unityProgress: fieldMetrics.unityProgress
+        |                                       ^^^^^^^^^^^^^
+    232 |         }));
+    233 |
+    234 |         setLoading(false);
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:237:18
+TS2345: Argument of type '"Failed to fetch token metrics"' is not assignable to parameter of type 'SetStateAction<null>'.
+    235 |       } catch (error) {
+    236 |         console.error('Error fetching token metrics:', error);
+  > 237 |         setError('Failed to fetch token metrics');
+        |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    238 |         setLoading(false);
+    239 |       }
+    240 |     };
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:247:22
+TS7006: Parameter 'value' implicitly has an 'any' type.
+    245 |   }, []);
+    246 |
+  > 247 |   const formatUSD = (value) => {
+        |                      ^^^^^
+    248 |     return new Intl.NumberFormat('en-US', {
+    249 |       style: 'currency',
+    250 |       currency: 'USD',
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:256:26
+TS7006: Parameter 'value' implicitly has an 'any' type.
+    254 |   };
+    255 |
+  > 256 |   const formatPercent = (value) => {
+        |                          ^^^^^
+    257 |     return new Intl.NumberFormat('en-US', {
+    258 |       style: 'percent',
+    259 |       minimumFractionDigits: 2,
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:325:23
+TS2552: Cannot find name 'fetchMetrics'. Did you mean 'setMetrics'?
+    323 |           <RequirementsDisplay 
+    324 |             requirements={foundationState?.requirements}
+  > 325 |             onUpdate={fetchMetrics}
+        |                       ^^^^^^^^^^^^
+    326 |           />
+    327 |         ) : (
+    328 |           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:333:14
+TS18048: 'foundationState.level' is possibly 'undefined'.
+    331 |             )}
+    332 |
+  > 333 |             {foundationState?.level >= FoundationStateType.THIRD_POWER_STATE && (
+        |              ^^^^^^^^^^^^^^^^^^^^^^
+    334 |               <MarketMetrics metrics={metrics} />
+    335 |             )}
+    336 |
+ERROR in src/views/components/dashboard/TokenMetrics.tsx:337:14
+TS18048: 'foundationState.level' is possibly 'undefined'.
+    335 |             )}
+    336 |
+  > 337 |             {foundationState?.level >= FoundationStateType.FIRST_FORMATION_STATE && (
+        |              ^^^^^^^^^^^^^^^^^^^^^^
+    338 |               <FormationMetrics metrics={metrics} />
+    339 |             )}
+    340 |
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:45:33
+TS7006: Parameter 'level' implicitly has an 'any' type.
+    43 |
+    44 | // Field strength calculation helper
+  > 45 | const calculateFieldStrength = (level) => {
+       |                                 ^^^^^
+    46 |   if (level < 50) return 0;
+    47 |   const normalizedLevel = (level - 50) / 50;
+    48 |   return Math.pow(normalizedLevel, 2) * 100;
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:65:36
+TS18047: 'contractService' is possibly 'null'.
+    63 |       try {
+    64 |         // Get current field level from LogicConstituent
+  > 65 |         const currentLevel = await contractService.logicConstituent.getDomainState();
+       |                                    ^^^^^^^^^^^^^^^
+    66 |         
+    67 |         setFieldState({
+    68 |           level: currentLevel,
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:65:52
+TS2339: Property 'logicConstituent' does not exist on type 'ContractService'.
+    63 |       try {
+    64 |         // Get current field level from LogicConstituent
+  > 65 |         const currentLevel = await contractService.logicConstituent.getDomainState();
+       |                                                    ^^^^^^^^^^^^^^^^
+    66 |         
+    67 |         setFieldState({
+    68 |           level: currentLevel,
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:84:31
+TS18047: 'contractService' is possibly 'null'.
+    82 |   // Field state calculation functions
+    83 |   const getFieldSynchronization = async () => {
+  > 84 |     const totalSupply = await contractService.daoToken.totalSupply();
+       |                               ^^^^^^^^^^^^^^^
+    85 |     const dailyVolume = await contractService.daoToken.dailyAllocation();
+    86 |     return (Number(dailyVolume) / Number(totalSupply)) * 100;
+    87 |   };
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:84:47
+TS2339: Property 'daoToken' does not exist on type 'ContractService'.
+    82 |   // Field state calculation functions
+    83 |   const getFieldSynchronization = async () => {
+  > 84 |     const totalSupply = await contractService.daoToken.totalSupply();
+       |                                               ^^^^^^^^
+    85 |     const dailyVolume = await contractService.daoToken.dailyAllocation();
+    86 |     return (Number(dailyVolume) / Number(totalSupply)) * 100;
+    87 |   };
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:85:31
+TS18047: 'contractService' is possibly 'null'.
+    83 |   const getFieldSynchronization = async () => {
+    84 |     const totalSupply = await contractService.daoToken.totalSupply();
+  > 85 |     const dailyVolume = await contractService.daoToken.dailyAllocation();
+       |                               ^^^^^^^^^^^^^^^
+    86 |     return (Number(dailyVolume) / Number(totalSupply)) * 100;
+    87 |   };
+    88 |
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:85:47
+TS2339: Property 'daoToken' does not exist on type 'ContractService'.
+    83 |   const getFieldSynchronization = async () => {
+    84 |     const totalSupply = await contractService.daoToken.totalSupply();
+  > 85 |     const dailyVolume = await contractService.daoToken.dailyAllocation();
+       |                                               ^^^^^^^^
+    86 |     return (Number(dailyVolume) / Number(totalSupply)) * 100;
+    87 |   };
+    88 |
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:90:31
+TS18047: 'contractService' is possibly 'null'.
+    88 |
+    89 |   const getDimensionalReach = async () => {
+  > 90 |     const activeUsers = await contractService.daoToken.activeUserCount();
+       |                               ^^^^^^^^^^^^^^^
+    91 |     const maxUsers = 11664; // From DAOToken constant TARGET_USERS
+    92 |     return (activeUsers / maxUsers) * 100;
+    93 |   };
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:90:47
+TS2339: Property 'daoToken' does not exist on type 'ContractService'.
+    88 |
+    89 |   const getDimensionalReach = async () => {
+  > 90 |     const activeUsers = await contractService.daoToken.activeUserCount();
+       |                                               ^^^^^^^^
+    91 |     const maxUsers = 11664; // From DAOToken constant TARGET_USERS
+    92 |     return (activeUsers / maxUsers) * 100;
+    93 |   };
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:114:16
+TS2304: Cannot find name 'Progress'.
+    112 |             <div>
+    113 |               <label className="text-sm font-medium">Field Strength</label>
+  > 114 |               <Progress value={fieldState.strength} max={100} />
+        |                ^^^^^^^^
+    115 |               <p className="text-sm text-gray-500">
+    116 |                 {fieldState.strength.toFixed(2)}% Capacity
+    117 |               </p>
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:123:16
+TS2304: Cannot find name 'Progress'.
+    121 |             <div>
+    122 |               <label className="text-sm font-medium">Field Synchronization</label>
+  > 123 |               <Progress value={fieldState.synchronization} max={100} />
+        |                ^^^^^^^^
+    124 |               <p className="text-sm text-gray-500">
+    125 |                 {fieldState.synchronization.toFixed(2)}% Synchronized
+    126 |               </p>
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:132:34
+TS2304: Cannot find name 'getFieldMetrics'.
+    130 |             <div className="h-[300px]">
+    131 |               <ResponsiveContainer width="100%" height="100%">
+  > 132 |                 <LineChart data={getFieldMetrics()}>
+        |                                  ^^^^^^^^^^^^^^^
+    133 |                   <CartesianGrid strokeDasharray="3 3" />
+    134 |                   <XAxis dataKey="timestamp" />
+    135 |                   <YAxis />
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:157:18
+TS2304: Cannot find name 'Progress'.
+    155 |               <div>
+    156 |                 <label className="text-sm font-medium">Progress to Unity</label>
+  > 157 |                 <Progress value={fieldState.unityProgress} max={100} />
+        |                  ^^^^^^^^
+    158 |                 <p className="text-sm text-gray-500">
+    159 |                   {fieldState.unityProgress.toFixed(2)}% Complete
+    160 |                 </p>
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:170:22
+TS2304: Cannot find name 'handleFieldOperation'.
+    168 |       <FieldOperationsControl 
+    169 |         fieldState={fieldState}
+  > 170 |         onOperation={handleFieldOperation}
+        |                      ^^^^^^^^^^^^^^^^^^^^
+    171 |       />
+    172 |     </div>
+    173 |   );
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:177:35
+TS7031: Binding element 'fieldState' implicitly has an 'any' type.
+    175 |
+    176 | // Field Operations Control Component
+  > 177 | const FieldOperationsControl = ({ fieldState, onOperation }) => {
+        |                                   ^^^^^^^^^^
+    178 |   // Different operations become available as field level increases
+    179 |   const getAvailableOperations = () => {
+    180 |     if (fieldState.level >= FIELD_STATES.INTEGRATION_FIELDS.PRIMARY) {
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:177:47
+TS7031: Binding element 'onOperation' implicitly has an 'any' type.
+    175 |
+    176 | // Field Operations Control Component
+  > 177 | const FieldOperationsControl = ({ fieldState, onOperation }) => {
+        |                                               ^^^^^^^^^^^
+    178 |   // Different operations become available as field level increases
+    179 |   const getAvailableOperations = () => {
+    180 |     if (fieldState.level >= FIELD_STATES.INTEGRATION_FIELDS.PRIMARY) {
+ERROR in src/views/components/dashboard/UnifiedFieldsSystem.tsx:209:16
+TS2304: Cannot find name 'formatOperationName'.
+    207 |               className="w-full"
+    208 |             >
+  > 209 |               {formatOperationName(operation)}
+        |                ^^^^^^^^^^^^^^^^^^^
+    210 |             </Button>
+    211 |           ))}
+    212 |         </div>
+ERROR in src/views/components/dashboard/VotingInterface.tsx:33:28
+TS7031: Binding element 'proposal' implicitly has an 'any' type.
+    31 | };
+    32 |
+  > 33 | const VotingInterface = ({ proposal }) => {
+       |                            ^^^^^^^^
+    34 |   const [loading, setLoading] = useState(false);
+    35 |   const [proposalState, setProposalState] = useState(null);
+    36 |   const [timeRemaining, setTimeRemaining] = useState('');
+ERROR in src/views/components/dashboard/VotingInterface.tsx:49:60
+TS2345: Argument of type 'EthereumProvider | undefined' is not assignable to parameter of type 'ExternalProvider | JsonRpcFetchFunc'.
+    47 |     const initializeContract = async () => {
+    48 |       try {
+  > 49 |         const provider = new ethers.providers.Web3Provider(window.ethereum);
+       |                                                            ^^^^^^^^^^^^^^^
+    50 |         const service = new ContractService(
+    51 |           provider,
+    52 |           '0x23767A0C9A072C6A081C27A1C03Cc95B9F9cc6E0' // Contract address
+ERROR in src/views/components/dashboard/VotingInterface.tsx:54:28
+TS2345: Argument of type 'ContractService' is not assignable to parameter of type 'SetStateAction<null>'.
+    52 |           '0x23767A0C9A072C6A081C27A1C03Cc95B9F9cc6E0' // Contract address
+    53 |         );
+  > 54 |         setContractService(service);
+       |                            ^^^^^^^
+    55 |         
+    56 |         // Fetch initial proposal state
+    57 |         if (proposal.id) {
+ERROR in src/views/components/dashboard/VotingInterface.tsx:59:28
+TS2345: Argument of type '{ state: any; startEpoch: any; endEpoch: any; canceled: any; executed: any; forVotes: any; againstVotes: any; stage: any; proposerReputation: any; }' is not assignable to parameter of type 'SetStateAction<null>'.
+  Type '{ state: any; startEpoch: any; endEpoch: any; canceled: any; executed: any; forVotes: any; againstVotes: any; stage: any; proposerReputation: any; }' provides no match for the signature '(prevState: null): null'.
+    57 |         if (proposal.id) {
+    58 |           const state = await service.getProposalState(proposal.id);
+  > 59 |           setProposalState(state);
+       |                            ^^^^^
+    60 |         }
+    61 |       } catch (error) {
+    62 |         console.error('Error initializing contract:', error);
+ERROR in src/views/components/dashboard/VotingInterface.tsx:75:33
+TS2339: Property 'endEpoch' does not exist on type 'never'.
+    73 |
+    74 |       const now = Math.floor(Date.now() / 1000);
+  > 75 |       const end = proposalState.endEpoch;
+       |                                 ^^^^^^^^
+    76 |       const diff = end - now;
+    77 |
+    78 |       if (diff <= 0) {
+ERROR in src/views/components/dashboard/VotingInterface.tsx:100:34
+TS2304: Cannot find name 'AuthorityService'.
+     98 |       
+     99 |       try {
+  > 100 |         const authorityService = AuthorityService.getInstance(contractService);
+        |                                  ^^^^^^^^^^^^^^^^
+    101 |         const state = await authorityService.getCurrentState(web3State.account);
+    102 |         setAuthorityState(state);
+    103 |       } catch (error) {
+ERROR in src/views/components/dashboard/VotingInterface.tsx:117:32
+TS2304: Cannot find name 'AuthorityService'.
+    115 |     setLoading(true);
+    116 |     try {
+  > 117 |       const authorityService = AuthorityService.getInstance(contractService);
+        |                                ^^^^^^^^^^^^^^^^
+    118 |       const baseAmount = ethers.utils.parseEther(voteAmount);
+    119 |       
+    120 |       // Calculate weighted voting power
+ERROR in src/views/components/dashboard/VotingInterface.tsx:129:9
+TS2304: Cannot find name 'VotingCapabilityType'.
+    127 |       if (!support && await authorityService.hasCapability(
+    128 |         web3State.account,
+  > 129 |         VotingCapabilityType.VETO_VOTE
+        |         ^^^^^^^^^^^^^^^^^^^^
+    130 |       )) {
+    131 |         await handleVetoVote(votingPower);
+    132 |         return;
+ERROR in src/views/components/dashboard/VotingInterface.tsx:131:15
+TS2304: Cannot find name 'handleVetoVote'.
+    129 |         VotingCapabilityType.VETO_VOTE
+    130 |       )) {
+  > 131 |         await handleVetoVote(votingPower);
+        |               ^^^^^^^^^^^^^^
+    132 |         return;
+    133 |       }
+    134 |
+ERROR in src/views/components/dashboard/VotingInterface.tsx:135:29
+TS2339: Property 'castVote' does not exist on type 'never'.
+    133 |       }
+    134 |
+  > 135 |       await contractService.castVote(proposal.id, support, votingPower);
+        |                             ^^^^^^^^
+    136 |       
+    137 |       // Update state after voting
+    138 |       const newState = await contractService.getProposalState(proposal.id);
+ERROR in src/views/components/dashboard/VotingInterface.tsx:138:46
+TS2339: Property 'getProposalState' does not exist on type 'never'.
+    136 |       
+    137 |       // Update state after voting
+  > 138 |       const newState = await contractService.getProposalState(proposal.id);
+        |                                              ^^^^^^^^^^^^^^^^
+    139 |       setProposalState(newState);
+    140 |       
+    141 |       closeVoteDialogs();
+ERROR in src/views/components/dashboard/VotingInterface.tsx:141:7
+TS2304: Cannot find name 'closeVoteDialogs'.
+    139 |       setProposalState(newState);
+    140 |       
+  > 141 |       closeVoteDialogs();
+        |       ^^^^^^^^^^^^^^^^
+    142 |     } catch (error) {
+    143 |       console.error('Error casting vote:', error);
+    144 |     } finally {
+ERROR in src/views/components/dashboard/VotingInterface.tsx:155:24
+TS2304: Cannot find name 'VotingCapabilityType'.
+    153 |     return (
+    154 |       <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
+  > 155 |         {Object.values(VotingCapabilityType).map(capability => (
+        |                        ^^^^^^^^^^^^^^^^^^^^
+    156 |           <Chip
+    157 |             key={capability}
+    158 |             label={formatCapability(capability)}
+ERROR in src/views/components/dashboard/VotingInterface.tsx:156:12
+TS2304: Cannot find name 'Chip'.
+    154 |       <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
+    155 |         {Object.values(VotingCapabilityType).map(capability => (
+  > 156 |           <Chip
+        |            ^^^^
+    157 |             key={capability}
+    158 |             label={formatCapability(capability)}
+    159 |             color={hasCapability(capability) ? 'primary' : 'default'}
+ERROR in src/views/components/dashboard/VotingInterface.tsx:158:20
+TS2304: Cannot find name 'formatCapability'.
+    156 |           <Chip
+    157 |             key={capability}
+  > 158 |             label={formatCapability(capability)}
+        |                    ^^^^^^^^^^^^^^^^
+    159 |             color={hasCapability(capability) ? 'primary' : 'default'}
+    160 |             size="small"
+    161 |           />
+ERROR in src/views/components/dashboard/VotingInterface.tsx:159:20
+TS2304: Cannot find name 'hasCapability'.
+    157 |             key={capability}
+    158 |             label={formatCapability(capability)}
+  > 159 |             color={hasCapability(capability) ? 'primary' : 'default'}
+        |                    ^^^^^^^^^^^^^
+    160 |             size="small"
+    161 |           />
+    162 |         ))}
+ERROR in src/views/components/dashboard/VotingInterface.tsx:172:14
+TS2304: Cannot find name 'CircularProgress'.
+    170 |         <CardContent>
+    171 |           <Box display="flex" justifyContent="center" p={3}>
+  > 172 |             <CircularProgress />
+        |              ^^^^^^^^^^^^^^^^
+    173 |           </Box>
+    174 |         </CardContent>
+    175 |       </Card>
+ERROR in src/views/components/dashboard/VotingInterface.tsx:179:36
+TS2339: Property 'forVotes' does not exist on type 'never'.
+    177 |   }
+    178 |
+  > 179 |   const totalVotes = proposalState.forVotes.add(proposalState.againstVotes);
+        |                                    ^^^^^^^^
+    180 |   const forPercentage = totalVotes.gt(0)
+    181 |     ? proposalState.forVotes.mul(100).div(totalVotes).toNumber()
+    182 |     : 0;
+ERROR in src/views/components/dashboard/VotingInterface.tsx:179:63
+TS2339: Property 'againstVotes' does not exist on type 'never'.
+    177 |   }
+    178 |
+  > 179 |   const totalVotes = proposalState.forVotes.add(proposalState.againstVotes);
+        |                                                               ^^^^^^^^^^^^
+    180 |   const forPercentage = totalVotes.gt(0)
+    181 |     ? proposalState.forVotes.mul(100).div(totalVotes).toNumber()
+    182 |     : 0;
+ERROR in src/views/components/dashboard/VotingInterface.tsx:181:21
+TS2339: Property 'forVotes' does not exist on type 'never'.
+    179 |   const totalVotes = proposalState.forVotes.add(proposalState.againstVotes);
+    180 |   const forPercentage = totalVotes.gt(0)
+  > 181 |     ? proposalState.forVotes.mul(100).div(totalVotes).toNumber()
+        |                     ^^^^^^^^
+    182 |     : 0;
+    183 |   const againstPercentage = 100 - forPercentage;
+    184 |
+ERROR in src/views/components/dashboard/VotingInterface.tsx:185:40
+TS2339: Property 'state' does not exist on type 'never'.
+    183 |   const againstPercentage = 100 - forPercentage;
+    184 |
+  > 185 |   const isVotingActive = proposalState.state === ProposalState.Active;
+        |                                        ^^^^^
+    186 |
+    187 |   return (
+    188 |     <Card>
+ERROR in src/views/components/dashboard/VotingInterface.tsx:217:34
+TS2322: Type '{ size: number; sx: { mr: number; }; }' is not assignable to type 'IntrinsicAttributes & Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>'.
+  Property 'sx' does not exist on type 'IntrinsicAttributes & Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>'.
+    215 |             }}>
+    216 |               <Box sx={{ display: 'flex', alignItems: 'center' }}>
+  > 217 |                 <Timer size={16} sx={{ mr: 1 }} />
+        |                                  ^^
+    218 |                 {timeRemaining}
+    219 |               </Box>
+    220 |               <Box sx={{ display: 'flex', alignItems: 'center' }}>
+ERROR in src/views/components/dashboard/VotingInterface.tsx:221:34
+TS2322: Type '{ size: number; sx: { mr: number; }; }' is not assignable to type 'IntrinsicAttributes & Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>'.
+  Property 'sx' does not exist on type 'IntrinsicAttributes & Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>'.
+    219 |               </Box>
+    220 |               <Box sx={{ display: 'flex', alignItems: 'center' }}>
+  > 221 |                 <Users size={16} sx={{ mr: 1 }} />
+        |                                  ^^
+    222 |                 {totalVotes.toString()} votes
+    223 |               </Box>
+    224 |             </Box>
+ERROR in src/views/components/dashboard/VotingInterface.tsx:251:55
+TS2339: Property 'forVotes' does not exist on type 'never'.
+    249 |             />
+    250 |             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+  > 251 |               {ethers.utils.formatEther(proposalState.forVotes)} votes
+        |                                                       ^^^^^^^^
+    252 |             </Typography>
+    253 |           </Box>
+    254 |
+ERROR in src/views/components/dashboard/VotingInterface.tsx:273:55
+TS2339: Property 'againstVotes' does not exist on type 'never'.
+    271 |             />
+    272 |             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+  > 273 |               {ethers.utils.formatEther(proposalState.againstVotes)} votes
+        |                                                       ^^^^^^^^^^^^
+    274 |             </Typography>
+    275 |           </Box>
+    276 |         </Box>

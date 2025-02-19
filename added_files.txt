@@ -1,0 +1,211 @@
+- src/types/contracts.ts
+- src/state/contractState.ts
+- src/hooks/useDAOContracts.ts
+- src/services/ContractEventManager.ts
+- src/hooks/useContractEvents.ts
+- src/services/TransactionManager.ts - Renamed to TransactionManagerLegacy.ts
+- src/views/components/dashboard/DAODashboard.tsx
+- src/views/components/dashboard/ProposalCreation.tsx
+- src/views/components/dashboard/VotingInterface.tsx
+- src/views/components/dashboard/TokenMetrics.tsx
+- src/views/components/dashboard/MembershipStats.tsx
+- src/views/components/dashboard/DAOPage.tsx
+- src/views/components/dashboard/ProposalList.tsx (added at a much later time)
+
+
+Instructions:
+
+To use this dashboard in your application:
+
+1. Import the required components:
+```typescript
+import DAOPage from './components/dao/DAOPage';
+```
+
+2. Wrap it with the necessary providers:
+```typescript
+function App() {
+  return (
+    <ContractEventsProvider>
+      <DAOPage />
+    </ContractEventsProvider>
+  );
+}
+```
+
+3. Configure the contract addresses in your environment:
+```env
+REACT_APP_DAO_TOKEN_ADDRESS=0x972Dc127cD4bbAfC87f885a554d8208113d768C6
+REACT_APP_STATE_CONSTITUENT_ADDRESS=0x98f345C539f67e8D6D5B7ceD4048b4Ee99307910
+REACT_APP_VIEW_CONSTITUENT_ADDRESS=0x8A2F613a31d6FdB9EEA3b6e6DD45959d832224FD
+REACT_APP_LOGIC_CONSTITUENT_ADDRESS=0x5215bcD28f7A54E11F5A0ca3A687a679Ff69FeCC
+REACT_APP_TRIPARTITE_PROXY_ADDRESS=0x64f0eD6D3f9bb53f0Aa6E614868E47710e9cbF85
+```
+
+
+- src/services/ProposalLifecycle.ts
+- src/contexts/ProposalContext.tsx
+- src/hooks/useProposalCreation.ts
+- src/components/ProposalManagement/index.tsx
+
+Instructions:
+
+The component uses the established hooks and context providers to maintain a consistent state across both systems while providing a seamless user experience.
+
+To use this component in your application, simply import and render it within your router or parent component:
+
+```typescript
+import ProposalManagement from './components/ProposalManagement';
+
+function DAOApp() {
+  return (
+    <ProposalProvider>
+      <ProposalManagement />
+    </ProposalProvider>
+  );
+}
+```
+
+This implementation provides a complete solution for managing proposals across both Nostr and smart contracts while maintaining a consistent and user-friendly interface.
+
+- src/components/DAODashboard/index.tsx
+- src/components/DAODashboard/DashboardMetrics.tsx
+- src/components/DAODashboard/GovernanceOverview.tsx
+- src/components/DAODashboard/VotingActivity.tsx
+- src/components/DAODashboard/TokenAnalytics.tsx
+- src/hooks/useDAOMetrics.ts
+- src/hooks/useVotingActivity.ts
+
+- src/services/TransactionManager.ts
+- src/contexts/TransactionContext.tsx
+- src/components/TransactionFlow/index.tsx
+- src/components/TransactionFlow/TransactionHandler.tsx
+
+To use this transaction management system in your application:
+
+1. Wrap your app with the TransactionProvider:
+```typescript
+function App() {
+  return (
+    <TransactionProvider>
+      <TransactionHandler />
+      <YourApp />
+    </TransactionProvider>
+  );
+}
+```
+
+2. Use the transaction submission hook in your components:
+```typescript
+function YourComponent() {
+  const { submit } = useTransactionSubmission();
+
+  const handleAction = async () => {
+    try {
+      await submit(
+        "Your transaction description",
+        contract,
+        "methodName",
+        [param1, param2]
+      );
+    } catch (error) {
+      console.error('Transaction failed:', error);
+    }
+  };
+
+  return (
+    <Button onClick={handleAction}>
+      Perform Action
+    </Button>
+  );
+}
+```
+
+This implementation provides:
+- Comprehensive transaction state tracking
+- Real-time status updates
+- User-friendly error handling
+- Transaction replacement for stuck transactions
+- Clear status indicators and notifications
+- A consistent and intuitive UI for transaction management
+
+
+
+Prompt 7:
+
+- src/state/DAOStateManager.ts
+
+Prompt 8:
+
+- src/services/ErrorHandler.ts
+- src/contexts/ErrorContext.tsx
+- src/components/ErrorHandling/ErrorDisplay.tsx
+
+9 & 10 errors:
+
+Prompt 9:
+
+- src/services/LoadingStateManager.ts
+- src/contexts/LoadingContext.tsx
+- src/components/ErrorBoundary/index.tsx
+- src/components/LoadingIndicators/index.tsx
+
+To use this system in your application:
+
+1. Wrap your app with both error and loading providers:
+```typescript
+function App() {
+  return (
+    <ErrorBoundary>
+      <LoadingProvider
+        fallback={<LoadingOverlay />}
+      >
+        <YourApp />
+        <LoadingProgress />
+      </LoadingProvider>
+    </ErrorBoundary>
+  );
+}
+```
+
+2. Use loading states in your components:
+```typescript
+function YourComponent() {
+  const { startLoading, completeLoading } = useLoading();
+
+  const handleAction = async () => {
+    const loadingId = startLoading('Performing action', {
+      priority: LoadingPriority.MEDIUM,
+      estimatedDuration: 2000
+    });
+
+    try {
+      await performAction();
+      completeLoading(loadingId);
+    } catch (error) {
+      completeLoading(loadingId);
+      throw error;
+    }
+  };
+
+  return (
+    <LoadingBoundary
+      fallback={<LoadingSpinner />}
+    >
+      <Button onClick={handleAction}>
+        Perform Action
+      </Button>
+    </LoadingBoundary>
+  );
+}
+```
+
+This implementation provides a complete loading state management system that optimizes performance while providing a great user experience through appropriate loading indicators and error handling.
+
+Prompt 10:
+
+- src/deployment/config.ts
+- src/deployment/deploy.ts
+- src/services/Logger.ts
+- src/information.md (doc file, cannot err)
+- src/services/ContractRegistry.ts

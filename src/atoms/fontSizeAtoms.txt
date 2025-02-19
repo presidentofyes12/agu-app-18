@@ -1,0 +1,44 @@
+// src/atoms/fontSizeAtoms.ts
+import { atom } from 'jotai';
+
+// Constants for font size limits
+export const FONT_SIZE_MIN = 50;
+export const FONT_SIZE_MAX = 200;
+export const FONT_SIZE_DEFAULT = 100;
+export const FONT_SIZE_STEP = 5;
+
+// Helper function to safely get initial font size
+const getInitialFontSize = (): number => {
+  if (typeof window === 'undefined') return FONT_SIZE_DEFAULT;
+  
+  try {
+    const stored = localStorage.getItem('preferredFontSize');
+    if (!stored) return FONT_SIZE_DEFAULT;
+    
+    const parsed = parseInt(stored, 10);
+    if (isNaN(parsed)) return FONT_SIZE_DEFAULT;
+    
+    // Ensure the stored value is within valid range
+    return Math.min(Math.max(parsed, FONT_SIZE_MIN), FONT_SIZE_MAX);
+  } catch (error) {
+    console.warn('Error reading font size from localStorage:', error);
+    return FONT_SIZE_DEFAULT;
+  }
+};
+
+// Base atom for font size
+export const fontSizeAtom = atom<number>(getInitialFontSize());
+
+// Derived atom for font size with persistence
+export const persistentFontSizeAtom = atom(
+  (get) => get(fontSizeAtom),
+  (get, set, newSize: number) => {
+    const validSize = Math.min(Math.max(newSize, FONT_SIZE_MIN), FONT_SIZE_MAX);
+    set(fontSizeAtom, validSize);
+    try {
+      localStorage.setItem('preferredFontSize', validSize.toString());
+    } catch (error) {
+      console.warn('Error saving font size to localStorage:', error);
+    }
+  }
+);

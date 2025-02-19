@@ -1,0 +1,365 @@
+Firstly, I disconnected Rabby wallet (the only one that was connected at the time), reloaded the page, and clicked to "Connect Wallet" while on the "Overview" dashboard. A Rabby wallet pop-up came up and had me confirm that I was to connect to the wallet. Once that confirmation came, the "Connect Wallet" feature remained, but I assumed that, as it has been before, if I switched to another section of the page (Treasury, Members, anything) and reloaded, the address and chain ID would show up, as it had done before. However, I did it with Treasury and Members and reloaded both times, and nothing changed- then, I opened up the inspect element console to retrieve the logs, and the page went entirely blank (after multiple reloads) until I disconnected the Rabby wallet. Here are the logs I retrieved:
+
+20:06:59.439 GET
+http://localhost:3000/dao
+[HTTP/1.1 200 OK 48ms]
+
+20:06:59.466 GET
+https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css
+[HTTP/2 200 OK 0ms]
+
+20:06:59.491 Removing unpermitted intrinsics lockdown-install.js:1:52832
+20:06:59.525 GET
+http://localhost:3000/static/js/bundle.js
+[HTTP/1.1 304 Not Modified 36ms]
+
+20:07:00.101 GET
+ws://localhost:3000/ws
+[HTTP/1.1 101 Switching Protocols 2ms]
+
+20:07:00.104 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools bundle.js:179498:21
+20:07:00.106 Unknown property ‘-moz-osx-font-smoothing’.  Declaration dropped. dao:19:27
+20:07:00.110 Unknown property ‘text-security’.  Declaration dropped. dao:439:17
+20:07:00.233 GET
+wss://pulsechain-rpc.publicnode.com/
+[HTTP/1.1 101 Switching Protocols 196ms]
+
+20:07:00.409 GET
+http://localhost:3000/logo192.png
+[HTTP/1.1 200 OK 0ms]
+
+20:07:00.410 GET
+http://localhost:3000/favicon.ico
+[HTTP/1.1 200 OK 0ms]
+
+20:07:00.423 Unknown property ‘-moz-osx-font-smoothing’.  Declaration dropped. dao:1:65
+20:07:00.423 Error in parsing value for ‘-webkit-text-size-adjust’.  Declaration dropped. dao:1:122
+20:07:00.428 GET
+http://localhost:3000/favicon.ico
+[HTTP/1.1 304 Not Modified 3ms]
+
+20:07:00.570 Expected color but found ‘#transparent’.  Error in parsing value for ‘color’.  Declaration dropped. dao:1:36
+20:07:00.570 Error in parsing value for ‘background’.  Declaration dropped. dao:1:60
+
+
+20:07:00.591 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: null, chainId: undefined }
+bundle.js:5283:13
+20:07:00.591 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: null, chainId: undefined }
+bundle.js:5317:13
+20:07:00.592 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5325:15
+20:07:00.592 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: null, chainId: undefined }
+bundle.js:5283:13
+20:07:00.592 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: null, chainId: undefined }
+bundle.js:5317:13
+20:07:00.592 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5325:15
+20:07:00.615 DAOPage: Render state 
+Object { isInitialized: false, hasContractError: false, contractErrorMessage: undefined, hasWalletError: false, walletErrorMessage: undefined, isWalletConnected: true }
+bundle.js:25259:11
+20:07:00.640 Rendering loading state due to uninitialized contracts bundle.js:24391:13
+20:07:00.659 GET
+http://localhost:3000/static/js/src_raven_worker_ts.chunk.js
+[HTTP/1.1 304 Not Modified 3ms]
+
+20:07:00.661 XHRGET
+https://spam.nostrchat.io/list
+[HTTP/1.1 200 OK 265ms]
+
+20:07:00.686 Wallet connected: 
+Object { account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5974:15
+20:07:00.686 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.687 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5317:13
+20:07:00.687 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5325:15
+20:07:00.688 initializeContracts effect triggered: 
+Object { connectionStatus: "disconnected", hasAccount: true, connectionInitialized: false }
+bundle.js:25123:15
+20:07:00.689 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.689 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5317:13
+20:07:00.689 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5325:15
+20:07:00.690 Wallet connected: 
+Object { account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5974:15
+20:07:00.690 DAODashboard mounting with state: 
+Object { isInitialized: false, hasContracts: {…}, connectionStatus: "disconnected", account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:24329:13
+20:07:00.690 Dashboard not initialized, checking prerequisites... bundle.js:24342:15
+20:07:00.690 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.691 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5317:13
+20:07:00.691 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5325:15
+20:07:00.691 Wallet connected: 
+Object { account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5974:15
+20:07:00.692 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.692 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5317:13
+20:07:00.692 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5325:15
+20:07:00.692 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.693 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5317:13
+20:07:00.693 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5325:15
+20:07:00.696 DAOPage: Render state 
+Object { isInitialized: false, hasContractError: false, contractErrorMessage: undefined, hasWalletError: false, walletErrorMessage: undefined, isWalletConnected: true }
+bundle.js:25259:11
+20:07:00.715 Rendering loading state due to uninitialized contracts bundle.js:24391:13
+20:07:00.725 Initialization state changed: 
+Object { shouldInitialize: true, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.725 Contract initialization cycle: 
+Object { shouldInitialize: true, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5317:13
+20:07:00.726 Starting contract initialization... bundle.js:5340:13
+20:07:00.726 Provider initialized successfully bundle.js:5353:17
+20:07:00.726 useContractEvents: Loading contract ABIs bundle.js:5355:17
+20:07:00.726 useContractEvents: Creating contract instances bundle.js:5368:17
+20:07:00.738 Creating contract manager... bundle.js:5375:17
+20:07:00.744 initializeContracts effect triggered: 
+Object { connectionStatus: "connected", hasAccount: true, connectionInitialized: false }
+bundle.js:25123:15
+20:07:00.745 Calling initialize from effect bundle.js:25131:19
+20:07:00.745 Initialize function called, current state: 
+Object { shouldInitialize: false, isInitialized: false }
+bundle.js:5295:13
+20:07:00.745 Initialization state changed: 
+Object { shouldInitialize: true, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.745 Contract initialization cycle: 
+Object { shouldInitialize: true, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5317:13
+20:07:00.745 Starting contract initialization... bundle.js:5340:13
+20:07:00.746 Provider initialized successfully bundle.js:5353:17
+20:07:00.746 useContractEvents: Loading contract ABIs bundle.js:5355:17
+20:07:00.746 useContractEvents: Creating contract instances bundle.js:5368:17
+20:07:00.753 Creating contract manager... bundle.js:5375:17
+20:07:00.759 DAODashboard mounting with state: 
+Object { isInitialized: false, hasContracts: {…}, connectionStatus: "connected", account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:24329:13
+20:07:00.759 Dashboard not initialized, checking prerequisites... bundle.js:24342:15
+20:07:00.759 Initialization state changed: 
+Object { shouldInitialize: true, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.759 Contract initialization cycle: 
+Object { shouldInitialize: true, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5317:13
+20:07:00.759 Starting contract initialization... bundle.js:5340:13
+20:07:00.760 Provider initialized successfully bundle.js:5353:17
+20:07:00.760 useContractEvents: Loading contract ABIs bundle.js:5355:17
+20:07:00.760 useContractEvents: Creating contract instances bundle.js:5368:17
+20:07:00.763 Creating contract manager... bundle.js:5375:17
+20:07:00.767 Initialization state changed: 
+Object { shouldInitialize: true, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.767 Contract initialization cycle: 
+Object { shouldInitialize: true, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5317:13
+20:07:00.767 Starting contract initialization... bundle.js:5340:13
+20:07:00.767 Provider initialized successfully bundle.js:5353:17
+20:07:00.768 useContractEvents: Loading contract ABIs bundle.js:5355:17
+20:07:00.768 useContractEvents: Creating contract instances bundle.js:5368:17
+20:07:00.771 Creating contract manager... bundle.js:5375:17
+20:07:00.775 Initialization state changed: 
+Object { shouldInitialize: true, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.777 Contract initialization cycle: 
+Object { shouldInitialize: true, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5317:13
+20:07:00.777 Starting contract initialization... bundle.js:5340:13
+20:07:00.777 Provider initialized successfully bundle.js:5353:17
+20:07:00.777 useContractEvents: Loading contract ABIs bundle.js:5355:17
+20:07:00.777 useContractEvents: Creating contract instances bundle.js:5368:17
+20:07:00.781 Creating contract manager... bundle.js:5375:17
+20:07:00.796 Contract initialization successful 5 bundle.js:5383:19
+20:07:00.811 DAOPage: Render state 
+Object { isInitialized: false, hasContractError: false, contractErrorMessage: undefined, hasWalletError: false, walletErrorMessage: undefined, isWalletConnected: true }
+bundle.js:25259:11
+20:07:00.890 Unknown pseudo-class or pseudo-element ‘-ms-input-placeholder’.  Ruleset ignored due to bad selector. 2 dao:1:55
+20:07:00.890 Unknown pseudo-class or pseudo-element ‘-ms-input-placeholder’.  Ruleset ignored due to bad selector. 2 dao:1:106
+20:07:00.891 Unknown pseudo-class or pseudo-element ‘-ms-input-placeholder’.  Ruleset ignored due to bad selector. 2 dao:1:112
+20:07:00.894 Unknown pseudo-class or pseudo-element ‘-ms-input-placeholder’.  Ruleset ignored due to bad selector. 2 dao:1:56
+20:07:00.895 Unknown pseudo-class or pseudo-element ‘-ms-input-placeholder’.  Ruleset ignored due to bad selector. 2 dao:1:107
+20:07:00.895 Unknown pseudo-class or pseudo-element ‘-ms-input-placeholder’.  Ruleset ignored due to bad selector. 2 dao:1:113
+20:07:00.900 Unknown pseudo-class or pseudo-element ‘-ms-expand’.  Ruleset ignored due to bad selector. dao:1:73
+20:07:00.901 Unknown pseudo-class or pseudo-element ‘-ms-input-placeholder’.  Ruleset ignored due to bad selector. 2 dao:1:73
+20:07:00.902 Unknown pseudo-class or pseudo-element ‘-ms-input-placeholder’.  Ruleset ignored due to bad selector. 2 dao:1:124
+20:07:00.902 Unknown pseudo-class or pseudo-element ‘-ms-input-placeholder’.  Ruleset ignored due to bad selector. 2 dao:1:130
+20:07:00.916 Initialization state changed: 
+Object { shouldInitialize: true, isInitialized: true, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.917 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.917 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5317:13
+20:07:00.918 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5325:15
+20:07:00.918 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.918 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5317:13
+20:07:00.919 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5325:15
+20:07:00.919 Wallet connected: 
+Object { account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5974:15
+20:07:00.919 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.919 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5317:13
+20:07:00.919 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5325:15
+20:07:00.920 Initialization state changed: 
+Object { shouldInitialize: true, isInitialized: true, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.920 DAODashboard mounting with state: 
+Object { isInitialized: true, hasContracts: {…}, connectionStatus: "connected", account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:24329:13
+20:07:00.920 Fetching dashboard data... bundle.js:24347:17
+20:07:00.920 Initialization state changed: 
+Object { shouldInitialize: true, isInitialized: true, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.920 Initialization state changed: 
+Object { shouldInitialize: true, isInitialized: true, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.921 Failed to fetch core team addresses: TypeError: stateConstituent.getCoreTeamMembers is not a function
+    fetchCoreTeamAddresses ProposalContext.tsx:134
+    ProposalProvider ProposalContext.tsx:141
+    React 13
+    workLoop scheduler.development.js:266
+    flushWork scheduler.development.js:239
+    performWorkUntilDeadline scheduler.development.js:533
+    js scheduler.development.js:571
+    js scheduler.development.js:633
+    factory react refresh:6
+    Webpack 24
+bundle.js:3383:17
+20:07:00.922 Error: no matching event (argument="name", value="ProposalCreated", code=INVALID_ARGUMENT, version=abi/5.7.0)
+    makeError index.ts:269
+    throwError index.ts:281
+    throwArgumentError index.ts:285
+    getEvent interface.ts:241
+    _getRunningEvent index.ts:932
+    on index.ts:1059
+    setupEventListeners ProposalLifecycle.ts:168
+    ProposalLifecycleManager ProposalLifecycle.ts:103
+    ProposalProvider ProposalContext.tsx:156
+    React 13
+    workLoop scheduler.development.js:266
+    flushWork scheduler.development.js:239
+    performWorkUntilDeadline scheduler.development.js:533
+    js scheduler.development.js:571
+    js scheduler.development.js:633
+    factory react refresh:6
+    Webpack 24
+lockdown-install.js:1:97687
+20:07:00.926 Initialization state changed: 
+Object { shouldInitialize: true, isInitialized: true, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5283:13
+20:07:00.929 Error: no matching event (argument="name", value="ProposalCreated", code=INVALID_ARGUMENT, version=abi/5.7.0)
+    makeError index.ts:269
+    throwError index.ts:281
+    throwArgumentError index.ts:285
+    getEvent interface.ts:241
+    _getRunningEvent index.ts:932
+    on index.ts:1059
+    setupEventListeners ProposalLifecycle.ts:168
+    ProposalLifecycleManager ProposalLifecycle.ts:103
+    ProposalProvider ProposalContext.tsx:156
+    React 13
+    workLoop scheduler.development.js:266
+    flushWork scheduler.development.js:239
+    performWorkUntilDeadline scheduler.development.js:533
+    js scheduler.development.js:571
+    js scheduler.development.js:633
+    factory react refresh:6
+    Webpack 24
+bundle.js:169990:21
+20:07:00.929 The above error occurred in the <ProposalProvider> component:
+
+ProposalProvider@http://localhost:3000/static/js/bundle.js:3310:7
+TransactionProvider@http://localhost:3000/static/js/bundle.js:3690:7
+LoadingProvider@http://localhost:3000/static/js/bundle.js:3175:7
+ErrorProvider@http://localhost:3000/static/js/bundle.js:3025:7
+Web3ReactProvider@http://localhost:3000/static/js/bundle.js:226261:7
+RecoilRoot_INTERNAL@http://localhost:3000/static/js/bundle.js:213020:7
+RecoilRoot@http://localhost:3000/static/js/bundle.js:213161:7
+App@http://localhost:3000/static/js/bundle.js:125:65
+RavenProvider@http://localhost:3000/static/js/bundle.js:7036:64
+RemoteDataProvider@http://localhost:3000/static/js/bundle.js:7443:73
+KeysProvider@http://localhost:3000/static/js/bundle.js:6733:73
+PopoverProvider@http://localhost:3000/static/js/bundle.js:6922:94
+ToastProvider@http://localhost:3000/static/js/bundle.js:7704:93
+ModalProvider@http://localhost:3000/static/js/bundle.js:6826:89
+DefaultPropsProvider@http://localhost:3000/static/js/bundle.js:92373:7
+RtlProvider@http://localhost:3000/static/js/bundle.js:92519:9
+ThemeProvider@http://localhost:3000/static/js/bundle.js:91393:7
+ThemeProvider@http://localhost:3000/static/js/bundle.js:92815:7
+ThemeProvider@http://localhost:3000/static/js/bundle.js:89949:9
+ThemeProvider@http://localhost:3000/static/js/bundle.js:7599:81
+Providers@http://localhost:3000/static/js/bundle.js:6629:17
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. bundle.js:170009:19
+20:07:00.930 Error: no matching event (argument="name", value="ProposalCreated", code=INVALID_ARGUMENT, version=abi/5.7.0)
+    makeError index.ts:269
+    throwError index.ts:281
+    throwArgumentError index.ts:285
+    getEvent interface.ts:241
+    _getRunningEvent index.ts:932
+    on index.ts:1059
+    setupEventListeners ProposalLifecycle.ts:168
+    ProposalLifecycleManager ProposalLifecycle.ts:103
+    ProposalProvider ProposalContext.tsx:156
+    React 13
+    workLoop scheduler.development.js:266
+    flushWork scheduler.development.js:239
+    performWorkUntilDeadline scheduler.development.js:533
+    js scheduler.development.js:571
+    js scheduler.development.js:633
+    factory react refresh:6
+    Webpack 24
+lockdown-install.js:1:97687
+20:07:00.934 Set shouldInitialize to true bundle.js:5305:13
+20:07:00.934 Initialize from effect completed bundle.js:25133:19

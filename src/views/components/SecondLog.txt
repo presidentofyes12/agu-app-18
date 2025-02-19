@@ -1,0 +1,459 @@
+This second log is the log that showed up when I went from the dashboard to the wallet connection area, then back to the dashboard's Overview, to the Proposals.
+
+20:03:24.694 GET
+ws://localhost:3000/ws
+[HTTP/1.1 101 Switching Protocols 1ms]
+
+20:03:24.953 GET
+http://localhost:3000/dao
+[HTTP/1.1 304 Not Modified 3ms]
+
+20:03:24.981 GET
+https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css
+[HTTP/2 200 OK 0ms]
+
+20:03:24.999 Removing unpermitted intrinsics lockdown-install.js:1:52832
+20:03:25.036 GET
+http://localhost:3000/static/js/bundle.js
+[HTTP/1.1 304 Not Modified 57ms]
+
+20:03:25.863 GET
+http://localhost:3000/logo192.png
+[HTTP/1.1 200 OK 0ms]
+
+20:03:25.864 GET
+http://localhost:3000/favicon.ico
+[HTTP/1.1 200 OK 0ms]
+
+20:03:26.166 GET
+ws://localhost:3000/ws
+[HTTP/1.1 101 Switching Protocols 7ms]
+
+20:03:26.168 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools bundle.js:186101:21
+20:03:26.170 Unknown property ‘-moz-osx-font-smoothing’.  Declaration dropped. dao:19:27
+20:03:26.175 Unknown property ‘text-security’.  Declaration dropped. dao:439:17
+20:03:26.278 GET
+wss://pulsechain-rpc.publicnode.com/
+[HTTP/1.1 101 Switching Protocols 115ms]
+
+20:03:26.447 Unknown property ‘-moz-osx-font-smoothing’.  Declaration dropped. dao:1:65
+20:03:26.447 Error in parsing value for ‘-webkit-text-size-adjust’.  Declaration dropped. dao:1:122
+20:03:26.472 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5305:13
+20:03:26.472 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5339:13
+20:03:26.472 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5347:15
+20:03:26.474 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5305:13
+20:03:26.474 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5339:13
+20:03:26.475 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5347:15
+20:03:26.477 GET
+http://localhost:3000/favicon.ico
+[HTTP/1.1 304 Not Modified 2ms]
+
+20:03:26.479 GET
+http://localhost:3000/static/js/src_raven_worker_ts.chunk.js
+[HTTP/1.1 304 Not Modified 6ms]
+
+20:03:26.589 Wallet connected: 
+Object { account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:6022:15
+20:03:26.590 [DAODashboard] Contract service not initialized. bundle.js:26563:15
+20:03:26.591 [DAOPage] Contract service not initialized. bundle.js:28141:15
+20:03:26.592 Initialization state changed: 
+Object { shouldInitialize: true, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5305:13
+20:03:26.592 Contract initialization cycle: 
+Object { shouldInitialize: true, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5339:13
+20:03:26.592 Starting contract initialization... bundle.js:5362:13
+20:03:26.592 Provider initialized successfully bundle.js:5375:17
+20:03:26.593 useContractEvents: Loading contract ABIs bundle.js:5377:17
+20:03:26.593 useContractEvents: Creating contract instances bundle.js:5390:17
+20:03:26.601 Creating contract manager... bundle.js:5397:17
+20:03:26.609 Initialization state changed: 
+Object { shouldInitialize: true, isInitialized: false, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5305:13
+20:03:26.610 Contract initialization cycle: 
+Object { shouldInitialize: true, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5339:13
+20:03:26.610 Starting contract initialization... bundle.js:5362:13
+20:03:26.610 Provider initialized successfully bundle.js:5375:17
+20:03:26.610 useContractEvents: Loading contract ABIs bundle.js:5377:17
+20:03:26.610 useContractEvents: Creating contract instances bundle.js:5390:17
+20:03:26.615 XHRGET
+https://spam.nostrchat.io/list
+[HTTP/1.1 200 OK 229ms]
+
+20:03:26.616 Creating contract manager... bundle.js:5397:17
+20:03:26.624 Contract initialization successful 2 bundle.js:5405:19
+20:03:26.656 Initialization state changed: 
+Object { shouldInitialize: true, isInitialized: true, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5305:13
+20:03:26.657 Initialization state changed: 
+Object { shouldInitialize: true, isInitialized: true, hasProvider: true, isActive: true, account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:5305:13
+20:03:26.895 GET
+http://localhost:3000/static/js/vendors-node_modules_pmmmwh_react-refresh-webpack-plugin_lib_runtime_RefreshUtils_js-node_mod-15303e.chunk.js
+[HTTP/1.1 304 Not Modified 2ms]
+
+20:03:26.982 GET
+wss://relay1.nostrchat.io/
+[HTTP/1.1 101 Switching Protocols 351ms]
+
+20:03:26.983 GET
+wss://relay2.nostrchat.io/
+[HTTP/1.1 101 Switching Protocols 333ms]
+
+20:03:26.995 GET
+wss://relay.damus.io/
+[HTTP/1.1 101 Switching Protocols 202ms]
+
+20:03:26.996 GET
+wss://relay.snort.social/
+[HTTP/1.1 101 Switching Protocols 296ms]
+
+20:03:26.997 GET
+wss://nos.lol/
+[HTTP/1.1 101 Switching Protocols 351ms]
+
+20:03:28.272 Wallet connected: 
+Object { account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:6022:15
+20:03:28.273 [DAOGovernance] Contract service not initialized. bundle.js:27387:15
+20:03:28.274 Wallet connected: 
+Object { account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:6022:15
+20:03:28.274 [DomainMonitor] Contract service not initialized. bundle.js:29074:15
+20:03:28.274 [DomainMonitor] Contract service not initialized bundle.js:29083:17
+20:03:28.275 Wallet connected: 
+Object { account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:6022:15
+20:03:28.275 [ProposalList] Contract service not initialized. bundle.js:31980:15
+20:03:28.276 Wallet connected: 
+Object { account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:6022:15
+20:03:29.527 Warning: validateDOMNesting(...): <button> cannot appear as a descendant of <button>.
+button
+button
+./node_modules/@emotion/react/dist/emotion-element-43c6fea0.browser.esm.js/withEmotionCache/<@http://localhost:3000/static/js/bundle.js:48005:66
+ButtonBase@http://localhost:3000/static/js/bundle.js:71969:87
+./node_modules/@emotion/react/dist/emotion-element-43c6fea0.browser.esm.js/withEmotionCache/<@http://localhost:3000/static/js/bundle.js:48005:66
+IconButton@http://localhost:3000/static/js/bundle.js:79316:88
+Tooltip@http://localhost:3000/static/js/bundle.js:94134:88
+div
+./node_modules/@emotion/react/dist/emotion-element-43c6fea0.browser.esm.js/withEmotionCache/<@http://localhost:3000/static/js/bundle.js:48005:66
+InputAdornment@http://localhost:3000/static/js/bundle.js:79946:87
+div
+./node_modules/@emotion/react/dist/emotion-element-43c6fea0.browser.esm.js/withEmotionCache/<@http://localhost:3000/static/js/bundle.js:48005:66
+InputBase@http://localhost:3000/static/js/bundle.js:80336:88
+OutlinedInput@http://localhost:3000/static/js/bundle.js:85614:88
+div
+./node_modules/@emotion/react/dist/emotion-element-43c6fea0.browser.esm.js/withEmotionCache/<@http://localhost:3000/static/js/bundle.js:48005:66
+FormControl@http://localhost:3000/static/js/bundle.js:77101:87
+./node_modules/@emotion/react/dist/emotion-element-43c6fea0.browser.esm.js/withEmotionCache/<@http://localhost:3000/static/js/bundle.js:48005:66
+TextField@http://localhost:3000/static/js/bundle.js:93537:88
+div
+div
+./node_modules/@emotion/react/dist/emotion-element-43c6fea0.browser.esm.js/withEmotionCache/<@http://localhost:3000/static/js/bundle.js:48005:66
+CardContent@http://localhost:3000/static/js/bundle.js:73146:87
+div
+./node_modules/@emotion/react/dist/emotion-element-43c6fea0.browser.esm.js/withEmotionCache/<@http://localhost:3000/static/js/bundle.js:48005:66
+Paper@http://localhost:3000/static/js/bundle.js:85963:88
+./node_modules/@emotion/react/dist/emotion-element-43c6fea0.browser.esm.js/withEmotionCache/<@http://localhost:3000/static/js/bundle.js:48005:66
+Card@http://localhost:3000/static/js/bundle.js:73008:87
+div
+div
+./node_modules/@emotion/react/dist/emotion-element-43c6fea0.browser.esm.js/withEmotionCache/<@http://localhost:3000/static/js/bundle.js:48005:66
+Box@http://localhost:3000/static/js/bundle.js:99822:72
+SettingsContent@http://localhost:3000/static/js/bundle.js:43922:5
+div
+./node_modules/@emotion/react/dist/emotion-element-43c6fea0.browser.esm.js/withEmotionCache/<@http://localhost:3000/static/js/bundle.js:48005:66
+Box@http://localhost:3000/static/js/bundle.js:99822:72
+AppContent@http://localhost:3000/static/js/bundle.js:18590:78
+div
+./node_modules/@emotion/react/dist/emotion-element-43c6fea0.browser.esm.js/withEmotionCache/<@http://localhost:3000/static/js/bundle.js:48005:66
+Box@http://localhost:3000/static/js/bundle.js:99822:72
+AppWrapper@http://localhost:3000/static/js/bundle.js:20974:82
+SettingsKeysPage@http://localhost:3000/static/js/bundle.js:44614:65
+div
+FocusHandlerImpl@http://localhost:3000/static/js/bundle.js:108076:20
+FocusHandler@http://localhost:3000/static/js/bundle.js:108055:13
+RouterImpl@http://localhost:3000/static/js/bundle.js:107976:20
+LocationProvider@http://localhost:3000/static/js/bundle.js:107852:20
+Location@http://localhost:3000/static/js/bundle.js:107843:18
+Router
+ProposalProvider@http://localhost:3000/static/js/bundle.js:3317:7
+TransactionProvider@http://localhost:3000/static/js/bundle.js:3712:7
+LoadingProvider@http://localhost:3000/static/js/bundle.js:3175:7
+ErrorProvider@http://localhost:3000/static/js/bundle.js:3025:7
+Web3ReactProvider@http://localhost:3000/static/js/bundle.js:232823:7
+RecoilRoot_INTERNAL@http://localhost:3000/static/js/bundle.js:219582:7
+RecoilRoot@http://localhost:3000/static/js/bundle.js:219723:7
+App@http://localhost:3000/static/js/bundle.js:125:65
+RavenProvider@http://localhost:3000/static/js/bundle.js:7145:64
+RemoteDataProvider@http://localhost:3000/static/js/bundle.js:7552:73
+KeysProvider@http://localhost:3000/static/js/bundle.js:6842:73
+PopoverProvider@http://localhost:3000/static/js/bundle.js:7031:94
+ToastProvider@http://localhost:3000/static/js/bundle.js:7813:93
+ModalProvider@http://localhost:3000/static/js/bundle.js:6935:89
+DefaultPropsProvider@http://localhost:3000/static/js/bundle.js:98592:7
+RtlProvider@http://localhost:3000/static/js/bundle.js:98738:9
+ThemeProvider@http://localhost:3000/static/js/bundle.js:97431:7
+ThemeProvider@http://localhost:3000/static/js/bundle.js:99034:7
+ThemeProvider@http://localhost:3000/static/js/bundle.js:95987:9
+ThemeProvider@http://localhost:3000/static/js/bundle.js:7708:81
+Providers@http://localhost:3000/static/js/bundle.js:6738:17 bundle.js:160441:34
+20:03:29.587 Unknown pseudo-class or pseudo-element ‘-ms-input-placeholder’.  Ruleset ignored due to bad selector. 2 keys:1:56
+20:03:29.588 Unknown pseudo-class or pseudo-element ‘-ms-input-placeholder’.  Ruleset ignored due to bad selector. 2 keys:1:107
+20:03:29.589 Unknown pseudo-class or pseudo-element ‘-ms-input-placeholder’.  Ruleset ignored due to bad selector. 2 keys:1:113
+20:03:29.805
+Object { wsec: "0xaaf898d8d02d23c6afd2e6217ed364f74d24cf52720410ba6db30049e0d230be", balance: "0.0000 PLS", wpub: "0x4AF8fEd9BF55945194f4339eF14C6b9e5bb68cd1" }
+bundle.js:13747:13
+20:03:30.378 RavenProvider handleReadyState bundle.js:6658:15
+20:03:30.428 Processing event queue bundle.js:8819:13
+20:03:30.428 Processing event: 
+Object { content: '{"name":"Test","about":"Test","picture":""}', created_at: 1728937561, id: "b96f74a1a5b0b0ec2aebaa6b18231f7fb4c2647ed1823e9445d05415b2770e71", kind: 0, pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", sig: "63b81b83fb29eac104491c3dcd3439cf86d62788bf689d791cace488b2ea391ea21bd786b93497e741b9566d29d9f5ebb8b1b022f183ae750bbc463e1fa5e716", tags: [] }
+bundle.js:8824:15
+20:03:30.429 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:30.429 Event content: 
+Object { name: "Test", about: "Test", picture: "" }
+bundle.js:8827:17
+20:03:30.429 Processing event: 
+Object { content: '{"name":"NewLaw/Everyone is right/Force for peace","about":"{\\"problem\\":\\"Need for a fair governance system\\",\\"solution\\":\\"\\",\\"targetAudience\\":\\"\\",\\"qualifications\\":\\"\\",\\"purpose\\":\\"A governance system promoting universal fairness and conflict resolution.\\",\\"approach\\":\\"A governance system promoting universal fairness and conflict resolution.\\",\\"outcome\\":\\"A governance system promoting universal fairness and conflict resolution.\\",\\"timeline\\":\\"\\",\\"budget\\":\\"\\",\\"callToAction\\":\\"\\",\\"voting\\":[],\\"proposalID\\":\\"\\"}","picture":""}', created_at: 1739294785, id: "f252f3da0715e16be161909de723e8323e0960f356d949dbfa50d8cbbb886291", kind: 40, pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", sig: "d502332dc8868d1b039817504ef54926d179235d8d544ba02cf33d54d93288ae85961d92c2faeb20c3653fc012caabd0d9571e42a9faaa89adc3b684c0ff589b", tags: [] }
+bundle.js:8824:15
+20:03:30.429 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:30.429 Event content: 
+Object { name: "NewLaw/Everyone is right/Force for peace", about: '{"problem":"Need for a fair governance system","solution":"","targetAudience":"","qualifications":"","purpose":"A governance system promoting universal fairness and conflict resolution.","approach":"A governance system promoting universal fairness and conflict resolution.","outcome":"A governance system promoting universal fairness and conflict resolution.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}', picture: "" }
+bundle.js:8827:17
+20:03:30.429 Processing event: 
+Object { content: '{"name":"Ephemeral Relays","about":"{\\"problem\\":\\"Need for temporary communication channels\\",\\"solution\\":\\"\\",\\"targetAudience\\":\\"\\",\\"qualifications\\":\\"\\",\\"purpose\\":\\"Temporary communication channels that expire after a set duration.\\",\\"approach\\":\\"Temporary communication channels that expire after a set duration.\\",\\"outcome\\":\\"Temporary communication channels that expire after a set duration.\\",\\"timeline\\":\\"\\",\\"budget\\":\\"\\",\\"callToAction\\":\\"\\",\\"voting\\":[],\\"proposalID\\":\\"\\"}","picture":""}', created_at: 1738857656, id: "a21c59edce597c1f84f2261b0c381763244346d3410aa881fde0b7a68051e9c0", kind: 40, pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", sig: "552438beadb0568e630b75523e665360ed4806db114621c1f0f4876e066638a4f120e6d8db6572765bbd34fcbcdc7ab1f45c7b208950c8cd76eb4708364032fb", tags: [] }
+bundle.js:8824:15
+20:03:30.430 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:30.430 Event content: 
+Object { name: "Ephemeral Relays", about: '{"problem":"Need for temporary communication channels","solution":"","targetAudience":"","qualifications":"","purpose":"Temporary communication channels that expire after a set duration.","approach":"Temporary communication channels that expire after a set duration.","outcome":"Temporary communication channels that expire after a set duration.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}', picture: "" }
+bundle.js:8827:17
+20:03:30.430 Processing event: 
+Object { content: '{"name":"Smart contract","about":"{\\"problem\\":\\"Need for automated and self-executing contracts\\",\\"solution\\":\\"\\",\\"targetAudience\\":\\"\\",\\"qualifications\\":\\"\\",\\"purpose\\":\\"Automated and self-executing contracts with predefined rules.\\",\\"approach\\":\\"Automated and self-executing contracts with predefined rules.\\",\\"outcome\\":\\"Automated and self-executing contracts with predefined rules.\\",\\"timeline\\":\\"\\",\\"budget\\":\\"\\",\\"callToAction\\":\\"\\",\\"voting\\":[],\\"proposalID\\":\\"\\"}","picture":""}', created_at: 1738856955, id: "55dc35cb7344a51c07f62ad54e73423957c3a5e5c02ea37a498b8b920aabd211", kind: 40, pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", sig: "5ee2ffe9f22143496717c936dce3cc6adf4b06952d4066b6d72e67d3d860fd390fadec66f7b4273be9b242a93cd03e7f90582527bb13dc2aeb403f4183719198", tags: [] }
+bundle.js:8824:15
+20:03:30.430 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:30.430 Event content: 
+Object { name: "Smart contract", about: '{"problem":"Need for automated and self-executing contracts","solution":"","targetAudience":"","qualifications":"","purpose":"Automated and self-executing contracts with predefined rules.","approach":"Automated and self-executing contracts with predefined rules.","outcome":"Automated and self-executing contracts with predefined rules.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}', picture: "" }
+bundle.js:8827:17
+20:03:30.430 Processing event: 
+Object { content: '{"name":"Privacy, scalability, security, transparency, decentralization, and identification.","about":"{\\"problem\\":\\"Need for core platform principles\\",\\"solution\\":\\"\\",\\"targetAudience\\":\\"\\",\\"qualifications\\":\\"\\",\\"purpose\\":\\"Core principles guiding platform development and operations.\\",\\"approach\\":\\"Core principles guiding platform development and operations.\\",\\"outcome\\":\\"Core principles guiding platform development and operations.\\",\\"timeline\\":\\"\\",\\"budget\\":\\"\\",\\"callToAction\\":\\"\\",\\"voting\\":[],\\"proposalID\\":\\"\\"}","picture":""}', created_at: 1739294691, id: "3abd97339b0228bf1b3e4ae280d96b1838257185e96df47618bcb05115a14514", kind: 40, pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", sig: "5f38a1f7819f180aa4e8341de0cc14d5d0324d654a782e97d686c3d10b2e3daf0c082a51bc25bdecddb901f0597c0d5f773ea2f28e11d758fb70d8afab52e859", tags: [] }
+bundle.js:8824:15
+20:03:30.431 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:30.431 Event content: 
+Object { name: "Privacy, scalability, security, transparency, decentralization, and identification.", about: '{"problem":"Need for core platform principles","solution":"","targetAudience":"","qualifications":"","purpose":"Core principles guiding platform development and operations.","approach":"Core principles guiding platform development and operations.","outcome":"Core principles guiding platform development and operations.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}', picture: "" }
+bundle.js:8827:17
+20:03:30.431 Processing event: 
+Object { content: `{"name":"If you don't rate, you can't be rated.","about":"{\\"problem\\":\\"Lack of user participation in ratings\\",\\"solution\\":\\"\\",\\"targetAudience\\":\\"\\",\\"qualifications\\":\\"\\",\\"purpose\\":\\"A feedback system encouraging user participation in ratings.\\",\\"approach\\":\\"A feedback system encouraging user participation in ratings.\\",\\"outcome\\":\\"A feedback system encouraging user participation in ratings.\\",\\"timeline\\":\\"\\",\\"budget\\":\\"\\",\\"callToAction\\":\\"\\",\\"voting\\":[],\\"proposalID\\":\\"\\"}","picture":""}`, created_at: 1739294690, id: "9c540574a2bab57a470161e45b3a94d6349f40dda67c1ac91107de3194038de6", kind: 40, pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", sig: "8df0c35a47c65bc92f866bef482ec2ce609e0d66b361c0511b2abd57b344f8193b7efc27c827fc8edfa50179b04192329d432bf3f931b449903f8c5662bc138b", tags: [] }
+bundle.js:8824:15
+20:03:30.431 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:30.431 Event content: 
+Object { name: "If you don't rate, you can't be rated.", about: '{"problem":"Lack of user participation in ratings","solution":"","targetAudience":"","qualifications":"","purpose":"A feedback system encouraging user participation in ratings.","approach":"A feedback system encouraging user participation in ratings.","outcome":"A feedback system encouraging user participation in ratings.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}', picture: "" }
+bundle.js:8827:17
+20:03:30.432 Processed direct messages: 
+Array []
+bundle.js:8877:15
+20:03:30.432 RavenProvider handleDirectMessage 
+Array []
+bundle.js:6658:15
+20:03:30.432 RavenProvider handleProfileUpdate 
+Array [ {…} ]
+bundle.js:6658:15
+20:03:33.827 RavenProvider handleDmsDoneState bundle.js:6658:15
+20:03:36.113 All bundle.js:19476:13
+20:03:36.121 GET
+http://localhost:3000/static/media/AGU_logo_fully_transparent.fb1c564eb9895a5c8897.png
+[HTTP/1.1 304 Not Modified 3ms]
+
+20:03:38.450 Wallet connected: 
+Object { account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:6022:15
+20:03:38.452 [DAODashboard] Contract service not initialized. bundle.js:26563:15
+20:03:38.456 [DAOPage] Contract service not initialized. bundle.js:28141:15
+20:03:39.515 allprops 
+Array(13) [ {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, … ]
+bundle.js:19436:17
+20:03:39.517 nostr-tools: `signEvent` is deprecated and will be removed or changed in the future. Please use `getSignature` instead. bundle.js:270310:11
+20:03:39.624 GET
+wss://nos.lol/
+[HTTP/1.1 101 Switching Protocols 392ms]
+
+20:03:39.652 Processing event queue bundle.js:8819:13
+20:03:39.652 Processing event: 
+Object { kind: 40, tags: [], pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", content: '{"name":"Mostr","about":"{\\"problem\\":\\"Lack of connection between Fediverse and Nostr\\",\\"solution\\":\\"\\",\\"targetAudience\\":\\"\\",\\"qualifications\\":\\"\\",\\"purpose\\":\\"A platform feature enabling dynamic and flexible presentation of content.\\",\\"approach\\":\\"A platform feature enabling dynamic and flexible presentation of content.\\",\\"outcome\\":\\"A platform feature enabling dynamic and flexible presentation of content.\\",\\"timeline\\":\\"\\",\\"budget\\":\\"\\",\\"callToAction\\":\\"\\",\\"voting\\":[],\\"proposalID\\":\\"\\"}","picture":""}', created_at: 1739322219, id: "b0f9b2adafcc859c980af77d4a0f3060efaf12766be1ee7898cfed7c93e5f915", sig: "fb0b0744334e486400f66c8bbba363b2463e8b68adf171894fab1cc7d0d23addb2c09a0ec7d5592e40eb96b7f25bac032c04b620de50ba547bbb1814db7dd3fb" }
+bundle.js:8824:15
+20:03:39.653 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:39.653 Event content: 
+Object { name: "Mostr", about: '{"problem":"Lack of connection between Fediverse and Nostr","solution":"","targetAudience":"","qualifications":"","purpose":"A platform feature enabling dynamic and flexible presentation of content.","approach":"A platform feature enabling dynamic and flexible presentation of content.","outcome":"A platform feature enabling dynamic and flexible presentation of content.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}', picture: "" }
+bundle.js:8827:17
+20:03:39.653 Processed direct messages: 
+Array []
+bundle.js:8877:15
+20:03:39.653 RavenProvider handleDirectMessage 
+Array []
+bundle.js:6658:15
+20:03:39.695 GET
+wss://relay.damus.io/
+[HTTP/1.1 101 Switching Protocols 339ms]
+
+20:03:39.816 GET
+wss://relay1.nostrchat.io/
+[HTTP/1.1 101 Switching Protocols 508ms]
+
+20:03:39.818 GET
+wss://relay2.nostrchat.io/
+[HTTP/1.1 101 Switching Protocols 507ms]
+
+20:03:40.164 nostr-tools: `signEvent` is deprecated and will be removed or changed in the future. Please use `getSignature` instead. bundle.js:270310:11
+20:03:40.180 GET
+wss://relay.damus.io/
+[HTTP/1.1 101 Switching Protocols 254ms]
+
+20:03:40.185 GET
+wss://nos.lol/
+[HTTP/1.1 101 Switching Protocols 373ms]
+
+20:03:40.227 Processing event queue bundle.js:8819:13
+20:03:40.227 Processing event: 
+Object { kind: 40, tags: [], pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", content: '{"name":"NewLaw/Everyone is right/Force for peace","about":"{\\"problem\\":\\"Need for a fair governance system\\",\\"solution\\":\\"\\",\\"targetAudience\\":\\"\\",\\"qualifications\\":\\"\\",\\"purpose\\":\\"A governance system promoting universal fairness and conflict resolution.\\",\\"approach\\":\\"A governance system promoting universal fairness and conflict resolution.\\",\\"outcome\\":\\"A governance system promoting universal fairness and conflict resolution.\\",\\"timeline\\":\\"\\",\\"budget\\":\\"\\",\\"callToAction\\":\\"\\",\\"voting\\":[],\\"proposalID\\":\\"\\"}","picture":""}', created_at: 1739322220, id: "89217e081eaf7b9a537bf7f9143f84426cacb9f55c477cb3f223f4af5f6fced8", sig: "3eb97d2d472cf1657120289f4180d184082a1e1de12adf8445535a15b1dc84b0119e30f8ab5c0252f4ee84dabbc42506c41b41f9adfd3176dd09204c3475a77b" }
+bundle.js:8824:15
+20:03:40.228 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:40.228 Event content: 
+Object { name: "NewLaw/Everyone is right/Force for peace", about: '{"problem":"Need for a fair governance system","solution":"","targetAudience":"","qualifications":"","purpose":"A governance system promoting universal fairness and conflict resolution.","approach":"A governance system promoting universal fairness and conflict resolution.","outcome":"A governance system promoting universal fairness and conflict resolution.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}', picture: "" }
+bundle.js:8827:17
+20:03:40.229 Processed direct messages: 
+Array []
+bundle.js:8877:15
+20:03:40.229 RavenProvider handleDirectMessage 
+Array []
+bundle.js:6658:15
+20:03:40.312 Wallet connected: 
+Object { account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:6022:15
+20:03:40.312 [DAOGovernance] Contract service not initialized. bundle.js:27387:15
+20:03:40.313 Wallet connected: 
+Object { account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:6022:15
+20:03:40.313 [DomainMonitor] Contract service not initialized. bundle.js:29074:15
+20:03:40.313 [DomainMonitor] Contract service not initialized bundle.js:29083:17
+20:03:40.313 Wallet connected: 
+Object { account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:6022:15
+20:03:40.313 [ProposalList] Contract service not initialized. bundle.js:31980:15
+20:03:40.314 Wallet connected: 
+Object { account: "0xe576ac114288e2d89acd0443ae5f3de1f40f6fbe", chainId: 369 }
+bundle.js:6022:15
+20:03:40.418 GET
+wss://relay2.nostrchat.io/
+[HTTP/1.1 101 Switching Protocols 341ms]
+
+20:03:40.419 GET
+wss://relay1.nostrchat.io/
+[HTTP/1.1 101 Switching Protocols 357ms]
+
+20:03:40.541 nostr-tools: `signEvent` is deprecated and will be removed or changed in the future. Please use `getSignature` instead. bundle.js:270310:11
+20:03:40.557 GET
+wss://relay.damus.io/
+[HTTP/1.1 101 Switching Protocols 178ms]
+
+20:03:40.563 GET
+wss://nos.lol/
+[HTTP/1.1 101 Switching Protocols 401ms]
+
+20:03:40.601 Processing event queue bundle.js:8819:13
+20:03:40.601 Processing event: 
+Object { kind: 40, tags: [], pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", content: '{"name":"Autotranslate","about":"{\\"problem\\":\\"Need for multilingual support\\",\\"solution\\":\\"\\",\\"targetAudience\\":\\"\\",\\"qualifications\\":\\"\\",\\"purpose\\":\\"Automatic translation feature for multilingual support.\\",\\"approach\\":\\"Automatic translation feature for multilingual support.\\",\\"outcome\\":\\"Automatic translation feature for multilingual support.\\",\\"timeline\\":\\"\\",\\"budget\\":\\"\\",\\"callToAction\\":\\"\\",\\"voting\\":[],\\"proposalID\\":\\"\\"}","picture":""}', created_at: 1739322220, id: "4accb756fea399ef9c5cc6d314aa54d5f5d607e5bdba768f54b3d925ca40f524", sig: "c9e0c81aab0ee8b64dcc107768cdb772c5b6f18be44661839cbda46cba066a3d5c3b9fe95ce7d5b396be2b68cf7a9f93c3d55b5ab391be2c8165f8f7ca75b41b" }
+bundle.js:8824:15
+20:03:40.602 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:40.602 Event content: 
+Object { name: "Autotranslate", about: '{"problem":"Need for multilingual support","solution":"","targetAudience":"","qualifications":"","purpose":"Automatic translation feature for multilingual support.","approach":"Automatic translation feature for multilingual support.","outcome":"Automatic translation feature for multilingual support.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}', picture: "" }
+bundle.js:8827:17
+20:03:40.602 Processed direct messages: 
+Array []
+bundle.js:8877:15
+20:03:40.602 RavenProvider handleDirectMessage 
+Array []
+bundle.js:6658:15
+20:03:40.643 Public Proposal 
+Array(13) [ {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, … ]
+bundle.js:8204:13
+20:03:40.644 All of Proposal 
+Array(6) [ {…}, {…}, {…}, {…}, {…}, {…} ]
+bundle.js:8205:13
+20:03:40.645 Filtered Proposal 
+Array(6) [ {…}, {…}, {…}, {…}, {…}, {…} ]
+bundle.js:8206:13
+20:03:40.695 Processing event queue bundle.js:8819:13
+20:03:40.695 Processing event: 
+Object { content: '{"name":"Global Chat","about":"Whatever you want it to be, just be nice","picture":""}', created_at: 1678198928, id: "f412192fdc846952c75058e911d37a7392aa7fd2e727330f4344badc92fb8a22", kind: 40, pubkey: "9b2ee0fc682f2e28dc56a778766e826a49d4560dc5a7939bb49808bf953d41fa", sig: "ed66b25f50e863be04afdc1b0f3575b5681a02a63a47437b55c3ce969940c8d9d5b1c0fb5c580097ed495f0d746d670bbde67636aa05fd95999976a8a65847e4", tags: [] }
+bundle.js:8824:15
+20:03:40.696 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:40.696 Event content: 
+Object { name: "Global Chat", about: "Whatever you want it to be, just be nice", picture: "" }
+bundle.js:8827:17
+20:03:40.696 Processed direct messages: 
+Array []
+bundle.js:8877:15
+20:03:40.696 RavenProvider handleDirectMessage 
+Array []
+bundle.js:6658:15
+20:03:40.765 GET
+wss://relay2.nostrchat.io/
+[HTTP/1.1 101 Switching Protocols 379ms]
+
+20:03:40.781 GET
+wss://relay1.nostrchat.io/
+[HTTP/1.1 101 Switching Protocols 382ms]
+
+20:03:40.896 [ProposalCreation] Contract service not initialized. bundle.js:30782:15
+20:03:40.904 Fetching proposals... bundle.js:31233:17
+20:03:40.931 All proposals: 
+Array(13) [ {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, … ]
+bundle.js:19463:17
+20:03:40.932 All fetched proposals: 
+Array []
+bundle.js:19464:17
+20:03:40.932 Permanent proposals: 
+Array(12) [ {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, … ]
+bundle.js:19465:17
+20:03:40.957 Legacy proposals: 
+Array []
+bundle.js:31705:15
+20:03:40.957 On-chain count: 0 bundle.js:31706:15
+20:03:40.957 Fetched proposals: 
+Array []
+bundle.js:31236:17
+20:03:40.958 No proposals found or error fetching proposals bundle.js:31238:19

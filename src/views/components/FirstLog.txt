@@ -1,0 +1,198 @@
+This first log is the log that showed up when I simply went from the Overview to the Proposals in the dashboard.
+
+20:03:00.528 GET
+http://localhost:3000/dao
+[HTTP/1.1 304 Not Modified 4ms]
+
+20:03:00.551 GET
+https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css
+[HTTP/2 200 OK 0ms]
+
+20:03:00.598 GET
+http://localhost:3000/static/js/bundle.js
+[HTTP/1.1 200 OK 520ms]
+
+20:03:00.678 Removing unpermitted intrinsics lockdown-install.js:1:52832
+20:03:00.872 TypeError: setting getter-only property "ethereum"
+    o http://localhost:3000/dao:1
+    initializeProvider http://localhost:3000/dao:1
+    [1]</</< http://localhost:3000/dao:1
+    [1]</< http://localhost:3000/dao:1
+    [1]< http://localhost:3000/dao:1
+    s http://localhost:3000/dao:1
+    e http://localhost:3000/dao:1
+    <anonymous> http://localhost:3000/dao:1
+lockdown-install.js:1:97687
+20:03:01.737 GET
+http://localhost:3000/logo192.png
+
+20:03:01.738 GET
+http://localhost:3000/favicon.ico
+
+20:03:01.891 GET
+ws://localhost:3000/ws
+[HTTP/1.1 101 Switching Protocols 2ms]
+
+20:03:01.894 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools bundle.js:186101:21
+20:03:01.896 Unknown property ‘-moz-osx-font-smoothing’.  Declaration dropped. dao:19:27
+20:03:01.898 Unknown property ‘text-security’.  Declaration dropped. dao:439:17
+20:03:02.008 GET
+wss://pulsechain-rpc.publicnode.com/
+[HTTP/1.1 101 Switching Protocols 434ms]
+
+20:03:02.182 GET
+http://localhost:3000/favicon.ico
+[HTTP/1.1 304 Not Modified 3ms]
+
+20:03:02.186 Unknown property ‘-moz-osx-font-smoothing’.  Declaration dropped. dao:1:65
+20:03:02.186 Error in parsing value for ‘-webkit-text-size-adjust’.  Declaration dropped. dao:1:122
+20:03:02.205 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: null, chainId: undefined }
+bundle.js:5305:13
+20:03:02.206 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: null, chainId: undefined }
+bundle.js:5339:13
+20:03:02.206 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5347:15
+20:03:02.206 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: null, chainId: undefined }
+bundle.js:5305:13
+20:03:02.206 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: null, chainId: undefined }
+bundle.js:5339:13
+20:03:02.206 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5347:15
+20:03:02.267 GET
+http://localhost:3000/static/js/src_raven_worker_ts.chunk.js
+[HTTP/1.1 200 OK 3ms]
+
+20:03:02.268 XHRGET
+https://spam.nostrchat.io/list
+[HTTP/1.1 200 OK 1142ms]
+
+20:03:02.356 [DAODashboard] Contract service not initialized. bundle.js:26563:15
+20:03:02.358 [DAOPage] Contract service not initialized. bundle.js:28141:15
+20:03:02.358 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: null, chainId: undefined }
+bundle.js:5305:13
+20:03:02.358 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: null, chainId: undefined }
+bundle.js:5339:13
+20:03:02.359 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5347:15
+20:03:02.359 Initialization state changed: 
+Object { shouldInitialize: false, isInitialized: false, hasProvider: true, isActive: true, account: null, chainId: undefined }
+bundle.js:5305:13
+20:03:02.359 Contract initialization cycle: 
+Object { shouldInitialize: false, hasProvider: true, isActive: true, account: null, chainId: undefined }
+bundle.js:5339:13
+20:03:02.359 Waiting for initialization trigger - current state: 
+Object { isInitialized: false, error: null }
+bundle.js:5347:15
+20:03:02.702 GET
+http://localhost:3000/static/js/vendors-node_modules_pmmmwh_react-refresh-webpack-plugin_lib_runtime_RefreshUtils_js-node_mod-15303e.chunk.js
+[HTTP/1.1 304 Not Modified 2ms]
+
+20:03:02.816 GET
+wss://relay1.nostrchat.io/
+[HTTP/1.1 101 Switching Protocols 405ms]
+
+20:03:02.817 GET
+wss://relay2.nostrchat.io/
+[HTTP/1.1 101 Switching Protocols 336ms]
+
+20:03:02.819 GET
+wss://relay.damus.io/
+[HTTP/1.1 101 Switching Protocols 353ms]
+
+20:03:02.832 GET
+wss://relay.snort.social/
+[HTTP/1.1 101 Switching Protocols 311ms]
+
+20:03:02.833 GET
+wss://nos.lol/
+[HTTP/1.1 101 Switching Protocols 330ms]
+
+20:03:05.808 [DAOGovernance] Contract service not initialized. bundle.js:27387:15
+20:03:05.809 [DomainMonitor] Contract service not initialized. bundle.js:29074:15
+20:03:05.810 [DomainMonitor] Contract service not initialized bundle.js:29083:17
+20:03:05.810 [ProposalList] Contract service not initialized. bundle.js:31980:15
+20:03:06.170 RavenProvider handleReadyState bundle.js:6658:15
+20:03:06.224 Processing event queue bundle.js:8819:13
+20:03:06.224 Processing event: 
+Object { content: '{"name":"Test","about":"Test","picture":""}', created_at: 1728937561, id: "b96f74a1a5b0b0ec2aebaa6b18231f7fb4c2647ed1823e9445d05415b2770e71", kind: 0, pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", sig: "63b81b83fb29eac104491c3dcd3439cf86d62788bf689d791cace488b2ea391ea21bd786b93497e741b9566d29d9f5ebb8b1b022f183ae750bbc463e1fa5e716", tags: [] }
+bundle.js:8824:15
+20:03:06.227 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:06.227 Event content: 
+Object { name: "Test", about: "Test", picture: "" }
+bundle.js:8827:17
+20:03:06.228 Processing event: 
+Object { content: '{"name":"Privacy, scalability, security, transparency, decentralization, and identification.","about":"{\\"problem\\":\\"Need for core platform principles\\",\\"solution\\":\\"\\",\\"targetAudience\\":\\"\\",\\"qualifications\\":\\"\\",\\"purpose\\":\\"Core principles guiding platform development and operations.\\",\\"approach\\":\\"Core principles guiding platform development and operations.\\",\\"outcome\\":\\"Core principles guiding platform development and operations.\\",\\"timeline\\":\\"\\",\\"budget\\":\\"\\",\\"callToAction\\":\\"\\",\\"voting\\":[],\\"proposalID\\":\\"\\"}","picture":""}', created_at: 1739294345, id: "c4e2558c1f9c7393fbd951e4df78067b42dbe9f180345ebea8bf503ccfcd749b", kind: 40, pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", sig: "ca75b40ac4b3e35605e2cc5988c8516569fffd5937c421ca6f120cc68a61cacb8729631e9f9bde1cb25e14248b28f0485adbf594c9812b23be066bac6a68c158", tags: [] }
+bundle.js:8824:15
+20:03:06.228 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:06.228 Event content: 
+Object { name: "Privacy, scalability, security, transparency, decentralization, and identification.", about: '{"problem":"Need for core platform principles","solution":"","targetAudience":"","qualifications":"","purpose":"Core principles guiding platform development and operations.","approach":"Core principles guiding platform development and operations.","outcome":"Core principles guiding platform development and operations.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}', picture: "" }
+bundle.js:8827:17
+20:03:06.228 Processing event: 
+Object { content: '{"name":"Embedded application","about":"{\\"problem\\":\\"Need for seamless application integration\\",\\"solution\\":\\"\\",\\"targetAudience\\":\\"\\",\\"qualifications\\":\\"\\",\\"purpose\\":\\"Integration of applications directly within the platform for seamless user experience.\\",\\"approach\\":\\"Integration of applications directly within the platform for seamless user experience.\\",\\"outcome\\":\\"Integration of applications directly within the platform for seamless user experience.\\",\\"timeline\\":\\"\\",\\"budget\\":\\"\\",\\"callToAction\\":\\"\\",\\"voting\\":[],\\"proposalID\\":\\"\\"}","picture":""}', created_at: 1739294343, id: "5763e1e2dffe0a4b838d11ce55103db6dc8f1c2a2da966421a5e0103d635ee74", kind: 40, pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", sig: "30d77fea8d845abd3d31493774c2d640fb7835b1fc9557e6dceba682d7d5921dd8e307a13ccd44f626c6d104295fd196e3d07f718218ed1b1fe7f3a40b36bfa9", tags: [] }
+bundle.js:8824:15
+20:03:06.229 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:06.229 Event content: 
+Object { name: "Embedded application", about: '{"problem":"Need for seamless application integration","solution":"","targetAudience":"","qualifications":"","purpose":"Integration of applications directly within the platform for seamless user experience.","approach":"Integration of applications directly within the platform for seamless user experience.","outcome":"Integration of applications directly within the platform for seamless user experience.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}', picture: "" }
+bundle.js:8827:17
+20:03:06.229 Processing event: 
+Object { content: '{"name":"Smart contract","about":"{\\"problem\\":\\"Need for automated and self-executing contracts\\",\\"solution\\":\\"\\",\\"targetAudience\\":\\"\\",\\"qualifications\\":\\"\\",\\"purpose\\":\\"Automated and self-executing contracts with predefined rules.\\",\\"approach\\":\\"Automated and self-executing contracts with predefined rules.\\",\\"outcome\\":\\"Automated and self-executing contracts with predefined rules.\\",\\"timeline\\":\\"\\",\\"budget\\":\\"\\",\\"callToAction\\":\\"\\",\\"voting\\":[],\\"proposalID\\":\\"\\"}","picture":""}', created_at: 1738814121, id: "2eb8102807a784773e7e24579d9eb048c45fc56d7697f779fba5347acdba2324", kind: 40, pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", sig: "1d5caa92c08947f716836395891db827a348844d39b370e6e39a2857ef1cbcf4c41d121ab8e264ffba384820c5e540712874d8035397bbbef9745e63938d88e4", tags: [] }
+bundle.js:8824:15
+20:03:06.229 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:06.230 Event content: 
+Object { name: "Smart contract", about: '{"problem":"Need for automated and self-executing contracts","solution":"","targetAudience":"","qualifications":"","purpose":"Automated and self-executing contracts with predefined rules.","approach":"Automated and self-executing contracts with predefined rules.","outcome":"Automated and self-executing contracts with predefined rules.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}', picture: "" }
+bundle.js:8827:17
+20:03:06.230 Processing event: 
+Object { content: '{"name":"Marketplace","about":"{\\"problem\\":\\"Need for a decentralized marketplace\\",\\"solution\\":\\"\\",\\"targetAudience\\":\\"\\",\\"qualifications\\":\\"\\",\\"purpose\\":\\"A decentralized marketplace for trading goods and services.\\",\\"approach\\":\\"A decentralized marketplace for trading goods and services.\\",\\"outcome\\":\\"A decentralized marketplace for trading goods and services.\\",\\"timeline\\":\\"\\",\\"budget\\":\\"\\",\\"callToAction\\":\\"\\",\\"voting\\":[],\\"proposalID\\":\\"\\"}","picture":""}', created_at: 1738814120, id: "cb9b8ecf01c49d4efd003ca629035f01916c2d938fd90f9b200057fdfcf80569", kind: 40, pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", sig: "160a49b503e234d2517894e3c14f209db8a5cabc6e49c723bfdedb1bf342c61804ccfc57ebbb01f7ba487bf3f816156bc0b4b22eaa6f31dbce632d57748fe8e6", tags: [] }
+bundle.js:8824:15
+20:03:06.230 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:06.230 Event content: 
+Object { name: "Marketplace", about: '{"problem":"Need for a decentralized marketplace","solution":"","targetAudience":"","qualifications":"","purpose":"A decentralized marketplace for trading goods and services.","approach":"A decentralized marketplace for trading goods and services.","outcome":"A decentralized marketplace for trading goods and services.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}', picture: "" }
+bundle.js:8827:17
+20:03:06.230 Processing event: 
+Object { content: '{"name":"Mostr","about":"{\\"problem\\":\\"Lack of connection between Fediverse and Nostr\\",\\"solution\\":\\"\\",\\"targetAudience\\":\\"\\",\\"qualifications\\":\\"\\",\\"purpose\\":\\"A platform feature enabling dynamic and flexible presentation of content.\\",\\"approach\\":\\"A platform feature enabling dynamic and flexible presentation of content.\\",\\"outcome\\":\\"A platform feature enabling dynamic and flexible presentation of content.\\",\\"timeline\\":\\"\\",\\"budget\\":\\"\\",\\"callToAction\\":\\"\\",\\"voting\\":[],\\"proposalID\\":\\"\\"}","picture":""}', created_at: 1738814119, id: "33c07bacf44175087dda220bf4714a91fc01a75b90ea17043211c2a4e7a8a3e2", kind: 40, pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", sig: "ea2d980069b421e5fbbd7e3a43ea5ea9717b915b14163784515333b7fe2d879156756fcf03a7f1d2733ab6b1ab0236bd973aca838b71a7042b6755e60f6b8331", tags: [] }
+bundle.js:8824:15
+20:03:06.231 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:06.231 Event content: 
+Object { name: "Mostr", about: '{"problem":"Lack of connection between Fediverse and Nostr","solution":"","targetAudience":"","qualifications":"","purpose":"A platform feature enabling dynamic and flexible presentation of content.","approach":"A platform feature enabling dynamic and flexible presentation of content.","outcome":"A platform feature enabling dynamic and flexible presentation of content.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}', picture: "" }
+bundle.js:8827:17
+20:03:06.231 Processing event: 
+Object { content: '{"name":"Autotranslate","about":"{\\"problem\\":\\"Need for multilingual support\\",\\"solution\\":\\"\\",\\"targetAudience\\":\\"\\",\\"qualifications\\":\\"\\",\\"purpose\\":\\"Automatic translation feature for multilingual support.\\",\\"approach\\":\\"Automatic translation feature for multilingual support.\\",\\"outcome\\":\\"Automatic translation feature for multilingual support.\\",\\"timeline\\":\\"\\",\\"budget\\":\\"\\",\\"callToAction\\":\\"\\",\\"voting\\":[],\\"proposalID\\":\\"\\"}","picture":""}', created_at: 1739293453, id: "805e57c4a372b9af613d38ba53a336f80f7263d47f85ebbc9298c7e60abbf561", kind: 40, pubkey: "004749ae0bb4c22d08bd194bac52bbf7050d6e6f0a6243523e26c8fcb65faafa", sig: "4453e87043f458a2177ffe24cf151abe2b8e6d0e019b8480ad0d007572f3b130ac4defb96be0f11c0676ebba5908975f856db72a9963416e99bbfa7ee779e9ec", tags: [] }
+bundle.js:8824:15
+20:03:06.231 Event tags: 
+Array []
+bundle.js:8825:15
+20:03:06.231 Event content: 
+Object { name: "Autotranslate", about: '{"problem":"Need for multilingual support","solution":"","targetAudience":"","qualifications":"","purpose":"Automatic translation feature for multilingual support.","approach":"Automatic translation feature for multilingual support.","outcome":"Automatic translation feature for multilingual support.","timeline":"","budget":"","callToAction":"","voting":[],"proposalID":""}', picture: "" }
+bundle.js:8827:17
+20:03:06.232 Processed direct messages: 
+Array []
+bundle.js:8877:15
+20:03:06.232 RavenProvider handleDirectMessage 
+Array []
+bundle.js:6658:15
+20:03:06.232 RavenProvider handleProfileUpdate 
+Array [ {…} ]
+bundle.js:6658:15
+20:03:07.931 [ProposalCreation] Contract service not initialized. bundle.js:30782:15
+20:03:09.573 RavenProvider handleDmsDoneState bundle.js:6658:15

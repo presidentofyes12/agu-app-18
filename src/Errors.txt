@@ -1,0 +1,244 @@
+/* Commented out the errors in this .txt file due to issues with the Cursor IDE.
+
+Compiled with problems:
+ERROR in src/services/ProposalLifecycle.ts:95:5
+TS2322: Type 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/types/contracts").ProposalState' is not assignable to type 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/services/ProposalLifecycle").ProposalState'.
+  Property 'PENDING' is missing in type 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/services/ProposalLifecycle").ProposalState'.
+    93 |     // Implement state calculation logic
+    94 |     if (!data.currentState) return ProposalState.DRAFT;
+  > 95 |     return toProposalState(data.currentState);
+       |     ^^^^^^
+    96 |   }
+    97 |
+    98 |   static isActive(state: ProposalState): boolean {
+ERROR in src/state/contractState.ts:122:35
+TS2367: This comparison appears to be unintentional because the types 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/types/contracts").ProposalState' and 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/services/ProposalLifecycle").ProposalState' have no overlap.
+    120 |   return {
+    121 |     total: proposals.length,
+  > 122 |     active: proposals.filter(p => p.currentState === ProposalState.ACTIVE).length,
+        |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    123 |     succeeded: proposals.filter(p => p.currentState === ProposalState.SUCCEEDED).length,
+    124 |     defeated: proposals.filter(p => p.currentState === ProposalState.DEFEATED).length
+    125 |   };
+ERROR in src/state/contractState.ts:123:38
+TS2367: This comparison appears to be unintentional because the types 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/types/contracts").ProposalState' and 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/services/ProposalLifecycle").ProposalState' have no overlap.
+    121 |     total: proposals.length,
+    122 |     active: proposals.filter(p => p.currentState === ProposalState.ACTIVE).length,
+  > 123 |     succeeded: proposals.filter(p => p.currentState === ProposalState.SUCCEEDED).length,
+        |                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    124 |     defeated: proposals.filter(p => p.currentState === ProposalState.DEFEATED).length
+    125 |   };
+    126 | });
+ERROR in src/state/contractState.ts:124:37
+TS2367: This comparison appears to be unintentional because the types 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/types/contracts").ProposalState' and 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/services/ProposalLifecycle").ProposalState' have no overlap.
+    122 |     active: proposals.filter(p => p.currentState === ProposalState.ACTIVE).length,
+    123 |     succeeded: proposals.filter(p => p.currentState === ProposalState.SUCCEEDED).length,
+  > 124 |     defeated: proposals.filter(p => p.currentState === ProposalState.DEFEATED).length
+        |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    125 |   };
+    126 | });
+    127 |
+ERROR in src/state/contractState.ts:174:40
+TS2367: This comparison appears to be unintentional because the types 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/types/contracts").ProposalState' and 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/services/ProposalLifecycle").ProposalState' have no overlap.
+    172 |   return {
+    173 |     recent: proposals.filter(p => isRecent(p.createdAt)),
+  > 174 |     needsAction: proposals.filter(p => p.currentState === ProposalState.ACTIVE),
+        |                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    175 |     completed: proposals.filter(p => 
+    176 |       p.currentState === ProposalState.EXECUTED || 
+    177 |       p.currentState === ProposalState.DEFEATED
+ERROR in src/state/contractState.ts:176:7
+TS2367: This comparison appears to be unintentional because the types 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/types/contracts").ProposalState' and 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/services/ProposalLifecycle").ProposalState' have no overlap.
+    174 |     needsAction: proposals.filter(p => p.currentState === ProposalState.ACTIVE),
+    175 |     completed: proposals.filter(p => 
+  > 176 |       p.currentState === ProposalState.EXECUTED || 
+        |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    177 |       p.currentState === ProposalState.DEFEATED
+    178 |     )
+    179 |   };
+ERROR in src/state/contractState.ts:177:7
+TS2367: This comparison appears to be unintentional because the types 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/types/contracts").ProposalState' and 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/services/ProposalLifecycle").ProposalState' have no overlap.
+    175 |     completed: proposals.filter(p => 
+    176 |       p.currentState === ProposalState.EXECUTED || 
+  > 177 |       p.currentState === ProposalState.DEFEATED
+        |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    178 |     )
+    179 |   };
+    180 | });
+ERROR in src/state/DAOStateManager.ts:353:5
+TS2783: 'id' is specified more than once, so this usage will be overwritten.
+    351 |
+    352 |   return {
+  > 353 |     id: idString,
+        |     ^^^^^^^^^^^^
+    354 |     startTime: proposalData.startEpoch.toNumber(),
+    355 |     endTime: proposalData.endEpoch.toNumber(),
+    356 |     executed: false,
+ERROR in src/types/contracts.ts:384:3
+TS2717: Subsequent property declarations must have the same type.  Property 'currentState' must be of type 'ProposalState', but here has type 'ProposalStateEnum'.
+    382 |   forVotes: BigNumber;
+    383 |   againstVotes: BigNumber;
+  > 384 |   currentState: ProposalStateEnum;
+        |   ^^^^^^^^^^^^
+    385 | }
+    386 |
+    387 | // Contract instances container type
+ERROR in src/views/components/dashboard/contractService.ts:662:17
+TS2554: Expected 3 arguments, but got 4.
+    660 |                 category,
+    661 |                 startEpoch,
+  > 662 |                 endEpoch
+        |                 ^^^^^^^^
+    663 |             );
+    664 |             
+    665 |             const receipt = await this.logTransaction(tx, 'Create Proposal');
+ERROR in src/views/components/dashboard/contractService.ts:970:84
+TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+    968 |         try {
+    969 |             // Get on-chain state
+  > 970 |             const onChainState = await this.contracts.stateConstituent.getProposal(proposalId);
+        |                                                                                    ^^^^^^^^^^
+    971 |             
+    972 |             // Get Raven votes if available
+    973 |             let ravenVotes;
+ERROR in src/views/components/dashboard/contractService.ts:982:17
+TS2322: Type 'import("/home/impromise/agu-app-no-errors/agu-app (1)/agu-app/src/types/contracts").ProposalState' is not assignable to type 'ProposalStateOld'.
+    980 |
+    981 |             return {
+  > 982 |                 state: onChainState.currentState,
+        |                 ^^^^^
+    983 |                 data: onChainState,
+    984 |                 ravenVotes
+    985 |             };
+ERROR in src/views/components/dashboard/contractService.ts:1002:17
+TS2554: Expected 2 arguments, but got 3.
+    1000 |                 proposalId,
+    1001 |                 support,
+  > 1002 |                 voteAmount
+         |                 ^^^^^^^^^^
+    1003 |             );
+    1004 |             await tx.wait();
+    1005 |
+ERROR in src/views/components/dashboard/NetworkProfile.tsx:128:30
+TS2345: Argument of type '{ state: ProposalStateOld; data: ProposalData; ravenVotes?: { forVotes: number; againstVotes: number; } | undefined; }' is not assignable to parameter of type 'SetStateAction<ProposalStateData | null>'.
+    126 |         if (proposal.id) {
+    127 |             const state = await service.getProposalState(parseInt(proposal.id));
+  > 128 |             setProposalState(state);
+        |                              ^^^^^
+    129 |         }
+    130 |     } catch (error) {
+    131 |         console.error('Error initializing contract:', error);
+ERROR in src/views/components/dashboard/NetworkProfile.tsx:215:24
+TS2345: Argument of type '{ state: ProposalStateOld; data: ProposalData; ravenVotes?: { forVotes: number; againstVotes: number; } | undefined; }' is not assignable to parameter of type 'SetStateAction<ProposalStateData | null>'.
+  Type '{ state: ProposalStateOld; data: ProposalData; ravenVotes?: { forVotes: number; againstVotes: number; } | undefined; }' is missing the following properties from type 'ProposalStateData': endEpoch, forVotes, againstVotes
+    213 |       // Update state after voting
+    214 |       const newState = await contractService.getProposalState(parseInt(proposal.id));
+  > 215 |       setProposalState(newState);
+        |                        ^^^^^^^^
+    216 |       
+    217 |       closeVoteDialogs();
+    218 |     } catch (error) {
+ERROR in src/views/components/dashboard/ProposalDisplay.tsx:78:22
+TS1361: 'ProposalState' cannot be used as a value because it was imported using 'import type'.
+    76 |
+    77 |   const isProposalActive = (state: ProposalState): boolean => {
+  > 78 |     return state === ProposalState.ACTIVE;
+       |                      ^^^^^^^^^^^^^
+    79 |   };
+    80 |
+    81 |   if (loading) {
+ERROR in src/views/components/dashboard/ProposalIntegrationService.tsx:112:17
+TS2322: Type 'ProposalState.ACTIVE' is not assignable to type 'ProposalState'.
+    110 |                 endEpoch: BigNumber.from(legacy.created_at).add(votingPeriod),
+    111 |                 executionDelay: BigNumber.from(0),
+  > 112 |                 currentState: ProposalState.ACTIVE,
+        |                 ^^^^^^^^^^^^
+    113 |                 forVotes: BigNumber.from(0),
+    114 |                 againstVotes: BigNumber.from(0),
+    115 |                 quorum: BigNumber.from(0),
+ERROR in src/views/components/dashboard/ProposalList.tsx:33:50
+TS1361: 'ProposalState' cannot be used as a value because it was imported using 'import type'.
+    31 | // Helper to safely get a proposal state
+    32 | const getProposalState = (state: any): ProposalState => {
+  > 33 |   if (typeof state === 'string' && Object.values(ProposalState).includes(state as ProposalState)) {
+       |                                                  ^^^^^^^^^^^^^
+    34 |     return state as ProposalState;
+    35 |   }
+    36 |   return ProposalState.DRAFT;
+ERROR in src/views/components/dashboard/ProposalList.tsx:33:74
+TS2352: Conversion of type 'string' to type 'ProposalState' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+    31 | // Helper to safely get a proposal state
+    32 | const getProposalState = (state: any): ProposalState => {
+  > 33 |   if (typeof state === 'string' && Object.values(ProposalState).includes(state as ProposalState)) {
+       |                                                                          ^^^^^^^^^^^^^^^^^^^^^^
+    34 |     return state as ProposalState;
+    35 |   }
+    36 |   return ProposalState.DRAFT;
+ERROR in src/views/components/dashboard/ProposalList.tsx:34:12
+TS2352: Conversion of type 'string' to type 'ProposalState' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+    32 | const getProposalState = (state: any): ProposalState => {
+    33 |   if (typeof state === 'string' && Object.values(ProposalState).includes(state as ProposalState)) {
+  > 34 |     return state as ProposalState;
+       |            ^^^^^^^^^^^^^^^^^^^^^^
+    35 |   }
+    36 |   return ProposalState.DRAFT;
+    37 | };
+ERROR in src/views/components/dashboard/ProposalList.tsx:36:10
+TS1361: 'ProposalState' cannot be used as a value because it was imported using 'import type'.
+    34 |     return state as ProposalState;
+    35 |   }
+  > 36 |   return ProposalState.DRAFT;
+       |          ^^^^^^^^^^^^^
+    37 | };
+    38 |
+    39 | // Helper function to normalize any proposal-like object to a proper Proposal
+ERROR in src/views/components/dashboard/VotingInterface.tsx:144:11
+TS2322: Type 'BigNumber' is not assignable to type 'number'.
+    142 |         setProposalState({
+    143 |           state: response.data.currentState,
+  > 144 |           endEpoch: response.data.endEpoch,
+        |           ^^^^^^^^
+    145 |           forVotes: response.data.forVotes,
+    146 |           againstVotes: response.data.againstVotes,
+    147 |           stage: response.data.stage || 0,
+ERROR in src/views/components/dashboard/VotingInterface.tsx:161:28
+TS2345: Argument of type '{ channelVotes: { forVotes: number; againstVotes: number; } | undefined; state: ProposalStateOld; data: ProposalData; ravenVotes?: { forVotes: number; againstVotes: number; }; }' is not assignable to parameter of type 'SetStateAction<ProposalStateData | null>'.
+  Type '{ channelVotes: { forVotes: number; againstVotes: number; } | undefined; state: ProposalStateOld; data: ProposalData; ravenVotes?: { forVotes: number; againstVotes: number; } | undefined; }' is missing the following properties from type 'ProposalStateData': endEpoch, forVotes, againstVotes
+    159 |           }
+    160 |
+  > 161 |           setProposalState({
+        |                            ^
+  > 162 |             ...response,
+        | ^^^^^^^^^^^^^^^^^^^^^^^^
+  > 163 |             channelVotes
+        | ^^^^^^^^^^^^^^^^^^^^^^^^
+  > 164 |           });
+        | ^^^^^^^^^^^^
+    165 |         }
+    166 |       } catch (error) {
+    167 |         console.error('Error initializing contract:', error);
+ERROR in src/views/components/dashboard/VotingInterface.tsx:270:24
+TS2345: Argument of type '{ channelVotes: { forVotes: number; againstVotes: number; } | undefined; state: ProposalStateOld; data: ProposalData; ravenVotes?: { forVotes: number; againstVotes: number; }; }' is not assignable to parameter of type 'SetStateAction<ProposalStateData | null>'.
+  Type '{ channelVotes: { forVotes: number; againstVotes: number; } | undefined; state: ProposalStateOld; data: ProposalData; ravenVotes?: { forVotes: number; againstVotes: number; } | undefined; }' is missing the following properties from type 'ProposalStateData': endEpoch, forVotes, againstVotes
+    268 |       }
+    269 |
+  > 270 |       setProposalState({
+        |                        ^
+  > 271 |         ...newState,
+        | ^^^^^^^^^^^^^^^^^^^^
+  > 272 |         channelVotes
+        | ^^^^^^^^^^^^^^^^^^^^
+  > 273 |       });
+        | ^^^^^^^^
+    274 |       
+    275 |       closeVoteDialogs();
+    276 |     } catch (error) {
+ERROR in src/views/components/dashboard/VotingInterface.tsx:328:26
+TS2367: This comparison appears to be unintentional because the types 'ProposalState' and 'ProposalStateEnum' have no overlap.
+    326 |   const againstPercentage = 100 - forPercentage;
+    327 |
+  > 328 |   const isVotingActive = proposalState.state === ProposalStateEnum.ACTIVE;
+        |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    329 |
+    330 |   return (
+    331 |     <Card>*/

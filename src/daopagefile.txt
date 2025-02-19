@@ -1,0 +1,439 @@
+import React, { useState } from 'react';
+//import { useContractEvents } from 'hooks/useContractEvents';
+//import { useWeb3React } from 'hooks/useWeb3ReactProvider';
+
+import { useWeb3React } from 'hooks/useWeb3ReactProvider';
+import { useContractEvents } from 'hooks/useContractEvents';
+import { useWeb3Manager } from 'hooks/useWeb3Manager';
+
+import { 
+  Card,
+  CardHeader,
+  CardContent,
+  Typography,
+  Alert,
+  AlertTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Tabs,
+  Tab,
+  Box,
+  CircularProgress
+} from '@mui/material';
+
+import { 
+  LayoutDashboard,
+  Vote,
+  Wallet,
+  Users,
+  Settings,
+  AlertCircle
+} from 'lucide-react';
+import { ethers } from 'ethers';
+
+import DAODashboard from './DAODashboard';
+import ProposalCreation from './ProposalCreation';
+import VotingInterface from './VotingInterface';
+import TokenMetrics from './TokenMetrics';
+import MembershipStats from './MembershipStats';
+
+// Create a TabPanel component to handle content display
+function TabPanel(props: {
+  children?: React.ReactNode;
+  value: string;
+  index: string;
+}) {
+  const { children, value, index } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+    >
+      {value === index && (
+        <Box sx={{ py: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
+const DAOPage: React.FC = () => {
+  // Get contract-related state and errors
+  /*const { 
+    isInitialized,
+    error: contractError,  // Renamed for clarity
+    initialize: initializeContracts 
+  } = useContractEvents();*/
+  
+  const { 
+    error: contractError,  // Renamed for clarity
+  } = useContractEvents();
+  
+  const {
+    isInitialized,
+    contracts,
+    error,
+    startInitialization,
+    web3State
+  } = useWeb3Manager();
+
+  // Get wallet-related state and errors
+  const { 
+    isActive,
+    connect,
+    error: walletError,  // Renamed for clarity
+    isActivating,
+    chainId,
+    account
+  } = useWeb3React();
+
+  const [currentTab, setCurrentTab] = useState('dashboard');
+
+  // Updated logging to use the correct error references
+  console.log('DAOPage: Render state', {
+    isInitialized,
+    hasContractError: !!contractError,
+    contractErrorMessage: contractError?.message,
+    hasWalletError: !!walletError,
+    walletErrorMessage: walletError?.message,
+    isWalletConnected: isActive
+  });
+  
+  const handleConnect = async () => {
+    try {
+      // Start the initialization process
+      await startInitialization();
+    } catch (error) {
+      console.error('Failed to start initialization:', error);
+    }
+  };
+
+  const Header = () => (
+    <Box sx={{ 
+      borderBottom: 1, 
+      borderColor: 'divider',
+      p: 2,
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }}>
+      <Typography variant="h6">DAO Dashboard</Typography>
+      {/*<Button 
+        variant="contained"
+        onClick={handleConnect}
+      >
+        Connect Wallet
+      </Button>*/}
+    </Box>
+  );
+
+  // Check if we're on PulseChain
+  const isPulseChain = chainId === 369 || chainId === 943;
+
+  // Handle tab change
+  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    setCurrentTab(newValue);
+  };
+
+  // Show contract error if present
+  if (contractError) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Alert severity="error">
+          <AlertTitle>Error</AlertTitle>
+          <Typography>
+            {contractError.message}
+            <Button 
+              variant="text"
+              onClick={() => window.location.reload()}
+              sx={{ mt: 2, display: 'block' }}
+            >
+              Try refreshing the page
+            </Button>
+          </Typography>
+        </Alert>
+      </Box>
+    );
+  }
+  
+  /*if (isActive && !isInitialized && !contractError) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-blue-500"></div>
+          <h2 className="text-xl font-semibold">
+            Initializing DAO Interface...
+          </h2>
+        </div>
+      </div>
+    );
+  }*/
+
+  /*if (error) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Alert severity="error">
+          <AlertTitle>Error</AlertTitle>
+          <Typography>
+            {error.message}
+            <Button 
+              variant="text"
+              onClick={() => window.location.reload()}
+              sx={{ mt: 2, display: 'block' }}
+            >
+              Try refreshing the page
+            </Button>
+          </Typography>
+        </Alert>
+      </Box>
+    );
+  }*/
+
+  return (
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Header />
+
+      {/* Main Content */}
+      <Box sx={{ flex: 1, p: 3 }}>
+        <Box sx={{ display: 'flex', gap: 3 }}>
+          {/* Sidebar Navigation */}
+          <Box sx={{ width: 240, flexShrink: 0 }}>
+            <Tabs
+              orientation="vertical"
+              value={currentTab}
+              onChange={handleTabChange}
+              sx={{
+                borderRight: 1,
+                borderColor: 'divider',
+                '& .MuiTab-root': {
+                  justifyContent: 'flex-start',
+                  textAlign: 'left',
+                  alignItems: 'center',
+                  gap: 1
+                }
+              }}
+            >
+              <Tab 
+                icon={<LayoutDashboard />} 
+                label="Overview" 
+                value="dashboard"
+                iconPosition="start"
+              />
+              <Tab 
+                icon={<Vote />} 
+                label="Proposals" 
+                value="proposals"
+                iconPosition="start"
+              />
+              <Tab 
+                icon={<Wallet />} 
+                label="Treasury" 
+                value="treasury"
+                iconPosition="start"
+              />
+              <Tab 
+                icon={<Users />} 
+                label="Members" 
+                value="members"
+                iconPosition="start"
+              />
+              <Tab 
+                icon={<Settings />} 
+                label="Settings" 
+                value="settings"
+                iconPosition="start"
+              />
+            </Tabs>
+
+            <Button
+              variant="contained"
+              fullWidth
+              sx={{ mt: 2 }}
+              onClick={handleConnect}
+            >
+              Connect Wallet
+            </Button>
+          </Box>
+
+          {/* Main Content Area */}
+          <Box sx={{ flex: 1 }}>
+            <TabPanel value={currentTab} index="dashboard">
+              <DAODashboard />
+            </TabPanel>
+
+            <TabPanel value={currentTab} index="proposals">
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <ProposalCreation />
+                <VotingInterface proposal={{
+                  id: "1",
+                  title: "Example Proposal",
+                  description: "This is an example proposal",
+                  proposer: "0x1234...5678",
+                  startTime: Date.now() / 1000,
+                  endTime: (Date.now() / 1000) + 86400,
+                  forVotes: ethers.BigNumber.from("1000000"),
+                  againstVotes: ethers.BigNumber.from("500000"),
+                  executed: false,
+                  category: 1
+                }} />
+              </Box>
+            </TabPanel>
+
+            <TabPanel value={currentTab} index="treasury">
+              <TokenMetrics />
+            </TabPanel>
+
+            <TabPanel value={currentTab} index="members">
+              <MembershipStats />
+            </TabPanel>
+
+            <TabPanel value={currentTab} index="settings">
+              <Card>
+                <CardContent>
+                  <Typography variant="h6">DAO Settings</Typography>
+                  <Typography color="textSecondary" sx={{ mt: 1 }}>
+                    Configure your DAO preferences and parameters.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </TabPanel>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Footer */}
+      <Box sx={{ 
+        borderTop: 1, 
+        borderColor: 'divider',
+        p: 2,
+        mt: 'auto'
+      }}>
+        <Typography color="textSecondary" variant="body2">
+          Running on PulseChain Network • Block: #1234567
+        </Typography>
+      </Box>
+    </Box>
+  );
+};
+
+export default DAOPage;
+
+// src/hooks/useWeb3Manager.ts
+
+import { useState, useCallback, useEffect } from 'react';
+import { useWeb3React } from '@web3-react/core';
+import { ethers } from 'ethers';
+import { ContractEventManager } from '../services/ContractEventManager';
+
+export function useWeb3Manager() {
+  const [hasInitializationStarted, setHasInitializationStarted] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [contractManager, setContractManager] = useState<ContractEventManager | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+  const [contracts, setContracts] = useState(null);
+
+  // Get Web3React context with additional chainId and connector
+  const { account, provider, isActive, connector, chainId } = useWeb3React();
+
+  // Handle wallet connection separately from contract initialization
+  const connectWallet = useCallback(async () => {
+    if (!isActive && connector) {
+      try {
+        await connector.activate();
+        console.log('Wallet connected successfully');
+      } catch (err) {
+        console.error('Error connecting wallet:', err);
+        setError(err instanceof Error ? err : new Error('Failed to connect wallet'));
+      }
+    }
+  }, [connector, isActive]);
+
+  // Initialize contracts only after confirming wallet connection
+  const startInitialization = useCallback(async () => {
+    try {
+      if (!isActive || !provider) {
+        console.log('Waiting for wallet connection...');
+        await connectWallet();
+        return;
+      }
+
+      setHasInitializationStarted(true);
+      console.log('Starting contract initialization...');
+      
+      const web3Provider = new ethers.providers.Web3Provider(provider as any);
+      const signer = web3Provider.getSigner();
+
+      const manager = new ContractEventManager();
+      await manager.initialize(web3Provider, signer);
+      
+      setContractManager(manager);
+      setIsInitialized(true);
+      setError(null);
+
+    } catch (err) {
+      console.error('Failed to initialize Web3:', err);
+      setError(err instanceof Error ? err : new Error('Unknown error during initialization'));
+      setIsInitialized(false);
+    }
+  }, [provider, isActive, connectWallet]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (contractManager) {
+        contractManager.cleanup();
+      }
+    };
+  }, [contractManager]);
+
+  return {
+    isInitialized,
+    contractManager,
+    error,
+    contracts: null,
+    startInitialization,
+    web3State: {
+      account,
+      provider,
+      isActive,
+      chainId
+    }
+  };
+}
+
+Logs:
+
+11:45:57.011 Failed to initialize Web3: Error: no matching event (argument="name", value="ProposalCreated", code=INVALID_ARGUMENT, version=abi/5.7.0)
+    makeError bundle.js:51157
+    throwError index.ts:278
+    throwArgumentError index.ts:282
+    getEvent interface.ts:239
+    _getRunningEvent bundle.js:49434
+    on index.ts:1056
+    setupEventListeners ContractEventManager.ts:150
+    setupContracts ContractEventManager.ts:140
+    initialize bundle.js:9191
+    startInitialization useWeb3Manager.ts:47
+    handleConnect DAOPage.tsx:111
+    callCallback React
+    invokeGuardedCallbackDev bundle.js:156208
+    invokeGuardedCallback React
+    invokeGuardedCallbackAndCatchFirstError bundle.js:156279
+    React 11
+main.e52fdee14b737771cf79.hot-update.js:78:15
+11:45:57.012 useContractEvents: Initial State 
+Object { hasProvider: true, account: undefined, isActive: true, chainId: 369, currentInitState: false }
+bundle.js:5369:11
+11:45:57.012 DAOPage: Render state 
+Object { isInitialized: false, hasContractError: false, contractErrorMessage: undefined, hasWalletError: false, walletErrorMessage: undefined, isWalletConnected: true }
+bundle.js:25054:11
+11:45:57.031 useContractEvents: Initial State 
+Object { hasProvider: true, account: undefined, isActive: true, chainId: 369, currentInitState: false }
+bundle.js:5369:11

@@ -1,0 +1,52 @@
+//src/components/ConnectButton.tsx
+import { Button } from '@mui/material';
+import { useWeb3React } from 'hooks/useWeb3React';
+
+export const CustomConnectButton = () => {
+  const { active, connect, disconnect, account, isPulseChain } = useWeb3React();
+
+  // If not connected, show connect button
+  if (!active) {
+    return (
+      <Button
+        onClick={connect}
+        variant="contained"
+        fullWidth
+        sx={{ mt: 2 }}
+      >
+        Connect Wallet
+      </Button>
+    );
+  }
+
+  // If connected but wrong network
+  if (active && !isPulseChain) {
+    return (
+      <div>
+        <Button
+          variant="outlined"
+          color="error"
+          fullWidth
+          sx={{ mt: 2 }}
+        >
+          Switch to PulseChain
+        </Button>
+        <p className="mt-2 text-sm text-red-500">
+          Please switch to PulseChain network
+        </p>
+      </div>
+    );
+  }
+
+  // If connected and on correct network
+  return (
+    <Button
+      onClick={disconnect}
+      variant="outlined"
+      fullWidth
+      sx={{ mt: 2 }}
+    >
+      {account ? `${account.slice(0, 6)}...${account.slice(-4)}` : 'Disconnect'}
+    </Button>
+  );
+};

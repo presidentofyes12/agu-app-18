@@ -1,0 +1,181 @@
+// src/hooks/useWeb3React.ts
+import { useEffect, useState, useCallback } from 'react';
+import { MetaMask } from '@web3-react/metamask';
+import type { Actions } from '@web3-react/types';
+import { Web3Provider } from '@ethersproject/providers';
+import type { EthereumProvider, isExtendedProvider } from '../types/ethereum';
+
+interface Web3ReactState {
+  connector: MetaMask | null;
+  library?: Web3Provider;
+  chainId?: number;
+  account?: string;
+  active: boolean;
+  error?: Error;
+  isActivating: boolean;
+  isPulseChain: boolean;
+  connect: () => Promise<void>;
+  disconnect: () => Promise<void>;
+}
+
+const handleProvider = (provider: any): EthereumProvider | null => {
+  if (!provider || !isExtendedProvider(provider)) {
+    console.warn('Invalid provider or missing required methods');
+    return null;
+  }
+  return provider;
+};
+
+// Helper function to safely handle Ethereum provider events
+function safeAddEthereumListener(
+  event: string,
+  handler: (...args: any[]) => void
+) {
+  if (window.ethereum?.on) {
+    window.ethereum.on(event, handler);
+    return () => {
+      if (window.ethereum?.removeAllListeners) {
+        window.ethereum.removeAllListeners();
+      }
+    };
+  }
+  return () => {};
+}
+
+export function useWeb3React(): Web3ReactState {
+  const [connector, setConnector] = useState<MetaMask | null>(null);
+  const [error, setError] = useState<Error | undefined>();
+  const [isActivating, setIsActivating] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  const [account, setAccount] = useState<string | undefined>();
+  const [chainId, setChainId] = useState<number | undefined>();
+
+  const isPulseChain = chainId === 369 || chainId === 943;
+
+  const handleAccountsChanged = useCallback((accounts: string[]) => {
+    if (accounts.length > 0) {
+      setAccount(accounts[0]);
+      setIsActive(true);
+    } else {
+      setAccount(undefined);
+      setIsActive(false);
+    }
+  }, []);
+  
+  // Handler for chain changes
+  const handleChainChanged = useCallback((chainIdHex: string) => {
+    setChainId(parseInt(chainIdHex, 16));
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.ethereum) {
+      setError(new Error('No Web3 provider detected'));
+      return;
+    }
+
+    const provider = handleProvider(window.ethereum);
+    if (!provider) {
+      setError(new Error('Invalid provider'));
+      return;
+    }
+
+    const actions: Actions = {
+      startActivation: () => {
+        setIsActivating(true);
+        return () => setIsActivating(false);
+      },
+      update: (state) => {
+        if (state.chainId) setChainId(state.chainId);
+        if (state.accounts?.[0]) setAccount(state.accounts[0]);
+        setIsActive(!!(state.accounts?.[0] && state.chainId));
+        return () => {
+          setChainId(undefined);
+          setAccount(undefined);
+          setIsActive(false);
+        };
+      },
+      resetState: () => {
+        setChainId(undefined);
+        setAccount(undefined);
+        setIsActive(false);
+        return () => undefined;
+      }
+    };
+
+    const metaMask = new MetaMask({ actions });
+    setConnector(metaMask);
+
+    provider.on('accountsChanged', handleAccountsChanged);
+    provider.on('chainChanged', handleChainChanged);
+
+    // Try to eagerly connect
+    metaMask.connectEagerly().catch((error) => {
+      console.debug('Failed to connect eagerly:', error);
+    });
+
+    return () => {
+      if (provider.removeListener) {
+        provider.removeListener('accountsChanged', handleAccountsChanged);
+        provider.removeListener('chainChanged', handleChainChanged);
+      }
+      metaMask.deactivate?.();
+    };
+  }, [handleAccountsChanged, handleChainChanged]);
+
+  const connect = async () => {
+    if (!connector || isActivating || !window.ethereum) return;
+    
+    const provider = handleProvider(window.ethereum);
+    if (!provider) return;
+
+    setIsActivating(true);
+    try {
+      await provider.request({ method: 'eth_requestAccounts' });
+      await connector.activate();
+      
+      const accounts = await provider.request({ method: 'eth_accounts' });
+      const chainIdHex = await provider.request({ method: 'eth_chainId' });
+      
+      if (accounts?.[0] && chainIdHex) {
+        setAccount(accounts[0]);
+        setChainId(parseInt(chainIdHex as string, 16));
+        setIsActive(true);
+        setError(undefined);
+      }
+    } catch (err) {
+      console.error('Failed to connect:', err);
+      setError(err instanceof Error ? err : new Error('Failed to connect'));
+      setIsActive(false);
+    } finally {
+      setIsActivating(false);
+    }
+  };
+
+
+  const disconnect = async () => {
+    if (!connector) return;
+    
+    try {
+      await connector.deactivate?.();
+      setIsActive(false);
+      setAccount(undefined);
+      setChainId(undefined);
+      setError(undefined);
+    } catch (err) {
+      console.error('Failed to disconnect:', err);
+    }
+  };
+
+  return {
+    connector,
+    library: connector?.provider ? new Web3Provider(connector.provider) : undefined,
+    chainId,
+    account,
+    active: isActive,
+    error,
+    isActivating,
+    isPulseChain,
+    connect,
+    disconnect
+  };
+}

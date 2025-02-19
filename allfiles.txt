@@ -1,0 +1,4027 @@
+src/hooks/useModularDAO.ts
+ 
+// src/hooks/useModularDAO.ts
+import { useAtom } from 'jotai';
+import { ethers } from 'ethers';
+import {
+  providerAtom,
+  signerAtom,
+  accountAtom,
+  chainIdAtom,
+  isConnectedAtom,
+  balanceAtom,
+  familyInfoAtom
+} from '../state/web3State';
+
+export function useModularDAO() {
+  const [provider, setProvider] = useAtom(providerAtom);
+  const [, setSigner] = useAtom(signerAtom);
+  const [account, setAccount] = useAtom(accountAtom);
+  const [, setChainId] = useAtom(chainIdAtom);
+  const [, setIsConnected] = useAtom(isConnectedAtom);
+  const [, setBalance] = useAtom(balanceAtom);
+  const [familyInfo, setFamilyInfo] = useAtom(familyInfoAtom);
+
+  const connectWallet = async () => {
+    if (!window.ethereum) {
+      throw new Error('No Ethereum wallet found. Please install MetaMask.');
+    }
+
+    try {
+      // Request account access
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts'
+      });
+
+      if (accounts.length > 0) {
+        const newProvider = new ethers.providers.Web3Provider(window.ethereum);
+        const newSigner = newProvider.getSigner();
+        const chainId = await window.ethereum.request({
+          method: 'eth_chainId'
+        });
+
+        setProvider(newProvider);
+        setSigner(newSigner);
+        setAccount(accounts[0]);
+        setChainId(parseInt(chainId, 16));
+        setIsConnected(true);
+
+        // Fetch initial balance
+        const balance = await newProvider.getBalance(accounts[0]);
+        setBalance(ethers.utils.formatEther(balance));
+
+        return accounts[0];
+      }
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+      throw error;
+    }
+  };
+
+  const disconnectWallet = () => {
+    setProvider(null);
+    setSigner(null);
+    setAccount(null);
+    setChainId(null);
+    setIsConnected(false);
+    setBalance('0');
+    setFamilyInfo(null);
+  };
+
+  const getProfileInfo = async () => {
+    if (!provider || !account) {
+      throw new Error('Wallet not connected');
+    }
+
+    try {
+      // Implement your profile fetching logic here
+      // This is a placeholder implementation - adjust according to your needs
+      const profileData = {
+        // Add your profile data structure here
+      };
+      return profileData;
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      throw error;
+    }
+  };
+
+  return {
+    connectWallet,
+    disconnectWallet,
+    account,
+    familyInfo,
+    isConnected: !!account,
+    provider,
+    getProfileInfo // Add this to the returned object
+  };
+}
+ 
+src/views/components/marketplace/ProposalProductView.tsx
+ 
+import React from 'react';
+import { Box, Typography, Button } from '@mui/material';
+import { Product } from 'types';
+
+const ProposalProductView: React.FC<{ product: Product }> = ({ product }) => {
+  return (
+    <Box>
+      <Typography variant="h6">{product.name}</Typography>
+      <Typography variant="body1">{product.description}</Typography>
+      <Typography variant="body2">Price: {product.price}</Typography>
+      <Typography variant="body2">Quantity: {product.quantity}</Typography>
+      <Button variant="contained">View Proposal</Button>
+      <Button variant="contained">Add to Cart</Button>
+    </Box>
+  );
+};
+
+export default ProposalProductView; 
+src/views/components/marketplace/MarketplacePage.tsx
+ 
+import React, { useState, useEffect } from 'react';
+import { useMarketplace } from 'hooks/useMarketplace';
+import { Card, CardContent, Typography, Grid, Button, TextField, Box } from '@mui/material';
+import { Link } from '@reach/router';
+import useTranslation from 'hooks/use-translation';
+import { RouteComponentProps } from '@reach/router';
+import { Product } from 'types';
+import { Helmet } from 'react-helmet';
+import AppWrapper from 'views/components/app-wrapper';
+import AppMenu from 'views/components/app-menu';
+import AppContent from 'views/components/app-content';
+
+interface MarketplaceProps extends RouteComponentProps {}
+
+const MarketplacePage: React.FC<MarketplaceProps> = (props) => {
+  const [t] = useTranslation();
+  const { stalls, products } = useMarketplace();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 18;
+
+  const filteredProducts = products.filter(product => 
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  const renderProduct = (product: Product) => (
+    <Grid item xs={12} sm={6} md={4} key={product.id}>
+      <Card className="product-card">
+        <CardContent>
+          <Typography variant="h6">{product.name}</Typography>
+          <Typography variant="body2">{product.description}</Typography>
+          <Typography variant="body1">
+            {t('Price: {{price}} {{currency}}', { price: product.price, currency: product.currency })}
+          </Typography>
+          {product.proposalId && (
+            <Typography variant="body2">
+              This product is based on a proposal.
+              <Link to={`/channel/${product.proposalId}`}>View Proposal</Link>
+            </Typography>
+          )}
+          {product.images && product.images.length > 0 && (
+            <Box sx={{
+              width: '100%',
+              height: '200px',
+              overflow: 'hidden',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+              <img 
+                src={product.images[0]} 
+                alt={product.name} 
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  objectFit: 'contain',
+                }}
+              />
+            </Box>
+          )}
+        </CardContent>
+      </Card>
+    </Grid>
+  );
+
+  return (
+    <>
+      <Helmet>
+        <title>{t("NostrChat - Marketplace")}</title>
+      </Helmet>
+      <AppWrapper>
+        <AppMenu />
+        <AppContent>
+    <Box className="marketplace-container" sx={{
+      height: 'calc(100vh - 64px)', // Adjust based on your app's header height
+      overflow: 'auto',
+      padding: '20px',
+    }}>
+      <Box className="marketplace-content">
+        <TextField
+          fullWidth
+          label={t('Search products')}
+          value={searchQuery}
+          onChange={handleSearchChange}
+          margin="normal"
+        />
+        
+        <Grid container spacing={2}>
+          {currentProducts.map(renderProduct)}
+        </Grid>
+        <Box sx={{ marginTop: '20px', textAlign: 'center' }}>
+          <Button 
+            disabled={currentPage === 1} 
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
+            {t('Previous')}
+          </Button>
+          <span style={{ margin: '0 10px' }}>
+            {t('Page {{current}} of {{total}}', { current: currentPage, total: totalPages })}
+          </span>
+          <Button 
+            disabled={currentPage === totalPages} 
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            {t('Next')}
+          </Button>
+        </Box>
+      </Box>
+    </Box>
+       </AppContent>
+      </AppWrapper>
+    </>
+  );
+};
+
+export default MarketplacePage; 
+src/views/components/chat-view/ProposalChatView.tsx
+ 
+// @ts-nocheck
+
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
+import { useAtom } from 'jotai';
+import uniq from 'lodash.uniq';
+import { darken } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import { useTheme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
+import { grey } from '@mui/material/colors';
+import Divider from '@mui/material/Divider';
+import useTranslation from 'hooks/use-translation';
+import useStyles from 'hooks/use-styles';
+import MessageView from 'views/components/message-view';
+import {
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel
+} from '@mui/material';
+import {
+  ravenAtom,
+  activeProposalIdAtom,
+  readMarkMapAtom,
+  tempPrivAtom,
+  keysAtom,
+  channelAtom,
+  proposalCommitteesAtom,
+  channelsAtom,
+  directContactsAtom
+} from 'atoms';
+import { Message, Committee, Channel, Proposal } from 'types';
+import {
+  formatMessageTime,
+  formatMessageDate,
+} from 'helper';
+import { SCROLL_DETECT_THRESHOLD, PLATFORM } from 'const';
+import { separateByAgreement } from 'util/function';
+
+const ProposalChatView = (props: { messages: Message[], separator: string, loading?: boolean, isDM?: boolean, isPermanentProposal?: boolean }) => {
+  const { separator, messages, loading, isDM, isPermanentProposal } = props;
+  const theme = useTheme();
+  const styles = useStyles();
+  const [t] = useTranslation();
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [isAtBottom, setIsAtBottom] = useState(true);
+  const [firstMessageEl, setFirstMessageEl] = useState<HTMLDivElement | null>(null);
+  const [scrollTop, setScrollTop] = useState<number>(0);
+  const [raven] = useAtom(ravenAtom);
+  const [keys] = useAtom(keysAtom);
+  const [tempPriv] = useAtom(tempPrivAtom);
+  const [readMarkMap] = useAtom(readMarkMapAtom);
+  const [proposalCommittees, setProposalCommittees] = useAtom(proposalCommitteesAtom);
+
+  const [activeProposalId] = useAtom(activeProposalIdAtom);
+  const [channel] = useAtom(channelAtom);
+  const [channels] = useAtom(channelsAtom);
+
+const [directContacts] = useAtom(directContactsAtom);
+const [selectedContact, setSelectedContact] = useState<string | null>(null);
+
+  const scrollToBottom = () => {
+    ref.current!.scroll({ top: ref.current!.scrollHeight, behavior: 'auto' });
+  }
+
+  useEffect(() => {
+    if (ref.current && isAtBottom) {
+      scrollToBottom();
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [separator]);
+
+  useEffect(() => {
+    if (isAtBottom && keys?.priv !== 'none') {
+      if (messages.length === 0) return;
+
+      if (isPermanentProposal) {
+        const permanentProposalReadMarkKey = `permanent_proposal_${separator}`;
+        if (readMarkMap[permanentProposalReadMarkKey] === undefined) {
+          raven?.updateReadMarkMap({ ...readMarkMap, ...{ [permanentProposalReadMarkKey]: Math.floor(Date.now() / 1000) } });
+          return;
+        }
+
+        const lMessage = messages[messages.length - 1];
+        if (lMessage.created > readMarkMap[permanentProposalReadMarkKey]) {
+          raven?.updateReadMarkMap({ ...readMarkMap, ...{ [permanentProposalReadMarkKey]: Math.floor(Date.now() / 1000) } });
+        }
+      } else {
+        if (readMarkMap[separator] === undefined) {
+          raven?.updateReadMarkMap({ ...readMarkMap, ...{ [separator]: Math.floor(Date.now() / 1000) } });
+          return;
+        }
+
+        const lMessage = messages[messages.length - 1];
+        if (lMessage.created > readMarkMap[separator]) {
+          raven?.updateReadMarkMap({ ...readMarkMap, ...{ [separator]: Math.floor(Date.now() / 1000) } });
+        }
+      }
+    }
+  }, [separator, isAtBottom, messages, readMarkMap, keys, isPermanentProposal]);
+
+  useEffect(() => {
+    let scrollTimer: any;
+    const div = ref.current;
+
+    const handleScroll = () => {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        setScrollTop(div!.scrollTop);
+        const isAtBottom = Math.abs((div!.scrollHeight - div!.scrollTop) - div!.clientHeight) <= SCROLL_DETECT_THRESHOLD
+        setIsAtBottom(isAtBottom);
+        const isAtTop = (div!.scrollHeight > div!.clientHeight) && div!.scrollTop < SCROLL_DETECT_THRESHOLD;
+        if (isAtTop) {
+          window.dispatchEvent(new Event('chat-view-top', { bubbles: true }))
+        }
+      }, 50);
+    }
+
+    div?.addEventListener('scroll', handleScroll);
+    return () => {
+      div?.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
+
+  useEffect(() => {
+    const imageLoaded = () => {
+      if (ref.current && isAtBottom) {
+        scrollToBottom();
+      }
+    }
+
+    window.addEventListener('chat-media-loaded', imageLoaded);
+    return () => {
+      window.removeEventListener('chat-media-loaded', imageLoaded)
+    }
+  }, [isAtBottom]);
+
+  useEffect(() => {
+    if (loading) {
+      setFirstMessageEl(ref.current!.querySelector('.message') as HTMLDivElement);
+    } else {
+      if (firstMessageEl) {
+        if (firstMessageEl.previousSibling) {
+          (firstMessageEl.previousSibling as HTMLDivElement).scrollIntoView(true);
+        }
+        setFirstMessageEl(null);
+      }
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    const messageIds = Array.from(document.querySelectorAll('.message[data-visible=true]'))
+      .map(el => el.getAttribute('data-id'))
+      .filter(id => id !== null) as string[];
+    if (messageIds.length === 0) return;
+
+    const now = Math.floor(Date.now() / 1000)
+    const relIds = messageIds.map(m => messages.find(x => x.id === m)?.reactions?.filter(x => x.creator !== keys?.pub).filter(l => now - l.created <= 600).map(l => l.id) || []).flat();
+
+    let interval: any;
+    const timer = setTimeout(() => {
+      raven?.listenMessages(
+        messageIds.filter(id => id !== null) as string[],
+        relIds.filter(id => id !== null) as string[]
+      );
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    }
+  }, [raven, messages, scrollTop]);
+
+  useEffect(() => {
+    if (!ref.current) return;
+
+    const observer = new ResizeObserver(() => {
+      if (ref.current && isAtBottom) {
+        scrollToBottom();
+      }
+    });
+
+    observer.observe(ref.current);
+
+    return () => {
+      observer.disconnect();
+    }
+  }, [isAtBottom]);
+
+  const filteredMessages = useMemo(() => {
+    return messages.filter(message => message.proposalID === activeProposalId);
+  }, [messages, activeProposalId]);
+  // <p>{channel.description}</p>
+
+const isUserInCommittee = useMemo(() => {
+  return proposalCommittees.some(committee => 
+    committee.members.includes(keys?.pub || '')
+  );
+}, [proposalCommittees, keys]);
+
+const addMember = async () => {
+  if (!selectedContact || !isUserInCommittee || !channel || !keys) return;
+
+  // Check if the proposal has failed
+  const hasProposalFailed = ermHasProposalFailed;
+  if (hasProposalFailed) {
+    toast.error("Cannot add members to failed proposals");
+    return;
+  }
+
+  setProposalCommittees((prevCommittees: Committee[]) => {
+    return prevCommittees.map((committee, index) => {
+      if (index === 1) { // Always add to the second committee
+        return {
+          ...committee,
+          members: [...committee.members, selectedContact]
+        };
+      }
+      return committee;
+    });
+  });
+
+  // Send DM to the added member
+  try {
+    const message = `You have been added to a proposal committee. Proposal ID: ${channel.id}, Added by: ${keys.pub}`;
+    await raven?.sendDirectMessage(selectedContact, message);
+    toast.success("Member added and notified");
+  } catch (error) {
+    console.error("Failed to send DM", error);
+    toast.error("Member added but notification failed");
+  }
+
+  setSelectedContact(null); // Reset selection after adding
+};
+
+const ermHasProposalFailed = useMemo(() => {
+  if (!channel || !(channel as Proposal).about) return false;
+
+  const about = JSON.parse((channel as Proposal).about);
+  const { agreed, nonAgreed } = separateByAgreement(about.voting);
+  return nonAgreed.length >= agreed.length;
+}, [channel]);
+
+  const removeMember = (committeeId: string) => {
+    setProposalCommittees((prevCommittees: Committee[]) => {
+      return prevCommittees.map(committee => {
+        if (committee.id === committeeId) {
+          const updatedMembers = [...committee.members];
+          updatedMembers.pop();
+          return {
+            ...committee,
+            members: updatedMembers,
+          };
+        }
+        return committee;
+      });
+    });
+  };
+
+useEffect(() => {
+  if (channel?.id && channel.creator) {
+    setProposalCommittees((prevCommittees: Committee[]) => {
+      return prevCommittees.map((committee, index) => {
+        if (index === 0 && !committee.members.includes(channel.creator)) {
+          return {
+            ...committee,
+            members: [...committee.members, channel.creator],
+          };
+        }
+        return committee;
+      });
+    });
+  }
+}, [channel]);
+
+console.log("Proposal Committees: ", proposalCommittees);
+  console.log("Channel: ", channel);
+  console.log("Channels: ", channels);
+
+
+/*
+      <div className="committees">
+{proposalCommittees.map((committee, index) => (
+  <div key={committee.id} className="committee">
+    <div className="committee-header">{committee.name}</div>
+    <div className="committee-members">
+      <p>Members: {committee.members.join(', ')}</p>
+      <div className="add-remove-buttons">
+        {channel?.id && <button onClick={() => addMember(channel.id)}>Add Member</button>}
+        <button onClick={() => removeMember(committee.id)}>Remove Member</button>
+      </div>
+    </div>
+  </div>
+))}
+      </div>
+*/
+
+const ContactDropdown = () => (
+  <FormControl fullWidth>
+    <InputLabel>Select Contact</InputLabel>
+    <Select
+      value={selectedContact || ''}
+      onChange={(e) => setSelectedContact(e.target.value as string)}
+      disabled={!isUserInCommittee}
+    >
+      {directContacts.map((contact) => (
+        <MenuItem key={contact.pub} value={contact.pub}>
+          {contact.npub}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
+);
+
+  return (
+    <Box sx={{ display: 'flex', height: 'calc(100vh - 64px)' }}>
+      {/* Chat Section */}
+<Box 
+  ref={ref} 
+  sx={{ 
+    flex: 2, 
+    mt: 'auto', 
+    overflowY: 'auto', // Add this line
+    maxHeight: 'calc(100vh - 64px)', // Add this line
+    ...styles.scrollY, 
+    borderRight: `1px solid ${theme.palette.divider}` 
+  }}
+>
+        <div className="proposal-info">
+          <h3>{channel?.name}</h3>
+        </div>
+        {filteredMessages.map(message => (
+          <MessageView 
+            key={message.id} 
+            message={message} 
+            compactView={false} 
+            dateFormat="time"
+          />
+        ))}
+        {messages.map((msg, i) => {
+          const prevMsg = messages[i - 1];
+          const msgDate = formatMessageDate(msg.created);
+          const prevMsgDate = prevMsg ? formatMessageDate(prevMsg.created) : null;
+          const isCompact = prevMsg ? msg.creator === prevMsg?.creator && formatMessageTime(msg.created) === formatMessageTime(prevMsg.created) : false;
+
+          if (msgDate !== prevMsgDate) {
+            return (
+              <React.Fragment key={msg.id}>
+                <Divider
+                  sx={{
+                    m: '0 24px',
+                    fontSize: '0.7em',
+                    color: darken(theme.palette.text.secondary, 0.4),
+                    mt: i === 0 ? '100px' : null,
+                  }}
+                >
+                  {msgDate}
+                </Divider>
+                <MessageView message={msg} dateFormat="time" compactView={isCompact} />
+              </React.Fragment>
+            );
+          }
+
+          return <MessageView key={msg.id} message={msg} dateFormat="time" compactView={isCompact} />;
+        })}
+
+        {(channel as Proposal)?.readyForMarket && (channel as Proposal).productDetails && (
+          <Box>
+            <Typography variant="h6">Marketplace Product Details</Typography>
+            <Typography>
+              Price: {(channel as Proposal).productDetails?.price ?? 'N/A'}
+            </Typography>
+            <Typography>
+              Quantity: {(channel as Proposal).productDetails?.quantity ?? 'N/A'}
+            </Typography>
+          </Box>
+        )}
+
+        {isDM && keys?.priv === 'none' && !tempPriv && (
+          <Box sx={{ textAlign: 'center', m: '20px 0' }}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                window.requestPrivateKey().then();
+              }}
+            >
+              {t('Decrypt chat')}
+            </Button>
+          </Box>
+        )}
+      </Box>
+
+      {/* Dashboard Section */}
+      <Box sx={{ flex: 1, overflow: 'auto', p: 2, backgroundColor: theme.palette.background.default }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Dashboard
+        </Typography>
+
+<Box sx={{ mb: 4 }}>
+  <Typography variant="h5" component="h2" gutterBottom>
+    Committees
+  </Typography>
+  {proposalCommittees.map((committee, index) => (
+    <Box key={committee.id} sx={{ mb: 2, p: 2, backgroundColor: theme.palette.background.paper, borderRadius: 1 }}>
+      <Typography variant="h6">{committee.name}</Typography>
+      <Typography>Members: {committee.members.join(', ')}</Typography>
+      {index === 1 && isUserInCommittee && !ermHasProposalFailed && (
+        <Box sx={{ mt: 1 }}>
+          <ContactDropdown />
+          <Button 
+            variant="contained" 
+            size="small" 
+            sx={{ mt: 1 }} 
+            onClick={addMember}
+            disabled={!selectedContact || ermHasProposalFailed}
+          >
+            Add Member
+          </Button>
+        </Box>
+      )}
+    </Box>
+  ))}
+</Box>
+
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h5" component="h2" gutterBottom>
+            Proposal Details
+          </Typography>
+          <Box sx={{ p: 2, backgroundColor: theme.palette.background.paper, borderRadius: 1 }}>
+            <Typography><strong>Name:</strong> {channel?.name}</Typography>
+            <Typography><strong>Creator:</strong> {channel?.creator}</Typography>
+            <Typography><strong>Status:</strong> {(channel as Proposal)?.readyForMarket ? 'Ready for Market' : 'In Progress'}</Typography>
+          </Box>
+        </Box>
+
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h5" component="h2" gutterBottom>
+            Activities
+          </Typography>
+          {filteredMessages.slice(0, 5).map((message) => (
+            <Box key={message.id} sx={{ mb: 2, p: 2, backgroundColor: theme.palette.background.paper, borderRadius: 1 }}>
+              <Typography><strong>Contributor:</strong> {message.creator}</Typography>
+              <Typography><strong>Message:</strong> {message.content}</Typography>
+            </Box>
+          ))}
+        </Box>
+
+        <Box>
+          <Typography variant="h5" component="h2" gutterBottom>
+            Rewards
+          </Typography>
+          <Box sx={{ p: 2, backgroundColor: theme.palette.background.paper, borderRadius: 1 }}>
+            <Typography>Reward distribution to be implemented</Typography>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
+export default ProposalChatView; 
+src/providers/remote-data.tsx
+ 
+import React, {useEffect} from 'react';
+import {useAtom} from 'jotai';
+import {spammersAtom} from 'atoms';
+
+const RemoteDataProvider = (props: { children: React.ReactNode }) => {
+    const [, setSpammers] = useAtom(spammersAtom);
+
+    useEffect(() => {
+        fetch('https://spam.nostrchat.io/list').then(r => r.json()).then(r => {
+            const d:Record<string, number> = {}
+            for(const item of r.list){
+                d[item.pub] = item.score;
+            }
+            setSpammers(d)
+        })
+    }, []);
+
+    return <>
+        {props.children}
+    </>;
+}
+
+export default RemoteDataProvider;
+ 
+src/hooks/use-live-channel.ts
+ 
+import {useAtom} from 'jotai';
+import {channelAtom, channelUpdatesAtom, eventDeletionsAtom, leftChannelListAtom} from 'atoms';
+
+const useLiveChannel = () => {
+    const [channel] = useAtom(channelAtom);
+    const [channelUpdates] = useAtom(channelUpdatesAtom);
+    const [eventDeletions] = useAtom(eventDeletionsAtom);
+    const [leftChannelList] = useAtom(leftChannelListAtom);
+
+    if (!channel) {
+        return null;
+    }
+
+    if (leftChannelList.includes(channel.id)) {
+        return null;
+    }
+
+    if (eventDeletions.find(x => x.eventId === channel.id) !== undefined) {
+        return null;
+    }
+
+    const updated = channelUpdates.filter(x => x.channelId === channel.id).sort((a, b) => b.created - a.created)[0];
+    if (updated && channel.creator === updated.creator) {
+        return {
+            ...channel,
+            name: updated.name,
+            about: updated.about,
+            picture: updated.picture
+        }
+    }
+
+    return channel;
+}
+
+export default useLiveChannel;
+ 
+src/server/integrationLayer.js
+ 
+const axios = require('axios');
+
+async function setupRelayForAdmin(publicKey) {
+  try {
+    const response = await axios.post('http://localhost:8069/setup_relay', { publicKey });
+    return response.data;
+  } catch (error) {
+    console.error('Error setting up relay:', error);
+    throw error;
+  }
+}
+
+module.exports = { setupRelayForAdmin };
+ 
+src/util/crypto.ts
+ 
+import {HDKey} from '@scure/bip32';
+import * as secp256k1 from '@noble/secp256k1';
+
+export const privateKeyFromSeed = (seed: string) => {
+    const root = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'));
+    const privateKey = root.derive("m/44'/1237'/0'/0/0").privateKey;
+    if (!privateKey) {
+        throw new Error('could not derive private key')
+    }
+    return secp256k1.utils.bytesToHex(privateKey);
+}
+
+
+export const sha256 = async (text: string) => {
+    const textAsBuffer = new TextEncoder().encode(text);
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', textAsBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+export const isSha256 = (s: string) => /^[a-f0-9]{64}$/gi.test(s);
+ 
+src/hooks/useNostrAuth.ts
+ 
+import { useState } from 'react';
+import { generatePrivateKey, getPublicKey, signEvent, verifySignature } from 'nostr-tools';
+
+export const useNostrAuth = () => {
+  const [privateKey, setPrivateKey] = useState<string | null>(null);
+  const [publicKey, setPublicKey] = useState<string | null>(null);
+
+  const generateKeys = () => {
+    const privKey = generatePrivateKey();
+    const pubKey = getPublicKey(privKey);
+    setPrivateKey(privKey);
+    setPublicKey(pubKey);
+    return { privateKey: privKey, publicKey: pubKey };
+  };
+
+  const sign = (message: string) => {
+    if (!privateKey) throw new Error('Private key not set');
+    if (!publicKey) throw new Error('Public key not set');
+    return signEvent({ pubkey: publicKey, content: message, created_at: Math.floor(Date.now() / 1000), kind: 1, tags: [] }, privateKey);
+  };
+
+  const verify = (message: string, signature: string, pubKey: string) => {
+    const eventData = {
+      id: '', // This will be computed by verifySignature
+      pubkey: pubKey,
+      content: message,
+      created_at: Math.floor(Date.now() / 1000),
+      kind: 1,
+      tags: [],
+      sig: signature
+    };
+    return verifySignature(eventData);
+  };
+
+  return { generateKeys, sign, verify, publicKey };
+};
+ 
+src/raven/helper/event-emitter.ts
+ 
+import { EventEmitter } from 'events';
+
+export enum EventEmitterEvents {
+    NewListener = 'newListener',
+    RemoveListener = 'removeListener',
+    Error = 'error',
+}
+
+type AnyListener = (...args: any) => any;
+export type ListenerMap<E extends string> = { [eventName in E]: AnyListener };
+type EventEmitterEventListener = (eventName: string, listener: AnyListener) => void;
+type EventEmitterErrorListener = (error: Error) => void;
+
+export type Listener<E extends string, A extends ListenerMap<E>, T extends E | EventEmitterEvents> = T extends E
+    ? A[T]
+    : T extends EventEmitterEvents
+        ? EventEmitterErrorListener
+        : EventEmitterEventListener;
+
+/**
+ * Typed Event Emitter class which can act as a Base Model for all our model
+ * and communication events.
+ * This makes it much easier for us to distinguish between events, as we now need
+ * to properly type this, so that our events are not stringly-based and prone
+ * to silly typos.
+ */
+export class TypedEventEmitter<
+    Events extends string,
+    Arguments extends ListenerMap<Events>,
+    SuperclassArguments extends ListenerMap<any> = Arguments,
+    > extends EventEmitter {
+    public addListener<T extends Events | EventEmitterEvents>(
+        event: T,
+        listener: Listener<Events, Arguments, T>,
+    ): this {
+        // console.log("fuck", super.addListener(event, listener))
+        return super.addListener(event, listener);
+    }
+
+    public emit<T extends Events>(event: T, ...args: Parameters<SuperclassArguments[T]>): boolean;
+    public emit<T extends Events>(event: T, ...args: Parameters<Arguments[T]>): boolean;
+    public emit<T extends Events>(event: T, ...args: any[]): boolean {
+        return super.emit(event, ...args);
+    }
+
+    public eventNames(): (Events | EventEmitterEvents)[] {
+        return super.eventNames() as Array<Events | EventEmitterEvents>;
+    }
+
+    public listenerCount(event: Events | EventEmitterEvents): number {
+        return super.listenerCount(event);
+    }
+
+    public listeners(event: Events | EventEmitterEvents): ReturnType<EventEmitter['listeners']> {
+        return super.listeners(event);
+    }
+
+    public off<T extends Events | EventEmitterEvents>(event: T, listener: Listener<Events, Arguments, T>): this {
+        return super.off(event, listener);
+    }
+
+    public on<T extends Events | EventEmitterEvents>(event: T, listener: Listener<Events, Arguments, T>): this {
+        return super.on(event, listener);
+    }
+
+    public once<T extends Events | EventEmitterEvents>(event: T, listener: Listener<Events, Arguments, T>): this {
+        return super.once(event, listener);
+    }
+
+    public prependListener<T extends Events | EventEmitterEvents>(
+        event: T,
+        listener: Listener<Events, Arguments, T>,
+    ): this {
+        return super.prependListener(event, listener);
+    }
+
+    public prependOnceListener<T extends Events | EventEmitterEvents>(
+        event: T,
+        listener: Listener<Events, Arguments, T>,
+    ): this {
+        return super.prependOnceListener(event, listener);
+    }
+
+    public removeAllListeners(event?: Events | EventEmitterEvents): this {
+        return super.removeAllListeners(event);
+    }
+
+    public removeListener<T extends Events | EventEmitterEvents>(
+        event: T,
+        listener: Listener<Events, Arguments, T>,
+    ): this {
+        return super.removeListener(event, listener);
+    }
+
+    public rawListeners(event: Events | EventEmitterEvents): ReturnType<EventEmitter['rawListeners']> {
+        return super.rawListeners(event);
+    }
+}
+ 
+src/server/auth/nostrAuth.js
+ 
+const { generatePrivateKey, getPublicKey, signEvent, verifySignature } = require('nostr-tools');
+const crypto = require('crypto');
+
+function generateChallenge() {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+function generateToken(publicKey) {
+  const timestamp = Date.now();
+  const data = `${publicKey}:${timestamp}`;
+  const hash = crypto.createHash('sha256').update(data).digest('hex');
+  return `${publicKey}:${timestamp}:${hash}`;
+}
+
+function verifyToken(token) {
+  const [publicKey, timestamp, hash] = token.split(':');
+  const data = `${publicKey}:${timestamp}`;
+  const computedHash = crypto.createHash('sha256').update(data).digest('hex');
+  return computedHash === hash && (Date.now() - parseInt(timestamp)) < 3600000;
+}
+
+async function verifyNostrSignature(publicKey, signature, challenge) {
+  const event = {
+    pubkey: publicKey,
+    created_at: Math.floor(Date.now() / 1000),
+    kind: 22242,
+    tags: [],
+    content: challenge
+  };
+  return verifySignature(event, signature, publicKey);
+}
+
+module.exports = { generateChallenge, generateToken, verifyToken, verifyNostrSignature };
+ 
+src/server/auth/sessionManager.js
+ 
+const redis = require('redis');
+const client = redis.createClient({
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT
+});
+
+function storeSession(token, userData) {
+  return new Promise((resolve, reject) => {
+    client.setex(token, 3600, JSON.stringify(userData), (err) => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+}
+
+function getSession(token) {
+  return new Promise((resolve, reject) => {
+    client.get(token, (err, reply) => {
+      if (err) reject(err);
+      else resolve(JSON.parse(reply));
+    });
+  });
+}
+
+module.exports = { storeSession, getSession };
+ 
+src/hooks/use-media-break-point.ts
+ 
+import {useTheme} from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
+const useMediaBreakPoint = (): {isSm: boolean, isMd: boolean, isLg: boolean, isXl: boolean} => {
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.up('sm'));
+    const isMd = useMediaQuery(theme.breakpoints.up('md'));
+    const isLg = useMediaQuery(theme.breakpoints.up('lg'));
+    const isXl = useMediaQuery(theme.breakpoints.up('xl'));
+    return {isSm, isMd, isLg, isXl};
+}
+
+export default useMediaBreakPoint;
+ 
+src/hooks/use-toast.ts
+ 
+import {useRef} from 'react';
+import {useAtom} from 'jotai';
+import {toastAtom} from '../atoms';
+import {Toast, ToastType} from '../atoms';
+
+const useToast = (): [Toast, (message: string, type: ToastType, timeout?: number) => void, () => void] => {
+    const [toast, setToast] = useAtom(toastAtom);
+    let timer = useRef<any>();
+
+    const hideMessage = () => {
+        setToast({message: null, type: null});
+    }
+
+    const showMessage = (message: string, type: ToastType, timeout: number = 5000) => {
+        clearTimeout(timer.current);
+
+        setToast({message, type});
+
+        timer.current = setTimeout(() => {
+            hideMessage();
+        }, timeout);
+    };
+
+    return [toast, showMessage, hideMessage]
+}
+
+export default useToast;
+ 
+src/hooks/web3Config.ts
+ 
+export const WEB3_CONFIG = {
+  CONTRACT_ADDRESS: "YOUR_CONTRACT_ADDRESS",
+  SUPPORTED_CHAINS: [1, 5], // mainnet and goerli for example
+  RPC_URLS: {
+    1: "YOUR_MAINNET_RPC_URL",
+    5: "YOUR_GOERLI_RPC_URL"
+  }
+};
+
+export const CHAIN_NAMES = {
+  1: "Ethereum Mainnet",
+  5: "Goerli Testnet"
+};
+ 
+src/hooks/use-settings-sections.tsx
+ 
+import React from 'react';
+import useTranslation from 'hooks/use-translation';
+import Account from 'svg/account';
+import Server from 'svg/server';
+import KeyChain from 'svg/key-chain';
+import Lock from 'svg/lock';
+import LinkVariant from '../svg/link-variant';
+
+const useSettingsSections = () => {
+    const [t] = useTranslation();
+
+    return [
+        {
+            icon: <Account height={40}/>,
+            title: t('Profile'),
+            description: t('Edit your profile'),
+            href: '/settings/profile',
+        },
+        {
+            icon: <KeyChain height={40}/>,
+            title: t('Keys'),
+            description: t('View your private & public keys'),
+            href: '/settings/keys'
+        },
+        // {
+        //     icon: <Lock height={40}/>,
+        //     title: t('Password protection'),
+        //     description: t('Secure your private key with a password'),
+        //     href: '/settings/password',
+        //     hidden: true //keys?.priv === 'nip07'
+        // },
+        // {
+        //     icon: <Server height={40}/>,
+        //     title: t('Relays'),
+        //     description: t('Manage your preferred relay list'),
+        //     href: '/settings/relays'
+        // },
+        // {
+        //     icon: <LinkVariant height={40}/>,
+        //     title: t('Public DM page'),
+        //     description: t('Get your public DM page link'),
+        //     href: '/settings/public-link'
+        // },
+    ]
+// ].filter(x => !x.hidden);
+}
+
+export default useSettingsSections;
+ 
+src/providers/Web3Provider.tsx
+ 
+import React, { useEffect } from 'react';
+import { useAtom } from 'jotai';
+import { ethers } from 'ethers';
+import { providerAtom, accountAtom, chainIdAtom, isConnectedAtom } from '../state/web3State';
+import { WEB3_CONFIG } from '../hooks/web3Config';
+
+export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [, setProvider] = useAtom(providerAtom);
+  const [, setAccount] = useAtom(accountAtom);
+  const [, setChainId] = useAtom(chainIdAtom);
+  const [, setIsConnected] = useAtom(isConnectedAtom);
+
+  useEffect(() => {
+    const initProvider = async () => {
+      if (typeof window.ethereum !== 'undefined') {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        setProvider(provider);
+
+        try {
+          const accounts = await provider.listAccounts();
+          if (accounts.length > 0) {
+            setAccount(accounts[0]);
+            setIsConnected(true);
+          }
+
+          const network = await provider.getNetwork();
+          setChainId(network.chainId);
+        } catch (error) {
+          console.error('Error initializing Web3:', error);
+        }
+      }
+    };
+
+    initProvider();
+
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', (accounts: string[]) => {
+        if (accounts.length > 0) {
+          setAccount(accounts[0]);
+          setIsConnected(true);
+        } else {
+          setAccount(null);
+          setIsConnected(false);
+        }
+      });
+
+      window.ethereum.on('chainChanged', (chainId: string) => {
+        setChainId(parseInt(chainId));
+      });
+    }
+
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.removeAllListeners();
+      }
+    };
+  }, []);
+
+  return <>{children}</>;
+};
+ 
+src/providers/theme.tsx
+ 
+import React, {useEffect} from 'react';
+import {useAtom} from 'jotai';
+import {ThemeProvider as MThemeProvider, createTheme, CssBaseline} from '@mui/material';
+import {getAppTheme} from 'local-storage';
+import {themeAtom} from 'atoms';
+import {DEFAULT_THEME} from 'const';
+
+declare module '@mui/material/Button' {
+    interface ButtonPropsVariantOverrides {
+        login: true;
+    }
+}
+
+const themes = {
+    'light': createTheme({
+        palette: {
+            mode: 'light',
+        }
+    }),
+    'dark': createTheme({
+        palette: {
+            mode: 'dark',
+            divider: 'rgba(255, 255, 255, 0.08)',
+            primary: {
+                main: '#7166FF',
+                dark: 'rgb(132, 132, 132)',
+            },
+            error: {
+                main: '#F23047'
+            },
+            background: {
+                default: '#141414',
+                paper: '#1F1F1F',
+            },
+            text: {
+                primary: '#ffffff',
+                secondary: 'rgb(189, 189, 189)',
+            }
+        },
+        typography: {
+            allVariants: {
+                fontFamily: 'Inter, sans-serif'
+            },
+            button: {
+                textTransform: 'none'
+            },
+            fontSize: 16,
+        },
+        shape: {
+            borderRadius: 4,
+        },
+        components: {
+            MuiLink: {
+                variants: [
+                    {
+                        props: {variant: 'inherit'},
+                        style: {
+                            color: '#FFD60A',
+                            textDecorationColor: '#FFD60A'
+                        },
+                    },
+                ],
+            },
+            MuiButton: {
+                variants: [
+                    {
+                        props: {variant: 'login'},
+                        style: {
+                            background: 'rgba(255, 255, 255, 0.08)',
+                            ':hover': {
+                                background: 'rgba(255, 255, 255, 0.12)',
+                            }
+                        },
+                    },
+                ],
+            },
+        },
+    })
+}
+
+
+const ThemeProvider = (props: { children: React.ReactNode }) => {
+    const [appTheme, setAppTheme] = useAtom(themeAtom);
+
+    useEffect(() => {
+        getAppTheme().then(s => {
+            setAppTheme(['dark', 'light'].includes(s) ? s : DEFAULT_THEME);
+        });
+    }, []);
+
+    if (appTheme === undefined) return null;  // Wait until we find theme from storage
+
+    return <MThemeProvider theme={themes[appTheme]}>{props.children}<CssBaseline/></MThemeProvider>;
+}
+
+export default ThemeProvider;
+ 
+src/providers/keys.tsx
+ 
+import React, {useEffect} from 'react';
+import {getKeys} from 'local-storage';
+import {useAtom} from 'jotai';
+import {keysAtom} from 'atoms';
+
+const KeysProvider = (props: { children: React.ReactNode }) => {
+    const [keys, setKeys] = useAtom(keysAtom);
+
+    useEffect(() => {
+        getKeys().then(setKeys);
+    }, []);
+
+    if (keys === undefined) return null; // Wait until we find keys from storage
+
+    return <>
+        {props.children}
+    </>;
+}
+
+export default KeysProvider;
+ 
+src/views/components/metadata-form/index.tsx
+ 
+import React, { useEffect, useState } from 'react';
+import Joi from 'joi';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import { CircularProgress } from '@mui/material';
+import { toast } from 'react-toastify';
+
+import useTranslation from 'hooks/use-translation';
+// import PictureInput from "views/components/picture-input";
+import { Metadata } from 'types';
+//import QRCode from 'qrcode';
+import axios from 'axios';
+import { UPLOAD_API_KEY, proposalTypes } from 'util/constant';
+
+const MetadataForm = (props: {
+  values?: Metadata;
+  labels?: Metadata;
+  submitBtnLabel: string;
+  skipButton: React.ReactElement;
+  onSubmit: (data: Metadata) => void;
+  inProgress?: boolean;
+}) => {
+  const { skipButton, submitBtnLabel, values, labels, onSubmit, inProgress } =
+    props;
+  const [name, setName] = useState(values?.name || '');
+  const [about, setAbout] = useState(values?.about || '');
+  const [picture, setPicture] = useState(values?.picture || '');
+  const [t] = useTranslation();
+  const [error, setError] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [changed, setChanged] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    if (values && !changed) {
+      setName(values.name);
+      setAbout(values.about);
+      setPicture(values.picture);
+    }
+  }, [values]);
+
+  const resetError = () => {
+    setError('');
+    setErrorMessage('');
+  };
+
+  const nameChanged = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    resetError();
+    setName(e.target.value);
+    setChanged(true);
+  };
+
+  const aboutChanged = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    resetError();
+    setAbout(e.target.value);
+    setChanged(true);
+  };
+
+  const pictureChanged = (picture: string) => {
+    resetError();
+    setPicture(picture);
+    setChanged(true);
+  };
+
+  const handleFileUpload = (event: any) => {
+    if (event.target.files[0]) {
+      const formData = new FormData();
+      formData.append('image', event.target.files[0]);
+      setUploading(true);
+      axios
+        .post(`https://api.imgbb.com/1/upload?key=${UPLOAD_API_KEY}`, formData)
+        .then((response: any) => {
+          if (response.data) {
+            console.log('file settled');
+            pictureChanged(response.data.data.url);
+          }
+          setUploading(false);
+        })
+        .catch((error: any) => {
+          console.error('Upload failed:', error);
+        })
+        .finally(() => {
+          console.log('file upload done');
+        });
+    }
+  };
+
+  //  New proposal form
+  const [proposalType, setProposalType] = useState('');
+  const [formData, setFormData] = useState<{
+    problem: string;
+    solution: string;
+    targetAudience: string;
+    qualifications: string;
+    purpose: string;
+    approach: string;
+    outcome: string;
+    timeline: string;
+    budget: string;
+    callToAction: string;
+    voting:object
+  }>({
+    problem: '',
+    solution: '',
+    targetAudience: '',
+    qualifications: '',
+    purpose: '',
+    approach: '',
+    outcome: '',
+    timeline: '',
+    budget: '',
+    callToAction: '',
+    voting:[]
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleProposalTypeChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedProposalType = e.target.value;
+    setProposalType(selectedProposalType);
+
+    // Find the selected proposal type from the proposalTypes array
+    const selectedProposal = proposalTypes.find(
+      type => type.name === selectedProposalType
+    );
+
+    if (selectedProposal) {
+      // Update formData with purpose, approach, and outcome from selected proposal
+      setFormData({
+        ...formData,
+        purpose: selectedProposal.purpose,
+        approach: selectedProposal.approach,
+        outcome: selectedProposal.outcome,
+      });
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+  const submit = () => {
+    setIsSubmitting(true)
+    const metadata = {
+      name: formData.approach,
+      about: JSON.stringify(formData),
+      picture: picture,
+    };
+    onSubmit(metadata);
+  };
+  return (
+    <>
+      <div style={{ textAlign: 'center' }}>
+        <div>
+          <div style={{ marginBottom: '20px' }}>
+            <img
+              className="user_pic"
+              src={picture ? picture : '/img/proposal.png'}
+            />
+          </div>
+          {uploading ? (
+            <>
+              <CircularProgress size={20} sx={{ mr: '8px' }} /> Uploading Image
+              ...
+            </>
+          ) : (
+            <Button
+              variant="contained"
+              onClick={e =>
+                document.getElementById('upload_profile_pic')?.click()
+              }
+            >
+              + Upload
+            </Button>
+          )}
+          <br />
+          <input
+            style={{ visibility: 'hidden' }}
+            onChange={e => handleFileUpload(e)}
+            type="file"
+            accept="image/x-png,image/gif,image/jpeg"
+            id="upload_profile_pic"
+          />
+        </div>
+
+        <div className="text-left">
+          <div style={{ textAlign: 'left' }}>
+            <label>Proposal Type:</label>
+            <select
+              className="form-control in_bg_tr"
+              value={proposalType}
+              onChange={handleProposalTypeChange}
+            >
+              <option value="">Select a proposal type</option>
+              {proposalTypes.map((type, i) => (
+                <option key={i} value={type.name}>
+                  {type.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          {proposalType && (
+            <>
+              <div>
+                <label>Purpose:</label>
+                <textarea
+                  name="purpose"
+                  placeholder="Purpose"
+                  className="no_border form-control in_bg_tr"
+                  value={formData.purpose}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div>
+                <label>Approach:</label>
+                <textarea
+                  className="no_border form-control in_bg_tr"
+                  name="approach"
+                  value={formData.approach}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div>
+                <label>Outcome:</label>
+                <textarea
+                  className="no_border form-control in_bg_tr"
+                  name="outcome"
+                  value={formData.outcome}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </>
+          )}
+          <div>
+            <label>Problem:</label>
+            <textarea
+              className="form-control in_bg_tr"
+              name="problem"
+              value={formData.problem}
+              onChange={handleInputChange}
+            />
+          </div>
+          {proposalType && formData.problem ? (
+            <button
+              type="submit"
+              className="btn btn_success mt-3"
+              disabled={isSubmitting}
+              onClick={e => submit()}
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit'}
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="btn btn_success mt-3"
+              onClick={e => toast.error('Form incomplete, Fill it Up !')}
+            >
+              Submit
+            </button>
+          )}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default MetadataForm; 
+src/views/components/CredentialDisplayDialog/index.tsx
+ 
+import React, { useState } from 'react';
+import { 
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  DialogActions, 
+  Button, 
+  TextField
+} from '@mui/material';
+
+interface CredentialDisplayDialogProps {
+  open: boolean;
+  onClose: () => void;
+  username: string;
+  password: string;
+}
+
+const CredentialDisplayDialog: React.FC<CredentialDisplayDialogProps> = ({ 
+  open, 
+  onClose, 
+  username, 
+  password 
+}) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Your New Account Credentials</DialogTitle>
+      <DialogContent>
+        <p>Please copy and store these credentials in a safe place. You will need them to log in.</p>
+        <TextField
+          margin="dense"
+          label="Username"
+          type="text"
+          fullWidth
+          value={username}
+          InputProps={{
+            readOnly: true,
+          }}
+        />
+        <TextField
+          margin="dense"
+          label="Password"
+          type={showPassword ? 'text' : 'password'}
+          fullWidth
+          value={password}
+          InputProps={{
+            readOnly: true,
+          }}
+        />
+        <Button onClick={() => setShowPassword(!showPassword)}>
+          {showPassword ? 'Hide Password' : 'Show Password'}
+        </Button>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Close</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+export default CredentialDisplayDialog; 
+src/views/components/calendar/index.tsx
+ 
+import React, { useState, useEffect, useCallback } from 'react';
+import { useAtom } from 'jotai';
+import {
+  Box,
+  Slider,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Typography,
+  CircularProgress,
+  Snackbar,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel
+} from '@mui/material';
+import { ravenAtom, profilesAtom, channelAtom, activeProposalIdAtom, keysAtom, directMessagesAtom } from 'atoms';
+import NewKinds from 'raven/raven';
+import RavenEvents from 'raven/raven';
+import ExtendedFilter from 'raven/raven';
+import ExtendedKind from 'raven/raven';
+import useTranslation from 'hooks/use-translation';
+import { formatMessageDateTime } from 'helper';
+import { RouteComponentProps } from '@reach/router';
+import { nip19 } from 'nostr-tools';
+import useLiveDirectContacts from 'hooks/use-live-direct-contacts';
+import { Helmet } from 'react-helmet';
+import AppWrapper from 'views/components/app-wrapper';
+import AppMenu from 'views/components/app-menu';
+import AppContent from 'views/components/app-content';
+
+interface CalendarProps extends RouteComponentProps {}
+
+export interface EventSuggestion {
+  id: string;
+  root: string;
+  content: string;
+  creator: string;
+  created: number;
+  mentions: string[];
+  proposalID: string;
+  finalDateTime?: string;
+}
+
+const Calendar: React.FC<CalendarProps> = (props) => {
+  console.log("Starting Calendar component");
+
+  const [t] = useTranslation();
+  const [raven] = useAtom(ravenAtom);
+  const [profiles] = useAtom(profilesAtom);
+  const [channel] = useAtom(channelAtom);
+  const [activeProposalId] = useAtom(activeProposalIdAtom);
+  const [keys] = useAtom(keysAtom);
+
+  const [timeRange, setTimeRange] = useState<[number, number]>([9, 17]);
+  const [startDate, setStartDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState<string>(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+  const [eventSuggestions, setEventSuggestions] = useState<EventSuggestion[]>([]);
+  const [showDialog, setShowDialog] = useState(false);
+  const [selectedSuggestion, setSelectedSuggestion] = useState<EventSuggestion | null>(null);
+  const [finalDateTime, setFinalDateTime] = useState<string>('');
+  const [recipientPubKey, setRecipientPubKey] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+  //const [isIntervalLoading, setIsIntervalLoading] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
+  const [finalizedEvents, setFinalizedEvents] = useState<EventSuggestion[]>([]);
+const [isCountering, setIsCountering] = useState(false);
+const [counteredSuggestionId, setCounteredSuggestionId] = useState<string | null>(null);
+
+  const [directMessages] = useAtom(directMessagesAtom);
+  const directContacts = useLiveDirectContacts();
+
+  // Replace recipientPubKey state with selectedContact
+  const [selectedContact, setSelectedContact] = useState<string>('');
+
+const fetchEventSuggestions = useCallback(async (isInitialLoad = false) => {
+  if (!raven || !keys) {
+    console.log('Raven or keys not available, skipping fetchEventSuggestions', { raven, keys });
+    return;
+  }
+  if (isInitialLoad) {
+    setIsLoading(true);
+  }
+  try {
+    console.log('Fetching calendar suggestions...');
+    const messages = await raven.fetchCalendarSuggestions();
+    console.log('Fetched messages:', messages);
+    
+    const newSuggestions: EventSuggestion[] = [];
+    const newFinalizedEvents: EventSuggestion[] = [];
+
+    messages.forEach(msg => {
+      const content = JSON.parse(msg.content);
+      if (content.type === 'event_suggestion') {
+        newSuggestions.push({
+          id: msg.id,
+          root: msg.tags.find(tag => tag[0] === 'e')?.[1] || '',
+          content: msg.content,
+          creator: msg.pubkey,
+          created: msg.created_at,
+          mentions: msg.tags.filter(tag => tag[0] === 'p').map(tag => tag[1]),
+          proposalID: msg.tags.find(tag => tag[0] === 'e')?.[1] || '',
+        });
+      } else if (content.type === 'event_finalized') {
+        newFinalizedEvents.push({
+          id: msg.id,
+          root: msg.tags.find(tag => tag[0] === 'e')?.[1] || '',
+          content: msg.content,
+          creator: msg.pubkey,
+          created: msg.created_at,
+          mentions: msg.tags.filter(tag => tag[0] === 'p').map(tag => tag[1]),
+          proposalID: msg.tags.find(tag => tag[0] === 'e')?.[1] || '',
+          finalDateTime: content.finalDateTime,
+        });
+      }
+    });
+
+    console.log('New suggestions:', newSuggestions);
+    console.log('New finalized events:', newFinalizedEvents);
+
+    setEventSuggestions(prevSuggestions => {
+      const existingIds = new Set(prevSuggestions.map(s => s.id));
+      const uniqueNewSuggestions = newSuggestions.filter(s => !existingIds.has(s.id));
+      return [...prevSuggestions, ...uniqueNewSuggestions];
+    });
+
+    setFinalizedEvents(prevEvents => {
+      const existingIds = new Set(prevEvents.map(e => e.id));
+      const uniqueNewEvents = newFinalizedEvents.filter(e => !existingIds.has(e.id));
+      return [...prevEvents, ...uniqueNewEvents];
+    });
+
+  } catch (error) {
+    console.error('Error fetching event suggestions:', error);
+    setSnackbarMessage(t('Failed to fetch event suggestions. Please try again.'));
+  } finally {
+    if (isInitialLoad) {
+      setIsLoading(false);
+    }
+  }
+}, [raven, keys, t]);
+
+  useEffect(() => {
+    if (raven && keys) {
+      console.log("Raven and keys are available, starting to fetch event suggestions");
+      fetchEventSuggestions(true);
+      const interval = setInterval(() => fetchEventSuggestions(false), 30000);
+      return () => clearInterval(interval);
+    } else {
+      console.log("Raven or keys not available", { raven, keys });
+    }
+  }, [raven, keys, fetchEventSuggestions]);
+
+  useEffect(() => {
+    if (raven) {
+      const handleCalendarSuggestion = (suggestions: EventSuggestion[]) => {
+        setEventSuggestions(prevSuggestions => {
+          const newSuggestions = suggestions.filter(s => 
+            !prevSuggestions.some(ps => ps.id === s.id)
+          );
+          return [...prevSuggestions, ...newSuggestions];
+        });
+      };
+
+      raven.onCalendarSuggestion(handleCalendarSuggestion);
+
+      return () => {
+        raven.offCalendarSuggestion(handleCalendarSuggestion);
+      };
+    }
+  }, [raven]);
+
+  const handleSendSuggestion = async () => {
+    if (!raven) {
+      console.error('Raven is not initialized');
+      setSnackbarMessage(t('Unable to send suggestion. Please try again later.'));
+      return;
+    }
+
+    if (!selectedContact) {
+      console.log('No contact selected');
+      setSnackbarMessage(t('Please select a recipient'));
+      return;
+    }
+
+    const suggestion = JSON.stringify({
+      type: 'event_suggestion',
+      dateRange: [
+        new Date(startDate).toISOString(),
+        new Date(endDate).toISOString()
+      ],
+      timeRange: timeRange,
+      isCounterSuggestion: isCountering,
+      originalSuggestionId: counteredSuggestionId
+    });
+
+    console.log('Sending suggestion:', suggestion);
+
+    try {
+      setIsLoading(true);
+      const result = await raven.publishCalendarSuggestion(selectedContact, suggestion);
+      console.log('Send result:', result);
+      console.log('Message tags:', result.tags);
+      setSnackbarMessage(t('Event suggestion sent successfully!'));
+      setSelectedContact('');
+      await fetchEventSuggestions(true);
+    } catch (error) {
+      console.error('Error sending event suggestion:', error);
+      setSnackbarMessage(t('Failed to send event suggestion. Please try again.'));
+    } finally {
+      setIsLoading(false);
+    }
+
+    setIsCountering(false);
+    setCounteredSuggestionId(null);
+  };
+
+const handleIgnore = (suggestion: EventSuggestion) => {
+  setEventSuggestions(prevSuggestions => prevSuggestions.filter(s => s.id !== suggestion.id));
+  setSnackbarMessage(t('Suggestion ignored and removed'));
+};
+
+  const handleRespondToSuggestion = async (suggestion: EventSuggestion, response: 'accept' | 'counter' | 'ignore') => {
+    console.log("handleRespondToSuggestion called", { suggestion, response });
+
+    if (!raven) {
+      console.error('Raven is not initialized');
+      return;
+    }
+    const content = JSON.parse(suggestion.content);
+    console.log('Parsed suggestion content:', content);
+
+    if (response === 'accept') {
+      setSelectedSuggestion(suggestion);
+      setShowDialog(true);
+    } else if (response === 'counter') {
+      setTimeRange(content.timeRange);
+      setStartDate(content.dateRange[0]);
+      setEndDate(content.dateRange[1]);
+      setRecipientPubKey(suggestion.creator);
+      console.log('Set up counter suggestion', { timeRange: content.timeRange, startDate: content.dateRange[0], endDate: content.dateRange[1], recipientPubKey: suggestion.creator });
+    } else {
+      const responseMessage = JSON.stringify({
+        type: 'event_response',
+        originalSuggestionId: suggestion.id,
+        response: 'ignored',
+      });
+      console.log('Sending ignore response:', responseMessage);
+      try {
+        setIsLoading(true);
+        const result = await raven.sendDirectMessage(suggestion.creator, responseMessage, [], suggestion.proposalID);
+        console.log('Ignore response sent:', result);
+        setEventSuggestions(prevSuggestions => prevSuggestions.filter(s => s.id !== suggestion.id));
+      } catch (error) {
+        console.error('Error sending ignore response:', error);
+        setSnackbarMessage(t('Failed to send ignore response. Please try again.'));
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    await fetchEventSuggestions(true);
+  };
+
+const handleCounter = (suggestion: EventSuggestion) => {
+  const content = JSON.parse(suggestion.content);
+  setTimeRange(content.timeRange);
+  setStartDate(new Date(content.dateRange[0]).toISOString().split('T')[0]);
+  setEndDate(new Date(content.dateRange[1]).toISOString().split('T')[0]);
+  setRecipientPubKey(suggestion.creator);
+  setIsCountering(true);
+  setCounteredSuggestionId(suggestion.id);
+};
+
+const handleAccept = async (suggestion: EventSuggestion) => {
+  setSelectedSuggestion(suggestion);
+  setShowDialog(true);
+};
+
+const handleFinalizeEvent = async () => {
+  if (!raven || !selectedSuggestion || !finalDateTime) {
+    console.error('Missing required data for finalizing event', { raven, selectedSuggestion, finalDateTime });
+    return;
+  }
+
+  const finalizeMessage = JSON.stringify({
+    type: 'event_finalized',
+    originalSuggestionId: selectedSuggestion.id,
+    finalDateTime: finalDateTime,
+    suggestedBy: selectedSuggestion.creator,
+    ...JSON.parse(selectedSuggestion.content)
+  });
+
+  try {
+    setIsLoading(true);
+    const result = await raven.publishCalendarSuggestion(selectedSuggestion.creator, finalizeMessage);
+    console.log('Finalize message sent:', result);
+    setShowDialog(false);
+    setEventSuggestions(prevSuggestions => prevSuggestions.filter(s => s.id !== selectedSuggestion.id));
+    setFinalizedEvents(prevEvents => [...prevEvents, {
+      ...selectedSuggestion,
+      finalDateTime: finalDateTime
+    }]);
+    setSnackbarMessage(t('Event finalized successfully!'));
+  } catch (error) {
+    console.error('Error sending finalize message:', error);
+    setSnackbarMessage(t('Failed to finalize event. Please try again.'));
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+  const formatPublicKey = (pubkey: string) => {
+    return pubkey.slice(0, 8) + '...'; // or use nip19.npubEncode(pubkey) if available
+  };
+
+  const formatTimeRange = (range: [number, number] | undefined): string => {
+    if (!range || !Array.isArray(range) || range.length < 2) {
+      console.error('Invalid time range:', range);
+      return 'Invalid time range';
+    }
+    return `${range[0]}:00 - ${range[1]}:00`;
+  };
+
+const formatDateRange = (start: string, end: string): string => {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  };
+  return `${formatDate(start)} - ${formatDate(end)}`;
+};
+
+  return (
+    <>
+      <Helmet>
+        <title>{t("NostrChat - Calendar")}</title>
+      </Helmet>
+      <AppWrapper>
+        <AppMenu />
+        <AppContent>
+          <Box sx={{ width: '100%', maxWidth: 600, mx: 'auto', mt: 4 }}>
+            <Typography variant="h4" sx={{ mb: 4 }}>
+              {isCountering ? t('Counter Event Suggestion') : t('Event Suggestion')}
+            </Typography>
+      <Box sx={{ mb: 2 }}>
+        <FormControl fullWidth>
+          <InputLabel id="contact-select-label">{t("Select Recipient")}</InputLabel>
+          <Select
+            labelId="contact-select-label"
+            value={selectedContact}
+            onChange={(e) => setSelectedContact(e.target.value as string)}
+            label={t("Select Recipient")}
+          >
+            {directContacts.map((contact) => (
+              <MenuItem key={contact.pub} value={contact.pub}>
+                {profiles.find(p => p.creator === contact.pub)?.name || contact.npub}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
+      <Box sx={{ mb: 2 }}>
+        <TextField
+          label={t('Start Date')}
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          fullWidth
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+      </Box>
+      <Box sx={{ mb: 2 }}>
+        <TextField
+          label={t('End Date')}
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          fullWidth
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+      </Box>
+      <Box sx={{ mb: 2 }}>
+        <Slider
+          value={timeRange}
+          onChange={(_, newValue) => setTimeRange(newValue as [number, number])}
+          valueLabelDisplay="auto"
+          min={0}
+          max={24}
+          step={1}
+          marks
+          valueLabelFormat={(value) => `${value}:00`}
+        />
+        <Box sx={{ mt: 1 }}>{t('Time Range')}: {formatTimeRange(timeRange)}</Box>
+      </Box>
+      <Button 
+        variant="contained" 
+        onClick={handleSendSuggestion}
+        disabled={!selectedContact}
+      >
+        {isCountering ? t('Send Counter Suggestion') : t('Send Event Suggestion')}
+      </Button>
+
+      <Typography variant="h5" sx={{ mt: 4, mb: 2 }}>{t('Received Event Suggestions')}</Typography>
+      <Box sx={{ mt: 2 }}>
+        {eventSuggestions.map(suggestion => {
+          let content;
+          try {
+            content = JSON.parse(suggestion.content);
+          } catch (e) {
+            console.error('Error parsing suggestion content:', e);
+            content = {};
+          }
+          console.log("Rendering suggestion with content:", content);
+          return (
+            <Box key={suggestion.id} sx={{ border: '1px solid #ccc', borderRadius: 2, p: 2, mb: 2 }}>
+              <Box>{t('Suggested by')}: {profiles.find(p => p.creator === suggestion.creator)?.name || formatPublicKey(suggestion.creator)}</Box>
+              <Box>{t('Suggested time range')}: {formatTimeRange(content.timeRange)}</Box>
+<Box>
+  {t('Suggested date range')}: {content.dateRange ? 
+    formatDateRange(content.dateRange[0], content.dateRange[1]) 
+    : 'Invalid date range'}
+</Box>
+<Box sx={{ mt: 1 }}>
+  <Button onClick={() => handleAccept(suggestion)}>{t('Accept')}</Button>
+  <Button onClick={() => handleCounter(suggestion)}>{t('Counter')}</Button>
+  <Button onClick={() => handleIgnore(suggestion)}>{t('Ignore')}</Button>
+</Box>
+            </Box>
+          );
+        })}
+      </Box>
+
+<Typography variant="h5" sx={{ mt: 4, mb: 2 }}>{t('Finalized Events')}</Typography>
+<Box sx={{ mt: 2 }}>
+  {finalizedEvents.map(event => {
+    let content;
+    try {
+      content = JSON.parse(event.content);
+    } catch (e) {
+      console.error('Error parsing event content:', e);
+      content = {};
+    }
+    return (
+      <Box key={event.id} sx={{ border: '1px solid #ccc', borderRadius: 2, p: 2, mb: 2 }}>
+        <Box>{t('Suggested by')}: {profiles.find(p => p.creator === event.creator)?.name || formatPublicKey(event.creator)}</Box>
+        <Box>{t('Suggested time range')}: {formatTimeRange(content.timeRange)}</Box>
+        <Box>{t('Suggested date range')}: {content.dateRange ? 
+          formatDateRange(content.dateRange[0], content.dateRange[1]) 
+          : 'Invalid date range'}
+        </Box>
+        <Box>{t('Finalized date and time')}: {event.finalDateTime ? formatMessageDateTime(new Date(event.finalDateTime).getTime()) : 'Not set'}</Box>
+      </Box>
+    );
+  })}
+</Box>
+
+
+      <Dialog open={showDialog} onClose={() => setShowDialog(false)}>
+        <DialogTitle>{t('Finalize Event')}</DialogTitle>
+        <DialogContent>
+          <TextField
+            label={t('Final Date and Time')}
+            type="datetime-local"
+            value={finalDateTime}
+            onChange={(e) => setFinalDateTime(e.target.value)}
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowDialog(false)}>{t('Cancel')}</Button>
+          <Button onClick={handleFinalizeEvent} disabled={!finalDateTime}>{t('Finalize')}</Button>
+        </DialogActions>
+      </Dialog>
+      
+            <Snackbar
+              open={!!snackbarMessage}
+              autoHideDuration={6000}
+              onClose={() => setSnackbarMessage(null)}
+              message={snackbarMessage}
+            />
+          </Box>
+        </AppContent>
+      </AppWrapper>
+    </>
+  );
+};
+
+export default Calendar;
+ 
+src/state/web3State.ts
+ 
+import { atom } from 'jotai';
+import { ethers } from 'ethers';
+
+export const providerAtom = atom<ethers.providers.Web3Provider | null>(null);
+export const signerAtom = atom<ethers.Signer | null>(null);
+export const accountAtom = atom<string | null>(null);
+export const chainIdAtom = atom<number | null>(null);
+export const isConnectedAtom = atom<boolean>(false);
+
+// Derived atoms for contract state
+export const balanceAtom = atom<string>('0');
+export const familyInfoAtom = atom<{
+  familyId: number;
+  familySize: number;
+  relationships: number[];
+} | null>(null);
+ 
+src/state/userState.ts
+ 
+import { atom } from "recoil";
+import { SET_NOTE, SET_SEARCH_NOTE, SET_STOCK_NOTE } from "util/actionTypes";
+
+export const userState = atom({
+  key: 'userState',
+  default: {
+    stockNote: [],
+    userNote: [],
+    searchedNote: []
+  },
+});
+export const manageUserState = (actionType: string, payload: any, setState: Function, state: any) => {
+  switch (actionType) {
+    case SET_NOTE:
+      setState({
+        ...state,
+        stockNote: [
+          payload.data,
+          ...state.stockNote
+        ],
+        userNote: [
+          ...state.stockNote,
+          payload.data
+        ],
+      });
+      break;
+    case SET_STOCK_NOTE:
+      setState({
+        ...state,
+        stockNote: payload.data,
+      });
+      break;
+    case SET_SEARCH_NOTE:
+      setState({
+        ...state,
+        searchedNote: payload.data,
+      });
+      break;
+    default:
+      break;
+  }
+} 
+src/views/direct-message/index.tsx
+ 
+import {useEffect, useMemo, useState} from 'react';
+import {useAtom} from 'jotai';
+import {RouteComponentProps, useLocation, useNavigate} from '@reach/router';
+import {Helmet} from 'react-helmet';
+import isEqual from 'lodash.isequal';
+import {nip19} from 'nostr-tools';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import AppWrapper from 'views/components/app-wrapper';
+import AppContent from 'views/components/app-content';
+import AppMenu from 'views/components/app-menu';
+import ChatInput from 'views/components/chat-input';
+import ChatView from 'views/components/chat-view';
+import ProfileCard from 'views/components/profile-card';
+import DmHeader from 'views/direct-message/components/dm-header';
+import ThreadChatView from 'views/components/thread-chat-view';
+import useTranslation from 'hooks/use-translation';
+import useMediaBreakPoint from 'hooks/use-media-break-point';
+import useLiveDirectMessages from 'hooks/use-live-direct-messages';
+import {
+    directContactsAtom,
+    directMessageAtom,
+    keysAtom,
+    muteListAtom,
+    profilesAtom,
+    profileToDmAtom,
+    ravenAtom,
+    ravenStatusAtom,
+    threadRootAtom
+} from 'atoms';
+
+
+const DirectMessagePage = (props: RouteComponentProps) => {
+    const [keys] = useAtom(keysAtom);
+    const navigate = useNavigate();
+    const [t] = useTranslation();
+    const {isSm} = useMediaBreakPoint();
+    const location = useLocation();
+    const [directMessage, setDirectMessage] = useAtom(directMessageAtom);
+    const [directContacts] = useAtom(directContactsAtom);
+    const [threadRoot, setThreadRoot] = useAtom(threadRootAtom);
+    const [ravenStatus] = useAtom(ravenStatusAtom);
+    const [muteList] = useAtom(muteListAtom);
+    const [raven] = useAtom(ravenAtom);
+    const [profiles] = useAtom(profilesAtom);
+    const [profileToDm, setProfileToDm] = useAtom(profileToDmAtom);
+    const messages = useLiveDirectMessages(directMessage || undefined);
+    const [notFound, setNotFound] = useState(false);
+
+    const [npub, pub] = useMemo((): [string | null, string | null] => {
+        if ('npub' in props) {
+            const npub = props.npub as string;
+            try {
+                return [npub, nip19.decode(npub).data as string]
+            } catch (e) {
+            }
+        }
+        return [null, null];
+
+    }, [props]);
+
+    useEffect(() => {
+        if (!npub) navigate('/').then();
+    }, [npub]);
+
+    useEffect(() => {
+        if (!keys) navigate('/login').then();
+    }, [keys]);
+
+    useEffect(() => {
+        return () => setProfileToDm(null);
+    }, [location]);
+
+    useEffect(() => {
+        const c = directContacts.find(x => x.pub === pub);
+        setDirectMessage(c?.pub || null);
+    }, [pub, directContacts]);
+
+    useEffect(() => {
+        const contact = directContacts.find(x => x.pub === pub);
+        if (muteList.pubkeys.find(x => x === contact?.pub)) {
+            navigate('/').then();
+        }
+    }, [pub, muteList]);
+
+    useEffect(() => {
+        const msg = messages.find(x => x.id === threadRoot?.id);
+        if (threadRoot && msg && !isEqual(msg, threadRoot)) {
+            setThreadRoot(msg);
+        }
+    }, [messages, threadRoot]);
+
+    useEffect(() => {
+        if (ravenStatus.ready && !directMessage && pub && !profileToDm) {
+            const timer = setTimeout(() => setNotFound(true), 5000);
+
+            raven?.fetchProfile(pub).then(profile => {
+                if (profile) {
+                    setProfileToDm(profile);
+                    clearTimeout(timer);
+                }
+            });
+
+            return () => clearTimeout(timer);
+        }
+    }, [ravenStatus.ready, directMessage, props, profileToDm]);
+
+    const profile = useMemo(() => profiles.find(x => x.creator === pub), [profiles, pub]);
+
+    if (!npub || !pub || !keys) return null;
+
+    if (!ravenStatus.ready) {
+        return <Box sx={{display: 'flex', alignItems: 'center'}}>
+            <CircularProgress size={20} sx={{mr: '8px'}}/> {t('Loading...')}
+        </Box>;
+    }
+
+    if (!directMessage) {
+        return <>
+            <Helmet><title>{t('NostrChat')}</title></Helmet>
+            <AppWrapper>
+                <AppMenu/>
+                <AppContent>
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '100%',
+                        height: '100%'
+                    }}>
+                        {(() => {
+                            if (profileToDm) {
+                                return <Box sx={{maxWidth: isSm ? '500px' : '300px', ml: '10px', mr: '10px'}}>
+                                    <ProfileCard profile={profileToDm} pub={pub} onDM={() => {
+                                    }}/>
+                                </Box>
+                            }
+
+                            if (notFound) return t('Profile not found');
+
+                            return <>
+                                <CircularProgress size={20} sx={{mr: '8px'}}/> {t('Looking for the profile...')}
+                            </>;
+                        })()}
+                    </Box>
+                </AppContent>
+            </AppWrapper>
+        </>
+    }
+
+    if (!ravenStatus.dmsDone) {
+        return <>
+            <Helmet><title>{t(`NostrChat - ${profile?.name || npub}`)}</title></Helmet>
+            <AppWrapper>
+                <AppMenu/>
+                <AppContent>
+                    <DmHeader/>
+                    <Box sx={{
+                        flexGrow: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <CircularProgress size={20} sx={{mr: '8px'}}/> {t('Fetching messages...')}
+                    </Box>
+                    <ChatInput separator={pub} senderFn={() => {
+                        return new Promise(() => {
+                        }).then()
+                    }}/>
+                </AppContent>
+            </AppWrapper>
+        </>;
+    }
+
+    return <>
+        <Helmet><title>{t(`NostrChat - ${profile?.name || npub}`)}</title></Helmet>
+        <AppWrapper>
+            <AppMenu/>
+            <AppContent divide={!!threadRoot}>
+                <DmHeader/>
+                <ChatView separator={pub} messages={messages} isDM/>
+                <ChatInput separator={pub} senderFn={(message: string, mentions: string[]) => {
+                    return raven!.sendDirectMessage(pub, message, mentions);
+                }}/>
+            </AppContent>
+            {threadRoot && <ThreadChatView senderFn={(message: string, mentions: string[]) => {
+                return raven!.sendDirectMessage(pub, message, mentions, threadRoot.id);
+            }}/>}
+        </AppWrapper>
+    </>;
+}
+
+export default DirectMessagePage;
+ 
+src/views/settings/profile.tsx
+ 
+// External imports first
+import React, { useEffect, useState } from "react";
+import { useAtom } from 'jotai';
+import { RouteComponentProps, useNavigate } from "@reach/router";
+
+// Then local imports
+//import { LoginForm } from 'views/components/metadata-form/loginForm';
+import LoginMetadataForm from 'views/components/metadata-form/loginForm';
+
+import Button from "@mui/material/Button";
+import { Helmet } from "react-helmet";
+import useTranslation from "hooks/use-translation";
+import useToast from "hooks/use-toast";
+import AppWrapper from "views/components/app-wrapper";
+import AppContent from "views/components/app-content";
+import SettingsHeader from "views/settings/components/settings-header";
+import SettingsContent from "views/settings/components/settings-content";
+import SettingsMenu from "views/settings/components/settings-menu";
+import MetadataForm from "views/components/metadata-form";
+import { keysAtom, profileAtom, ravenAtom } from "atoms";
+import { Card, CardContent } from "@mui/material";
+
+import { useModularDAO } from '../../hooks/useModularDAO';
+import { familyInfoAtom } from '../../state/web3State';
+
+const SettingsProfilePage = (_: RouteComponentProps) => {
+  const [keys] = useAtom(keysAtom);
+  const [familyInfo] = useAtom(familyInfoAtom);
+  const { getProfileInfo } = useModularDAO();
+  const navigate = useNavigate();
+  const [t] = useTranslation();
+  const [profile] = useAtom(profileAtom);
+  const [raven] = useAtom(ravenAtom);
+  const [, showMessage] = useToast();
+  const [inProgress, setInProgress] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!keys) {
+      navigate("/login").then();
+    }
+  }, [keys]);
+
+  useEffect(() => {
+    if (keys?.pub) {
+      getProfileInfo();
+    }
+  }, [keys]);
+
+  return (
+    <>
+      <Helmet>
+        <title>{t("NostrChat - Profile")}</title>
+      </Helmet>
+      <AppWrapper>
+        <SettingsMenu />
+        <AppContent>
+          <SettingsHeader section={t("Profile")} />
+
+          <div className="col-12 col-md-8 offset-md-2">
+            <Card>
+              <CardContent>
+                <SettingsContent>
+                  <LoginMetadataForm
+                    values={{
+                      name: profile?.name || "",
+                      about: profile?.about || "",
+                      picture: profile?.picture || "",
+                    }}
+                    submitBtnLabel={t("Save")}
+                    skipButton={<Button />}
+                    onSubmit={(data) => {
+                      setInProgress(true);
+                      raven
+                        ?.updateProfile(data)
+                        .then(() => {
+                          showMessage(t("Your profile updated"), "success");
+                          navigate("/settings").then();
+                        })
+                        .catch((e) => {
+                          showMessage(e.toString(), "error");
+                        })
+                        .finally(() => setInProgress(false));
+                    }}
+                    inProgress={inProgress}
+                  />
+                </SettingsContent>
+              </CardContent>
+            </Card>
+          </div>
+          {familyInfo && (
+            <div>
+              <h3>Family Information</h3>
+              <p>Family ID: {familyInfo.familyId}</p>
+              <p>Family Size: {familyInfo.familySize}</p>
+              <p>Relationships: {familyInfo.relationships.length}</p>
+            </div>
+          )}
+        </AppContent>
+      </AppWrapper>
+    </>
+  );
+};
+
+export default SettingsProfilePage;
+ 
+src/views/settings/relays.tsx
+ 
+import React, {useEffect, useMemo, useState} from 'react';
+import {useAtom} from 'jotai';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableRow from '@mui/material/TableRow';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
+import TableHead from '@mui/material/TableHead';
+import Switch from '@mui/material/Switch';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputAdornment from '@mui/material/InputAdornment';
+import {RouteComponentProps, useNavigate} from '@reach/router';
+import {Helmet} from 'react-helmet';
+
+import useTranslation from 'hooks/use-translation';
+import useToast from 'hooks/use-toast';
+import useMediaBreakPoint from 'hooks/use-media-break-point';
+import useModal from 'hooks/use-modal';
+import AppWrapper from 'views/components/app-wrapper';
+import AppContent from 'views/components/app-content';
+import SettingsMenu from 'views/settings/components/settings-menu';
+import SettingsHeader from 'views/settings/components/settings-header';
+import SettingsContent from 'views/settings/components/settings-content';
+import ConfirmDialog from 'components/confirm-dialog';
+import {keysAtom, ravenAtom} from 'atoms';
+import {RelayDict} from 'types';
+import {getRelays, getRelaysNullable, removeRelays, storeRelays} from 'local-storage';
+import ShareIcon from 'svg/share';
+import DeleteIcon from 'svg/delete';
+import Plus from 'svg/plus';
+
+
+const SettingsRelaysPage = (_: RouteComponentProps) => {
+    const [keys] = useAtom(keysAtom);
+    const navigate = useNavigate();
+    const [t] = useTranslation();
+    const [, showMessage] = useToast();
+    const [, showModal] = useModal();
+    const {isSm} = useMediaBreakPoint();
+    const [raven] = useAtom(ravenAtom);
+    const [prevData, setPrevData] = useState<RelayDict>({});
+    const [data, setData] = useState<RelayDict>({});
+    const [newAddress, setNewAddress] = useState('');
+    const [canRestore, setCanRestore] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (!keys) {
+            navigate('/login').then();
+        }
+    }, [keys]);
+
+
+    const load = () => {
+        getRelays().then(d => {
+            setPrevData(d);
+            setData(d);
+        });
+    }
+
+    useEffect(() => {
+        load();
+    }, []);
+
+    useEffect(() => {
+        getRelaysNullable().then((r) => {
+            setCanRestore(r !== null);
+        });
+    }, [data]);
+
+    const canSave = useMemo(() => JSON.stringify(prevData) !== JSON.stringify(data), [data, prevData]);
+
+    if (!keys) {
+        return null;
+    }
+
+    const add = () => {
+        let url;
+        try {
+            url = new URL(newAddress.trim())
+        } catch (e) {
+            showMessage(t('Invalid URL', {n: newAddress}), 'error');
+            return;
+        }
+
+        if (!['ws:', 'wss:'].includes(url.protocol)) {
+            showMessage(t('Invalid protocol. Must be "ws" or "wss"'), 'error');
+            return;
+        }
+
+        const {href: address} = url
+
+        if (data[address]) {
+            showMessage(t('The address is already in the list'), 'error');
+            return;
+        }
+
+        setData({
+            ...data,
+            [address]: {read: true, write: true}
+        });
+
+        setNewAddress('');
+    }
+
+    const remove = (address: string) => {
+        let {[address]: _, ...nRelays} = data;
+        setData(nRelays);
+    }
+
+    const switchRead = (address: string) => {
+        setData({
+            ...data,
+            [address]: {read: !data[address].read, write: data[address].write}
+        });
+    }
+
+    const switchWrite = (address: string) => {
+        setData({
+            ...data,
+            [address]: {read: data[address].read, write: !data[address].write}
+        });
+    }
+
+    const save = () => {
+        const read = Object.keys(data).filter(d => data[d].read);
+        if (read.length === 0) {
+            showMessage(t('At least 1 read relay is required'), 'error');
+            return;
+        }
+
+        const write = Object.keys(data).filter(d => data[d].write);
+        if (write.length === 0) {
+            showMessage(t('At least 1 write relay is required'), 'error');
+            return;
+        }
+
+        storeRelays(data).then();
+        window.location.reload();
+    }
+
+    const discard = () => {
+        showModal({
+            body: <ConfirmDialog onConfirm={() => {
+                setData(prevData);
+            }}/>
+        });
+    }
+
+    const restore = () => {
+        showModal({
+            body: <ConfirmDialog onConfirm={() => {
+                removeRelays().then();
+                window.location.reload();
+            }}/>
+        });
+    }
+
+    const recommend = (address: string) => {
+        raven?.recommendRelay(address).then(() => {
+            showMessage(t('Done'), 'success');
+        }).catch(e => {
+            showMessage(e.toString(), 'error');
+        })
+    }
+
+    return <>
+        <Helmet><title>{t('NostrChat - Relays')}</title></Helmet>
+        <AppWrapper>
+            <SettingsMenu/>
+            <AppContent>
+                <SettingsHeader section={t('Relays')}/>
+                <SettingsContent>
+                    <Box sx={{maxWidth: '800px'}}>
+                        {canRestore && (
+                            <Box sx={{
+                                display: 'flex',
+                                justifyContent: 'flex-end',
+                                mb: '20px'
+                            }}>
+                                <Button variant="outlined" onClick={restore}>{t('Restore defaults')}</Button>
+                            </Box>
+                        )}
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>{t('Address')}</TableCell>
+                                        <TableCell>{t('Read')}</TableCell>
+                                        <TableCell>{t('Write')}</TableCell>
+                                        <TableCell></TableCell>
+                                        <TableCell></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {Object.keys(data).map(r => {
+                                        return <TableRow key={r}>
+                                            <TableCell>{r}</TableCell>
+                                            <TableCell sx={{width: '40px'}}>
+                                                <Switch size="small"
+                                                        checked={data[r].read}
+                                                        onChange={() => {
+                                                            switchRead(r);
+                                                        }}/>
+                                            </TableCell>
+                                            <TableCell sx={{width: '40px'}}>
+                                                <Switch size="small"
+                                                        checked={data[r].write}
+                                                        onChange={() => {
+                                                            switchWrite(r);
+                                                        }}/>
+                                            </TableCell>
+                                            <TableCell sx={{width: '70px'}}>
+                                                <Button size="small" startIcon={<ShareIcon height={20}/>}
+                                                        onClick={() => {
+                                                            recommend(r);
+                                                        }}>{t('Share')}</Button>
+                                            </TableCell>
+                                            <TableCell sx={{width: '70px'}}>
+                                                <IconButton size="small" color="primary"
+                                                            onClick={() => {
+                                                                remove(r);
+                                                            }}>
+                                                    <DeleteIcon height={20}/>
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    })}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <Box sx={{
+                            mt: '20px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            flexDirection: isSm ? 'row' : 'column'
+                        }}>
+                            <Box sx={{flexGrow: 1}}>
+                                <OutlinedInput fullWidth
+                                               size="small"
+                                               value={newAddress}
+                                               placeholder={t('Add a relay')}
+                                               endAdornment={<InputAdornment position="end">
+                                                   <IconButton onClick={add}>
+                                                       <Plus height={20}/>
+                                                   </IconButton>
+                                               </InputAdornment>}
+                                               onChange={(e) => {
+                                                   setNewAddress(e.target.value);
+                                               }}
+                                               onKeyDown={(e) => {
+                                                   if (e.key === 'Enter') {
+                                                       add();
+                                                   }
+                                               }}/>
+                            </Box>
+                            {canSave && (
+                                <Box sx={{
+                                    width: isSm ? '200px' : null,
+                                    display: 'flex',
+                                    justifyContent: isSm ? 'flex-end' : null,
+                                    mt: !isSm ? '10px' : null
+                                }}>
+                                    <Button variant="contained" onClick={save} sx={{mr: '6px'}}>{t('Save')}</Button>
+                                    <Button variant="outlined" onClick={discard}>{t('Discard')}</Button>
+                                </Box>
+                            )}
+                        </Box>
+                    </Box>
+                </SettingsContent>
+            </AppContent>
+        </AppWrapper>
+    </>;
+}
+
+export default SettingsRelaysPage;
+ 
+src/util/actionTypes.ts
+ 
+export const SET_NOTE="SET_NOTE"
+export const SET_STOCK_NOTE="SET_STOCK_NOTE"
+export const SET_SEARCH_NOTE="SET_SEARCH_NOTE" 
+src/util/misc.ts
+ 
+export function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
+    return value !== null && value !== undefined;
+}
+ 
+src/util/recoilFunctions.ts
+ 
+ 
+src/views/components/app-content/DashboardContent.tsx
+ 
+import React from 'react';
+import Box from '@mui/material/Box';
+import useMediaBreakPoint from 'hooks/use-media-break-point';
+import useStyles from 'hooks/use-styles';
+
+const DashboardContent = (props: { children: React.ReactNode, divide?: boolean }) => {
+    const {isMd} = useMediaBreakPoint();
+    const styles = useStyles();
+
+    const isSmallScreen = !isMd;
+
+    return <Box sx={{
+        width: isSmallScreen ? '100%' : (props.divide ? `calc((100% - ${styles.sideBarWidth}) / 2)` : `calc(100% - ${styles.sideBarWidth})`),
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        flexGrow: 0,
+        flexShrink: 0,
+        overflow:'scroll'
+    }}>
+        {props.children}
+    </Box>
+}
+
+export default DashboardContent;
+ 
+src/views/components/message-view/ProposalMessageView.tsx
+ 
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useAtom } from 'jotai';
+import uniq from 'lodash.uniq';
+import { darken } from '@mui/material';
+import Box from '@mui/material/Box';
+import { useTheme } from '@mui/material/styles';
+import Tooltip from '@mui/material/Tooltip';
+import { grey } from '@mui/material/colors';
+import { useNavigate } from '@reach/router';
+import { nip19 } from 'nostr-tools';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import useContentRenderer from 'hooks/use-render-content';
+import useMediaBreakPoint from 'hooks/use-media-break-point';
+import useTranslation from 'hooks/use-translation';
+import useModal from 'hooks/use-modal';
+import useStyles from 'hooks/use-styles';
+import Avatar from 'views/components/avatar';
+import ProfileDialog from 'views/components/dialogs/profile';
+import MessageReactions from 'views/components/message-reactions';
+import MessageMenuWeb from 'views/components/message-menu/web';
+import MessageMobileMobile from 'views/components/message-menu/mobile';
+import {
+  activeMessageAtom,
+  profilesAtom,
+  threadRootAtom,
+  spammersAtom,
+} from 'atoms';
+import { Message } from 'types';
+import {
+  formatMessageTime,
+  formatMessageFromNow,
+  formatMessageDateTime,
+} from 'helper';
+import ChevronRight from 'svg/chevron-right';
+import { PLATFORM } from 'const';
+import { truncateMiddle } from 'util/truncate';
+
+const ProposalMessageView = (props: {
+  message: Message;
+  compactView: boolean;
+  dateFormat: 'time' | 'fromNow';
+  inThreadView?: boolean;
+}) => {
+  const { message, compactView, dateFormat, inThreadView } = props;
+  const theme = useTheme();
+  const styles = useStyles();
+  const navigate = useNavigate();
+  const [profiles] = useAtom(profilesAtom);
+  const profile = profiles.find(x => x.creator === message.creator);
+  const [threadRoot, setThreadRoot] = useAtom(threadRootAtom);
+  const [activeMessage] = useAtom(activeMessageAtom);
+  const [spammers] = useAtom(spammersAtom);
+  const [t] = useTranslation();
+  const [, showModal] = useModal();
+  const { isMd } = useMediaBreakPoint();
+  const renderer = useContentRenderer();
+  const holderEl = useRef<HTMLDivElement | null>(null);
+  const [menu, setMenu] = useState<boolean>(false);
+  const [mobileMenu, setMobileMenu] = useState<boolean>(false);
+  const [isVisible, setIsVisible] = useState<boolean>(true);
+  const profileName = useMemo(
+    () =>
+      truncateMiddle(
+        profile?.name || nip19.npubEncode(message.creator),
+        isMd ? 40 : 22,
+        ':'
+      ),
+    [profile, message]
+  );
+  const messageTime = useMemo(
+    () =>
+      dateFormat === 'time'
+        ? formatMessageTime(message.created)
+        : formatMessageFromNow(message.created),
+    [message]
+  );
+  const messageDateTime = useMemo(
+    () => formatMessageDateTime(message.created),
+    [message]
+  );
+  const lastReply = useMemo(
+    () =>
+      message.children && message.children.length > 0
+        ? formatMessageFromNow(
+            message.children[message.children.length - 1].created
+          )
+        : null,
+    [message]
+  );
+  let mobileMenuTimer: any = null;
+  const canTouch = styles.canTouch();
+  const canHover = styles.canHover();
+  const [showSpammer, setShowSpammer] = useState<boolean>(false);
+  const isSpammer = spammers[message.creator] !== undefined;
+  const renderedBody = useMemo(() => {
+    const sx = {
+      fontSize: '.8em',
+      background: grey[800],
+      display: 'inline-flex',
+      borderRadius: '6px',
+      p: '0 6px',
+      cursor: 'pointer',
+      ':hover': {
+        background: grey[600],
+      },
+    };
+    if (isSpammer && !showSpammer) {
+      return (
+        <Box
+          sx={sx}
+          onClick={() => {
+            setShowSpammer(true);
+          }}
+        >
+          {t('This account appears to be a spammer. Click to show message.')}
+        </Box>
+      );
+    } else if (isSpammer && showSpammer) {
+      return (
+        <>
+          {renderer(message)}
+          <Box
+            sx={{ ...sx, mt: '10px' }}
+            onClick={() => {
+              setShowSpammer(false);
+            }}
+          >
+            {t('Hide')}
+          </Box>
+        </>
+      );
+    } else {
+      return renderer(message);
+    }
+  }, [message, isSpammer, showSpammer]);
+
+  const profileClicked = () => {
+    showModal({
+      body: (
+        <ProfileDialog
+          profile={profile}
+          pubkey={message.creator}
+          onDM={() => {
+            navigate(`/dm/${nip19.npubEncode(message.creator)}`).then();
+          }}
+        />
+      ),
+      maxWidth: 'xs',
+      hideOnBackdrop: true,
+    });
+  };
+
+  useEffect(() => {
+    if (!holderEl.current) return;
+
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    });
+    observer.observe(holderEl.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isVisible]);
+
+  useEffect(() => {
+    if (mobileMenu && PLATFORM !== 'web') {
+      // Send a small vibration
+      Haptics.impact({ style: ImpactStyle.Light }).then();
+    }
+  }, [mobileMenu]);
+
+  const ps = isMd ? '24px' : '10px';
+  return (
+    <Box
+      data-visible={isVisible}
+      data-id={message.id}
+      className="message"
+      ref={holderEl}
+      sx={{
+        display: 'flex',
+        p: `${!compactView ? '15px' : '3px'} ${ps} 0 ${ps}`,
+        position: 'relative',
+        background:
+          activeMessage === message.id || mobileMenu
+            ? theme.palette.divider
+            : null,
+        ...styles.withHover({
+          ':hover': {
+            background: theme.palette.divider,
+          },
+        }),
+        userSelect: canTouch ? 'none' : null,
+      }}
+      onMouseEnter={() => {
+        if (canHover) setMenu(true);
+      }}
+      onMouseLeave={() => {
+        if (canHover) setMenu(false);
+      }}
+      onTouchStart={() => {
+        mobileMenuTimer = setTimeout(() => {
+          setMobileMenu(true);
+        }, 600);
+      }}
+      onTouchEnd={() => {
+        clearTimeout(mobileMenuTimer);
+      }}
+      onTouchCancel={() => {
+        clearTimeout(mobileMenuTimer);
+      }}
+      onTouchMove={() => {
+        clearTimeout(mobileMenuTimer);
+      }}
+      onContextMenu={e => {
+        if (canTouch) {
+          // don't want to see context menu while using dev tools
+          e.preventDefault();
+        }
+      }}
+    >
+      {/* {(menu || activeMessage === message.id) && (
+        <Box
+          sx={{
+            position: 'absolute',
+            right: '10px',
+            top: '-10px',
+          }}
+        >
+          <MessageMenuWeb message={message} inThreadView={inThreadView} />
+        </Box>
+      )} */}
+      <Box
+        sx={{
+          display: 'flex',
+          width: '40px',
+          flexGrow: 0,
+          flexShrink: 0,
+        }}
+      >
+        {compactView ? null : (
+          <Box sx={{ cursor: 'pointer' }} onClick={profileClicked}>
+            <Avatar src={profile?.picture} seed={message.creator} size={40} />
+          </Box>
+        )}
+      </Box>
+      <Box sx={{ flexGrow: 1, ml: '12px' }}>
+        {!compactView && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              fontSize: '0.8em',
+              lineHeight: '1em',
+              mr: '12px',
+              mb: '12px',
+            }}
+          >
+            <Box
+              onClick={profileClicked}
+              sx={{
+                fontWeight: '600',
+                mr: '5px',
+                cursor: 'pointer',
+              }}
+            >
+              {profileName}
+            </Box>
+        <MessageReactions message={message} />
+            <Tooltip title={messageDateTime} placement="right">
+              <Box
+                sx={{
+                  color: darken(theme.palette.text.secondary, 0.3),
+                  fontSize: '90%',
+                  cursor: 'default',
+                }}
+              >
+                {messageTime}
+              </Box>
+            </Tooltip>
+          </Box>
+        )}
+        <Box
+          sx={{
+            fontSize: '0.9em',
+            mt: '4px',
+            wordBreak: 'break-word',
+            lineHeight: '1.4em',
+            color: theme.palette.text.secondary,
+          }}
+        >
+          {renderedBody}
+        </Box>
+        {!inThreadView && message.children && message.children.length > 0 && (
+          <Box
+            sx={{
+              p: '6px',
+              mb: '4px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              fontSize: '0.8rem',
+              cursor: 'pointer',
+              border: '1px solid transparent',
+              color: darken(theme.palette.text.secondary, 0.3),
+              borderRadius: theme.shape.borderRadius,
+              svg: {
+                display: 'none',
+              },
+              ':hover': {
+                borderColor: theme.palette.divider,
+                background: theme.palette.background.paper,
+                svg: {
+                  display: 'block',
+                },
+              },
+            }}
+            onClick={() => {
+              setThreadRoot(message);
+            }}
+          >
+            {uniq(message.children.map(m => m.creator))
+              .slice(0, 4)
+              .map(c => {
+                const profile = profiles.find(x => x.creator === c);
+                return (
+                  <Box
+                    key={c}
+                    sx={{
+                      mr: '6px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Avatar src={profile?.picture} seed={c} size={20} />
+                  </Box>
+                );
+              })}
+            <Box
+              sx={{
+                mr: '10px',
+                color: theme.palette.primary.main,
+                fontWeight: 'bold',
+              }}
+            >
+              {message.children.length === 1
+                ? t('1 reply')
+                : t('{{n}} replies', { n: message.children.length })}
+            </Box>
+            {isMd && !threadRoot && (
+              <>
+                <Box sx={{ mr: '10px' }}>
+                  {t('Last reply {{n}}', { n: lastReply! })}
+                </Box>
+                <ChevronRight height={20} />
+              </>
+            )}
+          </Box>
+        )}
+        <MessageReactions message={message} />
+        {mobileMenu && (
+          <MessageMobileMobile
+            message={message}
+            profileName={profileName}
+            inThreadView={inThreadView}
+            onClose={() => {
+              setMobileMenu(false);
+            }}
+          />
+        )}
+      </Box>
+    </Box>
+  );
+};
+
+export default ProposalMessageView;
+ 
+src/views/components/dialogs/profile/index.tsx
+ 
+import {useAtom} from 'jotai';
+import React, {useEffect, useMemo, useState} from 'react';
+import Box from '@mui/material/Box';
+import {useTheme} from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import DialogContent from '@mui/material/DialogContent';
+import {nip05, nip19} from 'nostr-tools';
+import useTranslation from 'hooks/use-translation';
+import useModal from 'hooks/use-modal';
+import useMediaBreakPoint from 'hooks/use-media-break-point';
+import CloseModal from 'components/close-modal';
+import CopyToClipboard from 'components/copy-clipboard';
+import Avatar from 'views/components/avatar';
+import MuteBtn from 'views/components/mute-btn';
+import DmInput from 'views/components/dm-input';
+import {keysAtom} from 'atoms';
+import {Profile} from 'types';
+import KeyVariant from 'svg/key-variant';
+import EyeOff from 'svg/eye-off';
+import CheckDecagram from 'svg/check-decagram';
+import {truncate, truncateMiddle} from 'util/truncate';
+
+const ProfileDialog = (props: { profile?: Profile | null, pubkey: string, onDM: () => void }) => {
+    const { profile, pubkey, onDM } = props;
+    const [keys] = useAtom(keysAtom);
+    const theme = useTheme();
+    const [t] = useTranslation();
+    const [, showModal] = useModal();
+    const {isSm} = useMediaBreakPoint();
+    const [nip05Verified, setNip05Verified] = useState<boolean>(false);
+
+    const profileName = useMemo(() => profile?.name ? truncateMiddle(profile.name, 22, ':') : null, [profile]);
+    const pub = useMemo(() => nip19.npubEncode(pubkey), [pubkey]);
+    const isMe = keys?.pub === pubkey;
+
+    const boxSx = {
+        position: 'absolute',
+        top: '4px',
+        zIndex: 2,
+        padding: '3px',
+        borderRadius: theme.shape.borderRadius,
+        background: theme.palette.background.paper,
+        width: '36px',
+        height: '36px',
+    };
+
+    useEffect(() => {
+        if (!profile?.nip05) return;
+        nip05.queryProfile(profile.nip05).then((resp) => {
+            setNip05Verified(resp?.pubkey === profile.creator);
+        })
+    }, [profile]);
+
+    const handleClose = () => {
+        showModal(null);
+    };
+
+    return <>
+        <DialogContent>
+            <CloseModal onClick={handleClose}/>
+            <Box sx={{fontSize: '0.8em'}}>
+                <Box sx={{
+                    mb: '10px',
+                    display: 'flex',
+                    position: 'relative',
+                    height: '200px',
+                    width: '200px',
+                    margin: 'auto'
+                }}>
+                    {nip05Verified && (
+                        <Box sx={{...boxSx, left: '4px'}}>
+                            <Tooltip title={t('NIP-05 verified')}>
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    height: '100%',
+                                }}>
+                                    <CheckDecagram height={18}/>
+                                </Box>
+                            </Tooltip>
+                        </Box>
+                    )}
+                    {!isMe && (<Box sx={{...boxSx, right: '4px'}}>
+                        <Tooltip title={t('Mute')}>
+                            <Box>
+                                <MuteBtn pubkey={pubkey}>
+                                    <IconButton><EyeOff height={14}/></IconButton>
+                                </MuteBtn>
+                            </Box>
+                        </Tooltip>
+                    </Box>)}
+                    <Box sx={{
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                        zIndex: 1
+                    }}>
+                        <Avatar src={profile?.picture} seed={pubkey} size={200}/>
+                    </Box>
+                </Box>
+                <Box sx={{textAlign: 'center', mt: '12px'}}>
+                    {profileName && (<Box sx={{mb: '10px', fontWeight: 600, fontSize: '1.2em'}}>{profileName}</Box>)}
+                    {profile?.about && (
+                        <Box sx={{
+                            mb: '10px',
+                            wordBreak: 'break-word',
+                            lineHeight: '1.4em',
+                            color: theme.palette.text.secondary
+                        }}>{truncate(profile.about, 160)}</Box>
+                    )}
+                    <CopyToClipboard copy={pub}>
+                        <Box sx={{
+                            mb: '16px',
+                            fontSize: '0.9em',
+                            color: theme.palette.text.secondary,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer'
+                        }}>
+                            <Box sx={{
+                                mr: '4px',
+                                display: 'flex',
+                                color: theme.palette.warning.main
+                            }}><KeyVariant height={14}/></Box>
+                            {truncateMiddle(pub, (isSm ? 46 : 36), ':')}
+                        </Box>
+                    </CopyToClipboard>
+                </Box>
+                {!isMe && (<DmInput pubkey={pubkey} onDM={onDM}/>)}
+            </Box>
+        </DialogContent>
+    </>;
+}
+
+export default ProfileDialog; 
+src/hooks/useMarketplace.ts
+ 
+import { useEffect, useState } from 'react';
+import { useAtom } from 'jotai';
+import { Product, Proposal, Stall } from 'types';
+import { stallsAtom, productsAtom, channelsAtom, ravenAtom } from 'atoms';
+
+export function useMarketplace() {
+  const [stalls, setStalls] = useAtom(stallsAtom);
+  const [products, setProducts] = useAtom(productsAtom);
+  const [channels] = useAtom(channelsAtom);
+  const [proposals, setProposals] = useState<Proposal[]>([]);
+  const [raven] = useAtom(ravenAtom);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (raven) {
+        // Fetch stalls
+        const fetchedStalls = await raven.fetchStalls();
+        setStalls(fetchedStalls);
+
+        // Fetch products
+        const fetchedProducts = await raven.fetchProducts();
+        setProducts(fetchedProducts);
+
+        // Set proposals
+        const fetchedProposals = channels.filter(channel => 'readyForMarket' in channel) as Proposal[];
+        setProposals(fetchedProposals);
+      }
+    };
+
+    fetchData();
+  }, [raven, channels]);
+
+  useEffect(() => {
+    console.log('useMarketplace - Stalls:', stalls);
+    console.log('useMarketplace - Products:', products);
+    console.log('useMarketplace - Proposals:', proposals);
+  }, [stalls, products, proposals]);
+
+  return {
+    stalls,
+    products,
+    proposals,
+  };
+}
+
+export default useMarketplace; 
+src/views/channel/components/channel-header/ProposalDetails.tsx
+ 
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Button from '@mui/material/Button';
+
+// Define the type of the proposal object
+interface Proposal {
+  about: string;
+  name: string;
+}
+
+interface ProposalDetailsProps {
+  proposal: Proposal;
+}
+
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  width: '90%',
+  transform: 'translate(-50%, -50%)',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  pt: 2,
+  px: 4,
+  pb: 3,
+};
+
+const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposal }) => {
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <div>
+      <button
+        onClick={handleOpen}
+        className="btn btn_success"
+        style={{ height: '40px' }}
+      >
+        Proposal Details
+      </button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="parent-modal-title"
+        aria-describedby="parent-modal-description"
+      >
+        <Box sx={{ ...style, width: 400 }}>
+          <div className="text-center">
+            <h2 id="parent-modal-title">Proposal Details</h2>
+            <hr />
+            <div>
+              <h3> {proposal.name} </h3>
+            </div>
+          </div>
+        </Box>
+      </Modal>
+    </div>
+  );
+};
+
+export default ProposalDetails;
+ 
+src/views/components/marketplace/ProductView.tsx
+ 
+import React from 'react';
+import { Box, Typography, Button } from '@mui/material';
+import { Product } from 'types';
+
+const ProductView: React.FC<{ product: Product }> = ({ product }) => {
+  return (
+    <Box>
+      <Typography variant="h6">{product.name}</Typography>
+      <Typography variant="body1">{product.description}</Typography>
+      <Typography variant="body2">Price: {product.price}</Typography>
+      <Typography variant="body2">Quantity: {product.quantity}</Typography>
+      <Button variant="contained">Add to Cart</Button>
+    </Box>
+  );
+};
+
+export default ProductView; 
+src/views/components/marketplace/MerchantDashboard.tsx
+ 
+import React, { useEffect, useState } from 'react';
+import { RouteComponentProps } from '@reach/router';
+import { useMarketplace } from 'hooks/useMarketplace';
+import { Stall, Order } from 'types';
+
+const MerchantDashboard: React.FC<RouteComponentProps> = () => {
+  const { stalls } = useMarketplace();
+  const [merchantStalls, setMerchantStalls] = useState<Stall[]>([]);
+  const [pendingOrders, setPendingOrders] = useState<Order[]>([]);
+
+  useEffect(() => {
+    // TODO: Fetch merchant's stalls and pending orders
+  }, []);
+
+  const handleCreateStall = () => {
+    // TODO: Implement create stall functionality
+  };
+
+  const handleCreateProduct = (stallId: string) => {
+    // TODO: Implement create product functionality
+  };
+
+  const handleUpdateOrderStatus = (orderId: string, status: string) => {
+    // TODO: Implement update order status functionality
+  };
+
+  return (
+    <div>
+      <h1>Merchant Dashboard</h1>
+      <h2>Your Stalls</h2>
+      {merchantStalls.map((stall) => (
+        <div key={stall.id}>
+          <h3>{stall.name}</h3>
+          <button onClick={() => handleCreateProduct(stall.id)}>Add Product</button>
+        </div>
+      ))}
+      <button onClick={handleCreateStall}>Create New Stall</button>
+      <h2>Pending Orders</h2>
+      {pendingOrders.map((order) => (
+        <div key={order.id}>
+          <h3>Order #{order.id}</h3>
+          <p>Status: {order.status}</p>
+          <button onClick={() => handleUpdateOrderStatus(order.id, 'shipped')}>Mark as Shipped</button>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default MerchantDashboard; 
+src/views/components/login/index.tsx
+ 
+import React, { useState, useEffect } from 'react';
+import { useAtom } from 'jotai';
+import { useTranslation, Trans } from 'react-i18next';
+import { Box, Button, Divider, CircularProgress, Modal, Typography, Checkbox, TextField } from '@mui/material';
+import { CiWarning } from 'react-icons/ci';
+import { IoMdClose } from 'react-icons/io';
+import { nip06, getPublicKey, nip19 } from 'nostr-tools';
+import { generateFirstGenKeys, deriveSecondGenKeys, generateCredentials } from 'hooks/keyDerivation';
+import { keysAtom, profileAtom, backupWarnAtom, ravenAtom, ravenStatusAtom } from 'atoms';
+import useModal from 'hooks/use-modal';
+import useMediaBreakPoint from 'hooks/use-media-break-point';
+import LoginMetadataForm from 'views/components/metadata-form/loginForm';
+import KeyDisplayDialog from 'views/components/KeyDisplayDialog';
+import CredentialDisplayDialog from 'views/components/CredentialDisplayDialog';
+import DownloadSeedWords from 'views/settings/DownloadSeedWords';
+import Creation from 'svg/creation';
+import Import from 'svg/import';
+import { storeKeys, storeCredentials } from 'local-storage';
+import { Keys } from 'types';
+import ImportAccount from 'views/components/dialogs/import-account';
+import { InstallNip07Dialog } from "views/components/dialogs/no-wallet/nip07";
+import axios from 'axios';
+
+import { getUserIP } from './ip';
+
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '700px',
+  maxWidth: '100%',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
+const Login = (props: { onDone: () => void }) => {
+  const { onDone } = props;
+  const { isSm } = useMediaBreakPoint();
+  
+  //const { t } = useTranslation();
+  // At the top of your login/index.tsx file, add this comment:
+  // @ts-ignore
+  const { t } = useTranslation('translation', {
+    useSuspense: false
+  });
+  
+  const [, showModal] = useModal();
+  const [, setKeys] = useAtom(keysAtom);
+  const [profile, setProfile] = useAtom(profileAtom);
+  const [, setBackupWarn] = useAtom(backupWarnAtom);
+  const [raven] = useAtom(ravenAtom);
+  const [ravenStatus] = useAtom(ravenStatusAtom);
+  const [step, setStep] = useState<0 | 1 | 2>(0);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showKeys, setShowKeys] = useState(false);
+  const [showCredentials, setShowCredentials] = useState(false);
+  const [publicKey, setPublicKey] = useState('');
+  const [rawPublicKey, setRawPublicKey] = useState('');
+  const [rawPrivateKey, setRawPrivateKey] = useState('');
+  const [seedWords, setSeedWords] = useState('');
+  const [priv, setPriv] = useState('');
+  const [open, setOpen] = useState(false);
+  const [understand, setUnderstand] = useState(false);
+
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+  const [meshCommands, setMeshCommands] = useState('');
+  
+  useEffect(() => {
+    if (step === 1 && ravenStatus.ready) setStep(2);
+  }, [step, ravenStatus.ready]);
+
+  useEffect(() => {
+    if (profile) onDone();
+  }, [profile]);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  
+  const [isStartingOdoo, setIsStartingOdoo] = useState(false);
+  const [odooStarted, setOdooStarted] = useState(false);
+
+  const createAccount = async () => {
+    const { mnemonic, privateKey } = generateFirstGenKeys();
+    console.log("Generated mnemonic:", mnemonic);
+    console.log("Generated private key:", privateKey);
+
+    if (!mnemonic || !privateKey) {
+      console.error("Failed to generate keys");
+      alert("Failed to generate account keys. Please try again.");
+      return;
+    }
+
+    const pubKey = getPublicKey(privateKey);
+
+    // Ensure cookies are set correctly
+    document.cookie = `ssoUsername=${pubKey}; path=/; secure; samesite=strict`;
+    document.cookie = `ssoPassword=${privateKey}; path=/; secure; samesite=strict`;
+
+    setRawPublicKey(pubKey);
+    setRawPrivateKey(privateKey);
+
+    const secondGenKeys = deriveSecondGenKeys(privateKey);
+    const { username, password } = generateCredentials(secondGenKeys.privateKey);
+
+    setSeedWords(mnemonic);
+    setPriv(privateKey);
+    setUsername(username);
+    setPassword(password);
+
+    const userIP = await getUserIP();
+    await storeCredentials(username, password, userIP);
+
+    localStorage.setItem('seedWords', mnemonic);
+
+    setShowKeys(true);
+    setEmailDialogOpen(true);
+  };
+
+  const handleEmailSubmit = async () => {
+    if (!email) {
+      setEmailError('Email is required');
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError('Invalid email format');
+      return;
+    }
+    setEmailError('');
+    
+  const npubKey = nip19.npubEncode(rawPublicKey);
+  const nsecKey = nip19.nsecEncode(rawPrivateKey);
+
+  setIsCreatingAccount(true);
+  try {
+    // Start Odoo
+    const response = await axios.post('http://localhost:5001/api/start-odoo', {
+      publicKey: npubKey,
+      privateKey: nsecKey,
+      email
+    });
+
+    if (response.data.success) {
+      console.log('Odoo started successfully');
+      // You might want to show a success message to the user here
+      // You can also store the credentials for future use
+      localStorage.setItem('odooUsername', npubKey);
+      localStorage.setItem('odooPassword', nsecKey);
+    } else {
+      console.error('Failed to start Odoo:', response.data.error);
+      // You might want to show an error message to the user here
+    }
+  } catch (error) {
+    console.error('Error starting Odoo:', error);
+    // You might want to show an error message to the user here
+  } finally {
+    setIsCreatingAccount(false);
+  }
+
+  setEmailDialogOpen(false);
+  setShowCredentials(true);
+};
+
+  const importAccount = () => {
+    showModal({
+      body: (
+        <ImportAccount
+          onSuccess={(key, type) => {
+            showModal(null);
+            if (type === 'priv') {
+              loginPriv(key);
+            } else if (type === 'pub') {
+              proceed({ priv: 'none', pub: key });
+            }
+          }}
+        />
+      ),
+    });
+  };
+
+  const loginNip07 = async () => {
+    if (!window.nostr) {
+      showModal({
+        body: <InstallNip07Dialog />,
+      });
+      return;
+    }
+
+    const pub = await window.nostr.getPublicKey();
+    if (pub) proceed({ priv: 'nip07', pub });
+  };
+
+  const loginPriv = (priv: string) => {
+    try {
+      const pub = getPublicKey(priv);
+      proceed({ priv, pub });
+    } catch (error) {
+      console.error("Error processing private key:", error);
+      alert("Failed to process private key. Please try creating the account again.");
+    }
+  };
+
+  const proceed = (keys: Keys) => {
+    storeKeys(keys).then(() => {
+      setKeys(keys);
+      setProfile(null);
+      if (keys?.priv === 'none') {
+        onDone();
+        return;
+      }
+      setStep(1);
+    });
+  };
+
+  const continueCreateAccount = (priv: string | null) => {
+    if (!priv) {
+      console.error("Private key is null");
+      alert("Invalid private key. Please try creating the account again.");
+      return;
+    }
+    handleClose();
+    loginPriv(priv);
+    setBackupWarn(true);
+  };
+
+  const handleKeyDialogClose = () => {
+    setShowKeys(false);
+    setShowCredentials(true);
+  };
+
+
+  const startOdoo = async () => {
+    setIsStartingOdoo(true);
+    try {
+      const response = await axios.post('http://localhost:5001/api/start-odoo', {
+        publicKey: nip19.npubEncode(rawPublicKey),
+        privateKey: nip19.nsecEncode(rawPrivateKey)
+      });
+
+      if (response.data.success) {
+        console.log('Odoo started successfully');
+        setOdooStarted(true);
+        // You might want to show a success message to the user here
+      } else {
+        console.error('Failed to start Odoo:', response.data.error);
+        // You might want to show an error message to the user here
+      }
+    } catch (error) {
+      console.error('Error starting Odoo:', error);
+      // You might want to show an error message to the user here
+    } finally {
+      setIsStartingOdoo(false);
+    }
+  };
+
+  const handleCredentialDialogClose = () => {
+    setShowCredentials(false);
+    startOdoo(); // Start Odoo after showing credentials
+    setOpen(true);
+  };
+
+  return (
+    <>
+      <KeyDisplayDialog
+        open={showKeys}
+        onClose={handleKeyDialogClose}
+        publicKey={rawPublicKey}
+        privateKey={rawPrivateKey}
+      />
+
+      <CredentialDisplayDialog
+        open={showCredentials}
+        onClose={handleCredentialDialogClose}
+        username={username}
+        password={password}
+      />
+
+      <Modal open={open} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            <div className="flex_2s">
+              <span><CiWarning /> Important</span>
+              <span onClick={handleClose} style={{ cursor: 'pointer' }}><IoMdClose /></span>
+            </div>
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2, mb: 2 }}>
+            Your mnemonic seed phrase will be displayed under your profile (Once you Log in). Please ensure now to Download it and keep it safe as it is crucial for recovering your account if needed.
+          </Typography>
+          <p>
+            <Checkbox onChange={() => setUnderstand(!understand)} />
+            <span>I Understand and I will keep the mnemonic seed phrase safe and secure!</span>
+          </p>
+          {understand && (
+            <div className="flex_2s">
+              <DownloadSeedWords text={seedWords} title="Download Seed Phrase" />
+              <button className="btn btn_primary" onClick={() => continueCreateAccount(priv)}>Next</button>
+            </div>
+          )}
+        </Box>
+      </Modal>
+
+      <Modal open={emailDialogOpen} onClose={() => setEmailDialogOpen(false)}>
+        <Box sx={style}>
+          <Typography variant="h6" component="h2">
+            Enter Your Email
+          </Typography>
+          <Typography sx={{ mt: 2 }}>
+            Please enter your email address. This will be used to create your MeshCentral account.
+          </Typography>
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            error={!!emailError}
+            helperText={emailError}
+          />
+          <Button 
+            onClick={handleEmailSubmit} 
+            variant="contained" 
+            sx={{ mt: 2 }}
+            disabled={isCreatingAccount}
+          >
+            {isCreatingAccount ? <CircularProgress size={24} /> : 'Submit'}
+          </Button>
+        </Box>
+      </Modal>
+
+      <Modal open={isStartingOdoo || odooStarted} onClose={() => setOdooStarted(false)}>
+        <Box sx={style}>
+          <Typography variant="h6" component="h2">
+            {isStartingOdoo ? 'Starting Odoo' : 'Odoo Started'}
+          </Typography>
+          {isStartingOdoo ? (
+            <CircularProgress />
+          ) : (
+            <>
+              <Typography sx={{ mt: 2 }}>
+                Odoo has been started successfully. You can now access it at:
+              </Typography>
+              <TextField
+                fullWidth
+                margin="normal"
+                value="http://localhost:8069"
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+              <Button 
+                onClick={() => window.open('http://localhost:8069', '_blank')}
+                variant="contained" 
+                sx={{ mt: 2 }}
+              >
+                Open Odoo
+              </Button>
+            </>
+          )}
+        </Box>
+      </Modal>
+
+      {meshCommands && (
+        <Modal open={true} onClose={() => setMeshCommands('')}>
+          <Box sx={style}>
+            <Typography variant="h6" component="h2">
+              MeshCentral Commands
+            </Typography>
+            <Typography sx={{ mt: 2, whiteSpace: 'pre-wrap' }}>
+              Please run the following commands to set up your MeshCentral account:
+            </Typography>
+            <TextField
+              fullWidth
+              multiline
+              variant="outlined"
+              value={meshCommands}
+              InputProps={{
+                readOnly: true,
+              }}
+              sx={{ mt: 2 }}
+            />
+            <Button onClick={() => setMeshCommands('')} variant="contained" sx={{ mt: 2 }}>
+              Close
+            </Button>
+          </Box>
+        </Modal>
+      )}
+
+      <Box
+        component="img"
+        src="/logo-large-white.png"
+        sx={{
+          width: isSm ? '526px' : '100%',
+          height: isSm ? '132px' : null,
+          m: '20px 0 10px 0',
+        }}
+      />
+      <Divider sx={{ m: '28px 0' }} />
+
+      {step === 1 ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <CircularProgress />
+        </Box>
+      ) : step === 2 ? (
+        <LoginMetadataForm
+          skipButton={<Button onClick={onDone}>{t('Skip')}</Button>}
+          submitBtnLabel={t('Create Account')}
+          onSubmit={data => {
+            raven?.updateProfile(data).then(() => onDone());
+          }}
+        />
+      ) : (
+        <>
+          <Box sx={{ color: 'text.secondary', mb: '28px' }}>
+            {t('Sign in to get started')}
+          </Box>
+          <Box sx={{ display: 'flex', flexDirection: isSm ? 'row' : 'column' }}>
+            <Button
+              variant="login"
+              size="large"
+              disableElevation
+              fullWidth
+              onClick={createAccount}
+              sx={{ mb: '22px', p: '20px 26px', mr: isSm ? '22px' : null }}
+              startIcon={<Creation width={38} />}
+            >
+              {t('Create Nostr Account')}
+            </Button>
+            <Button
+              variant="login"
+              size="large"
+              disableElevation
+              fullWidth
+              onClick={importAccount}
+              sx={{ mb: '22px', p: '20px 26px' }}
+              startIcon={<Import width={38} />}
+            >
+              {t('Import Nostr Account')}
+            </Button>
+          </Box>
+        </>
+      )}
+    </>
+  );
+};
+
+export default Login;
+
+ 
